@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Example
   weight: 1
-  pickupTime: 5
+  pickupTime: 2
   value: 100

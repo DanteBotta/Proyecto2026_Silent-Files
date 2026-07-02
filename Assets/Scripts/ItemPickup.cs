@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class ItemPickup : MonoBehaviour
 {
     public ItemData data;
 
     [Header("UI")]
-    public GameObject interactUI;  // el canvas que vas a crear
-    public Image      progressRing; // el aro de progreso
+    public GameObject interactUI;
+    public Image      progressRing;
+    public TMP_Text       itemNameLabel; // NUEVO
 
     private bool  playerNearby   = false;
     private float pickupProgress = 0f;
@@ -18,6 +20,10 @@ public class ItemPickup : MonoBehaviour
     {
         if (interactUI != null)
             interactUI.SetActive(false);
+
+        // Pone el nombre al iniciar, así no hay que cambiarlo a mano
+        if (itemNameLabel != null)
+            itemNameLabel.text = data.itemName; // NUEVO
     }
 
     void Update()

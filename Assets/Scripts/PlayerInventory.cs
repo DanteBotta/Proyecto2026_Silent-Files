@@ -29,10 +29,6 @@ public class PlayerInventory : MonoBehaviour
         totalValue  += item.value;
 
         ApplyWeight();
-
-        Debug.Log("Agarraste: " + item.itemName);
-        Debug.Log("Peso total: " + totalWeight);
-        Debug.Log("Valor total: $" + totalValue);
     }
 
     void ApplyWeight()

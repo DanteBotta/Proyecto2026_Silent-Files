@@ -77,10 +77,15 @@ public class LockpickMinigameController : MonoBehaviour
              "Si el jugador reintenta más veces que niveles definidos, se repite el último nivel de la lista.")]
     public NivelDificultad[] niveles = new NivelDificultad[]
     {
-        new NivelDificultad { nombre = "Intento 1 (fácil)", velocidad = 80f, anchoZonaVerde = 80f, probabilidadRotura = 0.05f },
-        new NivelDificultad { nombre = "Intento 2 (medio)",  velocidad = 110f, anchoZonaVerde = 60f, probabilidadRotura = 0.15f },
-        new NivelDificultad { nombre = "Intento 3 (difícil)", velocidad = 140f, anchoZonaVerde = 45f, probabilidadRotura = 0.30f },
+        new NivelDificultad { nombre = "Fácil", velocidad = 80f, anchoZonaVerde = 80f, probabilidadRotura = 0.05f },
+        new NivelDificultad { nombre = "Medio",  velocidad = 110f, anchoZonaVerde = 60f, probabilidadRotura = 0.15f },
+        new NivelDificultad { nombre = "Difícil", velocidad = 140f, anchoZonaVerde = 45f, probabilidadRotura = 0.30f },
     };
+
+    [Header("Dificultad seleccionada")]
+    [Tooltip("La seleccionará otro script antes de comenzar el nivel.")]
+    [Range(1,10)]
+    public int nivelSeleccionado = 1;
  
     [Header("Eventos")]
     [Tooltip("Se dispara cuando el jugador consigue los aciertos necesarios. La puerta debería abrirse.")]
@@ -92,8 +97,9 @@ public class LockpickMinigameController : MonoBehaviour
     [Tooltip("Se dispara si la ganzúa se rompe. El juego debería quitarla del inventario y ya no permitir reintentar sin una nueva.")]
     public UnityEvent onToolBroken;
  
+
+
     // --- Estado interno ---
-    private int intentoActual = 1;
     private int aciertosActuales;
     private bool herramientaRota;
     private bool minijuegoEnCurso;
@@ -160,11 +166,16 @@ public class LockpickMinigameController : MonoBehaviour
     {
         if (niveles == null || niveles.Length == 0)
         {
-            // Nivel de emergencia por si el array quedó vacío en el Inspector
-            return new NivelDificultad { velocidad = 90f, anchoZonaVerde = 60f, probabilidadRotura = 0.1f };
+            return new NivelDificultad
+            {
+                velocidad = 90f,
+                anchoZonaVerde = 60f,
+                probabilidadRotura = 0.1f
+            };
         }
- 
-        int index = Mathf.Clamp(intentoActual - 1, 0, niveles.Length - 1);
+
+        int index = Mathf.Clamp(nivelSeleccionado - 1, 0, niveles.Length - 1);
+
         return niveles[index];
     }
  
@@ -207,16 +218,6 @@ public class LockpickMinigameController : MonoBehaviour
                 {
                     topIndicators[i].color = colorFallo;
                 }
- 
-                // Solo se evalúa la rotura si la herramienta todavía no se rompió antes
-                if (!herramientaRota)
-                {
-                    float roll = UnityEngine.Random.Range(0f, 1f);
-                    if (roll <= nivel.probabilidadRotura)
-                    {
-                        herramientaRota = true;
-                    }
-                }
             }
  
             // Pequeña pausa entre círculos (además del fade propio del círculo)
@@ -253,16 +254,19 @@ public class LockpickMinigameController : MonoBehaviour
         else
         {
             if (onAttemptFailed != null) onAttemptFailed.Invoke();
- 
-            if (herramientaRota)
+
+            if (!herramientaRota)
             {
-                if (onToolBroken != null) onToolBroken.Invoke();
-                // No se incrementa el intento: sin herramienta no hay reintento posible
+                float roll = UnityEngine.Random.Range(0f, 1f);
+                if (roll <= ObtenerNivelActual().probabilidadRotura)
+                {
+                    herramientaRota = true;
+                }
             }
-            else
+
+            if (herramientaRota && onToolBroken != null)
             {
-                // Se puede reintentar, con la dificultad del próximo nivel definido
-                intentoActual++;
+                onToolBroken.Invoke();
             }
         }
     }

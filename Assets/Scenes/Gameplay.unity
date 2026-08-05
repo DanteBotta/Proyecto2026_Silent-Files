@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 170076734}
-  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641275, b: 0.5748172, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -228,18 +228,19 @@ MonoBehaviour:
   aciertosNecesarios: 3
   tiempoMostrarResultado: 1
   niveles:
-  - nombre: "Intento 1 (f\xE1cil)"
-    velocidad: 80
-    anchoZonaVerde: 80
+  - nombre: "F\xE1cil"
+    velocidad: 150
+    anchoZonaVerde: 50
     probabilidadRotura: 0.05
-  - nombre: Intento 2 (medio)
-    velocidad: 110
-    anchoZonaVerde: 60
+  - nombre: Medio
+    velocidad: 200
+    anchoZonaVerde: 40
     probabilidadRotura: 0.15
-  - nombre: "Intento 3 (dif\xEDcil)"
-    velocidad: 140
-    anchoZonaVerde: 45
+  - nombre: "Dif\xEDcil"
+    velocidad: 250
+    anchoZonaVerde: 30
     probabilidadRotura: 0.3
+  nivelSeleccionado: 1
   onDoorUnlocked:
     m_PersistentCalls:
       m_Calls:

@@ -33,8 +33,8 @@ public class CameraController : MonoBehaviour
     [Tooltip("Ángulo que rota la cámara cada vez que se presiona Q o E (en grados).")]
     public float rotationStep = 45f;
  
-    [Tooltip("Qué tan rápido se interpola la rotación al presionar Q/E (más alto = más rápido).")]
-    public float rotationSmoothness = 6f;
+    [Tooltip("Tiempo aproximado (en segundos) que tarda la cámara en completar la rotación. Más bajo = rotación más rápida/snap, más alto = más suave.")]
+    public float rotationSmoothTime = 0.15f;
  
     [Tooltip("Tecla para rotar la cámara hacia la izquierda.")]
     public KeyCode rotateLeftKey = KeyCode.Q;
@@ -43,8 +43,9 @@ public class CameraController : MonoBehaviour
     public KeyCode rotateRightKey = KeyCode.E;
  
     // --- Estado interno ---
-    private float currentYaw = 0f;      // Ángulo actual alrededor del jugador (eje Y)
-    private float targetYaw = 0f;       // Ángulo al que se está interpolando
+    private float currentYaw;           // Ángulo actual alrededor del jugador (eje Y)
+    private float targetYaw;            // Ángulo al que se está interpolando
+    private float yawVelocity;          // Usado internamente por SmoothDampAngle
  
     private void Start()
     {
@@ -75,8 +76,10 @@ public class CameraController : MonoBehaviour
             targetYaw += rotationStep;
         }
  
-        // Interpolar suavemente el ángulo actual hacia el objetivo
-        currentYaw = Mathf.LerpAngle(currentYaw, targetYaw, rotationSmoothness * Time.deltaTime);
+        // SmoothDampAngle da una rotación más estable y consistente entre
+        // distintos framerates que un Lerp simple, y maneja bien el "wrap"
+        // de 360° a 0° sin saltos raros.
+        currentYaw = Mathf.SmoothDampAngle(currentYaw, targetYaw, ref yawVelocity, rotationSmoothTime);
     }
  
     private void UpdateCameraPosition()

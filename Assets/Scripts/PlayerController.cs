@@ -124,8 +124,6 @@ public class PlayerController : MonoBehaviour
  
     private MovementState DetermineMovementState(Vector3 inputDir)
     {
-        // Si no se está moviendo, se considera "caminando" en reposo (sin ruido real,
-        // pero se puede ajustar según se necesite más adelante)
         bool isMoving = inputDir.magnitude >= 0.1f;
  
         if (Input.GetKey(KeyCode.LeftShift) && isMoving)

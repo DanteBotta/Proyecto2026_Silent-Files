@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -43,14 +44,14 @@ public class LockpickCircleUI : MonoBehaviour
     private bool inputEnabled;
     private bool resultAlreadyRegistered;
  
-    private System.Action<bool> onResultCallback;
+    private Action<bool> onResultCallback;
  
     /// <summary>
     /// Inicializa este círculo con los parámetros de dificultad actuales y
     /// arranca la secuencia de aparición. onResult se llama con true (acierto)
     /// o false (fallo) apenas el jugador hace clic.
     /// </summary>
-    public void Setup(float speed, float zoneWidth, System.Action<bool> onResult)
+    public void Setup(float speed, float zoneWidth, Action<bool> onResult)
     {
         speedDegreesPerSecond = speed;
         zoneWidthDegrees = Mathf.Clamp(zoneWidth, 5f, 360f);
@@ -126,10 +127,7 @@ public class LockpickCircleUI : MonoBehaviour
  
         bool success = IsAngleInsideGreenZone(currentAngle);
  
-        if (onResultCallback != null)
-        {
-            onResultCallback.Invoke(success);
-        }
+        onResultCallback?.Invoke(success);
  
         StartCoroutine(FadeOutAndDestroyRoutine());
     }

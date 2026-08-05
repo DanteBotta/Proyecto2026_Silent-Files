@@ -19,9 +19,9 @@ using TMPro;
 public class LockpickMinigameController : MonoBehaviour
 {
     /// <summary>
-    /// Representa la dificultad de UN intento completo (los 5 círculos de ese
-    /// intento usan siempre estos mismos valores). Se define un elemento por
-    /// intento en el array "niveles" de abajo, directamente desde el Inspector.
+    /// Representa la dificultad de UN nivel completo (los 5 círculos de ese
+    /// intento usan siempre estos mismos valores). Se elige externamente antes
+    /// de entrar al nivel mediante "nivelSeleccionado", no cambia por reintentos.
     /// </summary>
     [Serializable]
     public class NivelDificultad
@@ -36,7 +36,7 @@ public class LockpickMinigameController : MonoBehaviour
         [Range(5f, 360f)]
         public float anchoZonaVerde = 70f;
  
-        [Tooltip("Probabilidad (0 a 1) de que la ganzúa se rompa al fallar un círculo en este nivel.")]
+        [Tooltip("Probabilidad (0 a 1) de que la ganzúa se rompa si el intento completo termina en fallo.")]
         [Range(0f, 1f)]
         public float probabilidadRotura = 0.1f;
     }
@@ -73,18 +73,17 @@ public class LockpickMinigameController : MonoBehaviour
     public float tiempoMostrarResultado = 1f;
  
     [Header("Niveles de dificultad")]
-    [Tooltip("Un elemento por intento: el elemento 0 es el intento 1, el elemento 1 es el intento 2, etc. " +
-             "Si el jugador reintenta más veces que niveles definidos, se repite el último nivel de la lista.")]
+    [Tooltip("Cada elemento es un nivel de dificultad completo, elegible desde afuera (por ejemplo, según la dificultad del mapa).")]
     public NivelDificultad[] niveles = new NivelDificultad[]
     {
         new NivelDificultad { nombre = "Fácil", velocidad = 80f, anchoZonaVerde = 80f, probabilidadRotura = 0.05f },
         new NivelDificultad { nombre = "Medio",  velocidad = 110f, anchoZonaVerde = 60f, probabilidadRotura = 0.15f },
         new NivelDificultad { nombre = "Difícil", velocidad = 140f, anchoZonaVerde = 45f, probabilidadRotura = 0.30f },
     };
-
+ 
     [Header("Dificultad seleccionada")]
-    [Tooltip("La seleccionará otro script antes de comenzar el nivel.")]
-    [Range(1,10)]
+    [Tooltip("Nivel de dificultad a usar (1 = primer elemento del array). Lo debería asignar otro script antes de comenzar el nivel, según la dificultad del mapa/caso.")]
+    [Range(1, 10)]
     public int nivelSeleccionado = 1;
  
     [Header("Eventos")]
@@ -97,8 +96,6 @@ public class LockpickMinigameController : MonoBehaviour
     [Tooltip("Se dispara si la ganzúa se rompe. El juego debería quitarla del inventario y ya no permitir reintentar sin una nueva.")]
     public UnityEvent onToolBroken;
  
-
-
     // --- Estado interno ---
     private int aciertosActuales;
     private bool herramientaRota;
@@ -159,8 +156,7 @@ public class LockpickMinigameController : MonoBehaviour
     }
  
     /// <summary>
-    /// Devuelve la dificultad correspondiente al intento actual. Si hay más
-    /// intentos que niveles definidos, se queda repitiendo el último nivel.
+    /// Devuelve la dificultad seleccionada (fija, elegida antes de entrar al nivel).
     /// </summary>
     private NivelDificultad ObtenerNivelActual()
     {
@@ -173,9 +169,8 @@ public class LockpickMinigameController : MonoBehaviour
                 probabilidadRotura = 0.1f
             };
         }
-
+ 
         int index = Mathf.Clamp(nivelSeleccionado - 1, 0, niveles.Length - 1);
-
         return niveles[index];
     }
  
@@ -183,8 +178,8 @@ public class LockpickMinigameController : MonoBehaviour
     {
         minijuegoEnCurso = true;
  
-        // La dificultad de ESTE intento se mantiene fija durante los 5 círculos,
-        // según lo definido en el documento de diseño.
+        // La dificultad se obtiene UNA sola vez al inicio: se mantiene fija
+        // durante los 5 círculos, según lo definido en el diseño.
         NivelDificultad nivel = ObtenerNivelActual();
  
         for (int i = 0; i < totalCirculos; i++)
@@ -224,7 +219,7 @@ public class LockpickMinigameController : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
         }
  
-        FinalizarIntento();
+        FinalizarIntento(nivel);
  
         // Dejamos el resultado final visible un momento antes de ocultar el panel
         yield return new WaitForSeconds(tiempoMostrarResultado);
@@ -237,37 +232,33 @@ public class LockpickMinigameController : MonoBehaviour
         minijuegoEnCurso = false;
     }
  
-    private void FinalizarIntento()
+    private void FinalizarIntento(NivelDificultad nivel)
     {
         bool exito = aciertosActuales >= aciertosNecesarios;
  
         if (exito)
         {
-            if (onDoorUnlocked != null) onDoorUnlocked.Invoke();
+            onDoorUnlocked?.Invoke();
+            return;
+        }
  
-            if (herramientaRota && onToolBroken != null)
+        onAttemptFailed?.Invoke();
+ 
+        // La rotura se evalúa una única vez para todo el intento fallido,
+        // usando la probabilidad fija del nivel elegido (no aumenta con la
+        // cantidad de círculos individuales fallados).
+        if (!herramientaRota)
+        {
+            float roll = UnityEngine.Random.Range(0f, 1f);
+            if (roll <= nivel.probabilidadRotura)
             {
-                // La puerta se abrió, pero la ganzúa se rompió en el proceso
-                onToolBroken.Invoke();
+                herramientaRota = true;
             }
         }
-        else
+ 
+        if (herramientaRota)
         {
-            if (onAttemptFailed != null) onAttemptFailed.Invoke();
-
-            if (!herramientaRota)
-            {
-                float roll = UnityEngine.Random.Range(0f, 1f);
-                if (roll <= ObtenerNivelActual().probabilidadRotura)
-                {
-                    herramientaRota = true;
-                }
-            }
-
-            if (herramientaRota && onToolBroken != null)
-            {
-                onToolBroken.Invoke();
-            }
+            onToolBroken?.Invoke();
         }
     }
 }

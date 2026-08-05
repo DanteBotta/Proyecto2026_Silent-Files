@@ -22,6 +22,10 @@ using UnityEngine;
 [RequireComponent(typeof(Camera))]
 public class CameraOcclusionFade : MonoBehaviour
 {
+    // Nombres de propiedad de color según el shader/pipeline
+    private static readonly int ColorPropBuiltIn = Shader.PropertyToID("_Color");
+    private static readonly int ColorPropURP = Shader.PropertyToID("_BaseColor");
+ 
     [Header("Referencias")]
     [Tooltip("Transform del jugador (el objetivo que la cámara no debe perder de vista).")]
     public Transform target;
@@ -44,11 +48,13 @@ public class CameraOcclusionFade : MonoBehaviour
     [Tooltip("Velocidad de la transición entre opaco y transparente.")]
     public float fadeSpeed = 6f;
  
-    // Guarda, para cada Renderer afectado, su alpha actual y su MaterialPropertyBlock
+    // Guarda, para cada Renderer afectado, su alpha actual, su MaterialPropertyBlock
+    // y qué propiedad de color le corresponde según su shader.
     private class FadeInfo
     {
         public float currentAlpha = 1f;
         public MaterialPropertyBlock block;
+        public int colorProperty;
     }
  
     private Dictionary<Renderer, FadeInfo> fadeData = new Dictionary<Renderer, FadeInfo>();
@@ -89,9 +95,27 @@ public class CameraOcclusionFade : MonoBehaviour
                 FadeInfo info = new FadeInfo();
                 info.currentAlpha = 1f;
                 info.block = new MaterialPropertyBlock();
+                info.colorProperty = DetectColorProperty(rend);
                 fadeData.Add(rend, info);
             }
         }
+    }
+ 
+    /// <summary>
+    /// Determina si el material del renderer usa "_Color" (Built-in Standard)
+    /// o "_BaseColor" (URP Lit/Simple Lit), para escribir en la propiedad correcta.
+    /// </summary>
+    private int DetectColorProperty(Renderer rend)
+    {
+        Material mat = rend.sharedMaterial;
+        if (mat == null) return ColorPropBuiltIn;
+ 
+        if (mat.HasProperty(ColorPropURP))
+        {
+            return ColorPropURP;
+        }
+ 
+        return ColorPropBuiltIn;
     }
  
     private void UpdateFades()
@@ -136,10 +160,15 @@ public class CameraOcclusionFade : MonoBehaviour
     {
         rend.GetPropertyBlock(info.block);
  
-        Color color = rend.sharedMaterial.HasProperty("_Color") ? rend.sharedMaterial.color : Color.white;
+        Color color = Color.white;
+        if (rend.sharedMaterial != null && rend.sharedMaterial.HasProperty(info.colorProperty))
+        {
+            color = rend.sharedMaterial.GetColor(info.colorProperty);
+        }
+ 
         color.a = info.currentAlpha;
  
-        info.block.SetColor("_Color", color);
+        info.block.SetColor(info.colorProperty, color);
         rend.SetPropertyBlock(info.block);
     }
 }

@@ -265,18 +265,18 @@ MonoBehaviour:
   tiempoMostrarResultado: 1
   niveles:
   - nombre: "F\xE1cil"
-    velocidad: 150
-    anchoZonaVerde: 50
+    velocidad: 200
+    anchoZonaVerde: 60
     probabilidadRotura: 0.05
   - nombre: Medio
-    velocidad: 200
-    anchoZonaVerde: 40
+    velocidad: 250
+    anchoZonaVerde: 50
     probabilidadRotura: 0.15
   - nombre: "Dif\xEDcil"
-    velocidad: 250
-    anchoZonaVerde: 30
+    velocidad: 300
+    anchoZonaVerde: 40
     probabilidadRotura: 0.3
-  nivelSeleccionado: 3
+  nivelSeleccionado: 1
   onDoorUnlocked:
     m_PersistentCalls:
       m_Calls:
@@ -1458,8 +1458,8 @@ MonoBehaviour:
   walkSpeed: 6
   runSpeed: 8
   crouchSpeed: 4
-  runNoiseRadius: 8
   walkNoiseRadius: 3
+  runNoiseRadius: 8
   crouchNoiseRadius: 1
   weightSpeedMultiplier: 1
   gravity: -9.81

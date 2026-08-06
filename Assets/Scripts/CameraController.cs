@@ -2,76 +2,65 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Controla una cámara top-down con ángulo diagonal que sigue al jugador.
-/// Permite rotar la cámara alrededor del jugador con Q y E (en incrementos, no libre).
-/// Todos los valores clave son públicos para poder ajustarlos desde el Inspector
-/// sin tocar código.
-/// </summary>
+/// Controla la cámara top-down con un ángulo diagonal que sigue al jugador
+/// Permite rotar la cámara alrededor del jugador con Q y E
 public class CameraController : MonoBehaviour
 {
-    [Header("Referencia")]
-    [Tooltip("Transform del jugador al que la cámara va a seguir.")]
+    [Header("Objeto que sigue")]
     public Transform target;
  
-    [Header("Posición de la cámara respecto al jugador")]
-    [Tooltip("Distancia horizontal de la cámara respecto al jugador.")]
-    public float distance = 8f;
- 
-    [Tooltip("Altura de la cámara respecto al jugador.")]
-    public float height = 10f;
- 
-    [Tooltip("Ángulo de inclinación de la cámara mirando hacia abajo (en grados). 90 = totalmente cenital, valores menores = más diagonal.")]
-    [Range(20f, 90f)]
-    public float tiltAngle = 55f;
+    [Header("Configuración de la Cámara (respecto al jugador)")]
+    public float distance = 8f; //Distancia
+    public float height = 10f; //Altura
+    [Range(0f, 90f)]
+    public float tiltAngle = 55f; //Angulo de Inclinación
  
     [Header("Suavizado de seguimiento")]
-    [Tooltip("Qué tan rápido la cámara sigue al jugador al moverse. Valores más altos = sigue más rápido/rígido.")]
-    public float followSmoothness = 8f;
+    public float followSmoothness = 8f; //Rapidez de la cámara al seguir al jugador
  
     [Header("Rotación con Q y E")]
-    [Tooltip("Ángulo que rota la cámara cada vez que se presiona Q o E (en grados).")]
-    public float rotationStep = 45f;
- 
-    [Tooltip("Tiempo aproximado (en segundos) que tarda la cámara en completar la rotación. Más bajo = rotación más rápida/snap, más alto = más suave.")]
-    public float rotationSmoothTime = 0.15f;
- 
-    [Tooltip("Tecla para rotar la cámara hacia la izquierda.")]
-    public KeyCode rotateLeftKey = KeyCode.Q;
- 
-    [Tooltip("Tecla para rotar la cámara hacia la derecha.")]
-    public KeyCode rotateRightKey = KeyCode.E;
+    public float rotationStep = 45f; //Cuanto rota la cámara (en grados)
+    public float rotationSmoothTime = 0.15f; //Velocidad de rotación, cuanto tarda en rotar (segundos)
+    public KeyCode rotateLeftKey = KeyCode.Q; //Tecla para rotar hacia la izquierda
+    public KeyCode rotateRightKey = KeyCode.E; //Tecla para rotar hacia la derecha
  
     // --- Estado interno ---
-    private float currentYaw;           // Ángulo actual alrededor del jugador (eje Y)
-    private float targetYaw;            // Ángulo al que se está interpolando
-    private float yawVelocity;          // Usado internamente por SmoothDampAngle
+    private float currentYaw; // Ángulo actual que esta la cámara
+    private float targetYaw; // Ángulo al que debe rotar, luego de presionar Q o E
+    private float yawVelocity; // Ayuda matemática para suavizar el giro
  
+    //Se ejecuta una vez al iniciar el juego
     private void Start()
     {
+        //Define la rotación de la cámara actual
         currentYaw = transform.eulerAngles.y;
-        targetYaw = currentYaw;
+        targetYaw = currentYaw; //El objetivo inicial sea el mismo, para que la cámara no rote apenas comienza
     }
  
+    //Se repite cada frame
     private void Update()
     {
-        HandleRotationInput();
+        HandleRotationInput(); //Revisa si se presiono Q o E
     }
  
+    //Se ejecuta todos los frames, pero luego del Update
+    //Se usa para que primero se mueva el jugador y luego la cámara, si la cámara se moviera en Update(), podría seguir la posición anterior del jugador
     private void LateUpdate()
     {
+        //Verifica que trenga algo que seguir, sino no se mueve
         if (target == null) return;
- 
         UpdateCameraPosition();
     }
  
+    //Detecta cuando se debe rotar la cámara (Q o E)
     private void HandleRotationInput()
     {
-        if (Input.GetKeyDown(rotateLeftKey))
+        //Asigna el objetivo de rotación dependiendo de la tecla
+        if (Input.GetKeyDown(rotateLeftKey)) //Si debe rotar a la izquierda
         {
             targetYaw -= rotationStep;
         }
-        else if (Input.GetKeyDown(rotateRightKey))
+        else if (Input.GetKeyDown(rotateRightKey)) //Si debe rotar a la derecha
         {
             targetYaw += rotationStep;
         }
@@ -82,6 +71,7 @@ public class CameraController : MonoBehaviour
         currentYaw = Mathf.SmoothDampAngle(currentYaw, targetYaw, ref yawVelocity, rotationSmoothTime);
     }
  
+    //Calcula dónde debe colocarse la cámara
     private void UpdateCameraPosition()
     {
         // Calcular la posición deseada de la cámara alrededor del jugador,

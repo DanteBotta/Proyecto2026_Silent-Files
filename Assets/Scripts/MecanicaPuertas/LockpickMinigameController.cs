@@ -8,13 +8,21 @@ using TMPro;
 
 /// <summary>
 /// Controla el minijuego completo de ganzúa: genera los 5 círculos en secuencia,
-/// maneja la dificultad (definida manualmente por nivel/intento), cuenta aciertos/
-/// fallos, actualiza los 5 indicadores superiores, calcula el resultado final y
-/// decide si la puerta se abre, y si la ganzúa se rompe.
+/// usa una dificultad FIJA elegida antes de entrar al nivel (nivelSeleccionado,
+/// típicamente asignado por otro script según la dificultad del mapa/caso),
+/// cuenta aciertos/fallos, actualiza los 5 indicadores superiores, calcula el
+/// resultado final y decide si la puerta se abre.
+///
+/// La probabilidad de que la ganzúa se rompa es la definida en el nivel actual,
+/// y se evalúa UNA sola vez al final si el intento completo fue un fallo (no
+/// depende de cuántos de los 5 círculos individuales se fallaron).
 ///
 /// Para usarlo: llamar a StartMinigame() cuando el jugador interactúa con una
 /// puerta cerrada. Escuchar los eventos onDoorUnlocked / onAttemptFailed /
 /// onToolBroken desde el script de la puerta o del inventario.
+///
+/// Compatible con Unity 6 (probado en 6000.5.7f1). TextMeshPro ya viene
+/// integrado por defecto, no requiere importar ningún paquete extra.
 /// </summary>
 public class LockpickMinigameController : MonoBehaviour
 {
@@ -182,6 +190,14 @@ public class LockpickMinigameController : MonoBehaviour
         // durante los 5 círculos, según lo definido en el diseño.
         NivelDificultad nivel = ObtenerNivelActual();
  
+        int fallosActuales = 0;
+ 
+        // Con la config por defecto (5 círculos, 3 aciertos necesarios), esto
+        // significa que con 3 fallos ya es imposible llegar a los 3 aciertos,
+        // así que se corta ahí. Se calcula de forma genérica por si más adelante
+        // cambiás totalCirculos o aciertosNecesarios.
+        int fallosMaximosAntesDeSalirTemprano = totalCirculos - aciertosNecesarios + 1;
+ 
         for (int i = 0; i < totalCirculos; i++)
         {
             bool resultadoListo = false;
@@ -209,6 +225,7 @@ public class LockpickMinigameController : MonoBehaviour
             }
             else
             {
+                fallosActuales++;
                 if (topIndicators.Length > i && topIndicators[i] != null)
                 {
                     topIndicators[i].color = colorFallo;
@@ -217,6 +234,16 @@ public class LockpickMinigameController : MonoBehaviour
  
             // Pequeña pausa entre círculos (además del fade propio del círculo)
             yield return new WaitForSeconds(0.1f);
+ 
+            // Salida anticipada: ya se consiguieron los aciertos necesarios,
+            // o ya es imposible alcanzarlos con los círculos restantes.
+            bool yaGano = aciertosActuales >= aciertosNecesarios;
+            bool yaEsImposibleGanar = fallosActuales >= fallosMaximosAntesDeSalirTemprano;
+ 
+            if (yaGano || yaEsImposibleGanar)
+            {
+                break;
+            }
         }
  
         FinalizarIntento(nivel);

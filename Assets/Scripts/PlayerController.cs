@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour
     //Cámara que va a seguir al personaje, si no esta asignada, no anda
     [Header("Cámara Asignada")]
     public Transform cameraTransform;
- 
+
     [Header("Velocidades de movimiento")]
     public float walkSpeed = 4f;
     public float runSpeed = 7f; 
@@ -20,7 +20,7 @@ public class PlayerController : MonoBehaviour
     public float walkNoiseRadius = 3f;
     public float runNoiseRadius = 8f;
     public float crouchNoiseRadius = 0f;
- 
+
     //Multiplicador de Velocidad, al tener cosas disminuye y vas más lento
     [Header("Multiplicador de Peso e inventario")]
     [Range(0.1f, 1f)]

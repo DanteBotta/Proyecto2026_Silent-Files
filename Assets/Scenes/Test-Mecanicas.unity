@@ -229,7 +229,7 @@ GameObject:
   - component: {fileID: 232283427}
   - component: {fileID: 232283426}
   m_Layer: 5
-  m_Name: Mano
+  m_Name: Icono_Principal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -274,7 +274,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 0c96cd7db2630db47a66d1bad481c116, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -325,6 +325,7 @@ MonoBehaviour:
     type: 3}
   circleSpawnPoint: {fileID: 930912835}
   indicatorsPanel: {fileID: 1100726996}
+  inventoryPanel: {fileID: 1601195597}
   topIndicators:
   - {fileID: 1921174673}
   - {fileID: 891130776}
@@ -363,9 +364,9 @@ MonoBehaviour:
   onDoorUnlocked:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 729122447}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
-        m_MethodName: Open
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -378,9 +379,9 @@ MonoBehaviour:
   onAttemptFailed:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 729122447}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
-        m_MethodName: LockpickFailed
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -394,7 +395,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 729122447}
-        m_TargetAssemblyTypeName: 
+        m_TargetAssemblyTypeName: SimpleDoor, Assembly-CSharp
         m_MethodName: LockpickBroken
         m_Mode: 1
         m_Arguments:
@@ -884,6 +885,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25409b1c749126042af3bb12ad41a4ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  locked: 1
+  isOpen: 0
+  doorMeshRenderer: {fileID: 729122449}
+  lockpickManager: {fileID: 372765031}
+  onOpenedWithHand:
+    m_PersistentCalls:
+      m_Calls: []
+  onHandBlocked:
+    m_PersistentCalls:
+      m_Calls: []
+  onOpenedWithLever:
+    m_PersistentCalls:
+      m_Calls: []
+  onLockpickStarted:
+    m_PersistentCalls:
+      m_Calls: []
+  onLockpickSucceeded:
+    m_PersistentCalls:
+      m_Calls: []
+  onLockpickFailed:
+    m_PersistentCalls:
+      m_Calls: []
+  onLockpickBroken:
+    m_PersistentCalls:
+      m_Calls: []
+  onDoorOpened:
+    m_PersistentCalls:
+      m_Calls: []
+  onFeedbackMessage:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!65 &729122448
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1792,8 +1824,9 @@ GameObject:
   - component: {fileID: 1162109388}
   - component: {fileID: 1162109390}
   - component: {fileID: 1162109389}
+  - component: {fileID: 1162109391}
   m_Layer: 5
-  m_Name: Slot-1
+  m_Name: Slot_Secundario1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1857,6 +1890,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1162109387}
   m_CullTransparentMesh: 1
+--- !u!114 &1162109391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1162109387}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 0
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 1162109389}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1292687219
 GameObject:
   m_ObjectHideFlags: 0
@@ -2182,8 +2259,9 @@ GameObject:
   - component: {fileID: 1430250027}
   - component: {fileID: 1430250029}
   - component: {fileID: 1430250028}
+  - component: {fileID: 1430250030}
   m_Layer: 5
-  m_Name: Slot-Principal
+  m_Name: Slot_Principal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2247,6 +2325,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1430250026}
   m_CullTransparentMesh: 1
+--- !u!114 &1430250030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1430250026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 0
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 1430250028}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1580383901
 GameObject:
   m_ObjectHideFlags: 0
@@ -2396,7 +2518,7 @@ GameObject:
   - component: {fileID: 1601195600}
   - component: {fileID: 1601195599}
   m_Layer: 5
-  m_Name: Panel_Inventario
+  m_Name: InventoryPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2577,7 +2699,7 @@ GameObject:
   - component: {fileID: 1729488950}
   - component: {fileID: 1729488949}
   m_Layer: 5
-  m_Name: Palanca
+  m_Name: Icono_Secundario2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2622,7 +2744,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 1c9238733b99fcb4d9e9af5c25af7036, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2651,8 +2773,9 @@ GameObject:
   - component: {fileID: 1748369713}
   - component: {fileID: 1748369715}
   - component: {fileID: 1748369714}
+  - component: {fileID: 1748369716}
   m_Layer: 5
-  m_Name: Slot-2
+  m_Name: Slot_Secundario2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2716,6 +2839,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1748369712}
   m_CullTransparentMesh: 1
+--- !u!114 &1748369716
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1748369712}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 0
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 1748369714}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1763470131
 GameObject:
   m_ObjectHideFlags: 0
@@ -2728,7 +2895,7 @@ GameObject:
   - component: {fileID: 1763470134}
   - component: {fileID: 1763470133}
   m_Layer: 5
-  m_Name: Ganzua
+  m_Name: Icono_Secundario1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2773,7 +2940,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: df7da836cb5efed44844876362cefb5f, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2911,6 +3078,72 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2102920493
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2102920494}
+  - component: {fileID: 2102920495}
+  m_Layer: 0
+  m_Name: Inventory
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2102920494
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2102920493}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 4.25, y: 2.9749756, z: 4.25}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2102920495
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2102920493}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfa5eae9e236f934f96a5506fe70ea8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryInteraction
+  primaryButton: {fileID: 1430250030}
+  secondaryButton1: {fileID: 1162109391}
+  secondaryButton2: {fileID: 1748369716}
+  primaryImage: {fileID: 232283426}
+  secondaryImage1: {fileID: 1763470133}
+  secondaryImage2: {fileID: 1729488949}
+  handSprite: {fileID: 21300000, guid: 0c96cd7db2630db47a66d1bad481c116, type: 3}
+  lockpickSprite: {fileID: 21300000, guid: df7da836cb5efed44844876362cefb5f, type: 3}
+  leverSprite: {fileID: 21300000, guid: 1c9238733b99fcb4d9e9af5c25af7036, type: 3}
+  emptySprite: {fileID: 21300000, guid: 98d0db61a1792c94480137204fe98663, type: 3}
+  primaryItem: 0
+  secondaryItem1: 1
+  secondaryItem2: 2
+  selectedScale: 1.15
+  secondaryScale: 1
+  interactionCamera: {fileID: 1399291437}
+  interactionDistance: 20
+  doorLayer:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  lockpickBroken: 0
+  debugLogs: 1
 --- !u!1001 &5829397096129359659
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3064,3 +3297,4 @@ SceneRoots:
   - {fileID: 729122451}
   - {fileID: 2060802768}
   - {fileID: 1634313148}
+  - {fileID: 2102920494}

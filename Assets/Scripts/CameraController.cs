@@ -23,7 +23,10 @@ public class CameraController : MonoBehaviour
     public float rotationSmoothTime = 0.15f; //Velocidad de rotación, cuanto tarda en rotar (segundos)
     public KeyCode rotateLeftKey = KeyCode.Q; //Tecla para rotar hacia la izquierda
     public KeyCode rotateRightKey = KeyCode.E; //Tecla para rotar hacia la derecha
- 
+
+    [Header("Minijuego de ganzúa")]
+    public LockpickMinigameController lockpickManager;
+
     // --- Estado interno ---
     private float currentYaw; // Ángulo actual que esta la cámara
     private float targetYaw; // Ángulo al que debe rotar, luego de presionar Q o E
@@ -40,7 +43,10 @@ public class CameraController : MonoBehaviour
     //Se repite cada frame
     private void Update()
     {
-        HandleRotationInput(); //Revisa si se presiono Q o E
+        if (lockpickManager != null && lockpickManager.MinijuegoEnCurso)
+            return;
+
+        HandleRotationInput();
     }
  
     //Se ejecuta todos los frames, pero luego del Update

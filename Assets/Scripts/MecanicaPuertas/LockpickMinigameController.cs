@@ -81,7 +81,7 @@ public class LockpickMinigameController : MonoBehaviour
 
     private int aciertosActuales;
     private bool herramientaRota;
-    private bool minijuegoEnCurso;
+    public bool MinijuegoEnCurso { get; private set; }
 
     private SimpleDoor puertaActual;
 
@@ -103,7 +103,7 @@ public class LockpickMinigameController : MonoBehaviour
             return;
         }
 
-        if (minijuegoEnCurso)
+        if (MinijuegoEnCurso)
             return;
 
         if (herramientaRota)
@@ -123,7 +123,7 @@ public class LockpickMinigameController : MonoBehaviour
 
     public void StartMinigame()
     {
-        if (minijuegoEnCurso)
+        if (MinijuegoEnCurso)
             return;
 
         if (herramientaRota)
@@ -207,7 +207,7 @@ public class LockpickMinigameController : MonoBehaviour
 
     private IEnumerator RunMinigameRoutine()
     {
-        minijuegoEnCurso = true;
+        MinijuegoEnCurso = true;
 
         NivelDificultad nivel = ObtenerNivelActual();
 
@@ -296,7 +296,7 @@ public class LockpickMinigameController : MonoBehaviour
         if (inventoryPanel != null)
             inventoryPanel.SetActive(true);
 
-        minijuegoEnCurso = false;
+        MinijuegoEnCurso = false;
     }
 
     // =========================================================

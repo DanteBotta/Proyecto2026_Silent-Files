@@ -180,12 +180,14 @@ public class InventoryInteraction : MonoBehaviour
         if (image == null)
             return;
 
-        // Si es la ganzúa y ya está rota, se "hace desaparecer" del slot
-        // (se deja de mostrar el sprite) en vez de mostrarla normal.
+        // Si es la ganzúa y ya está rota, se reemplaza por el sprite de slot vacío
+        // (en vez de ocultarla). Para esto, la ganzúa rota siempre termina viviendo
+        // en el slot secundario 2 (ver OnLockpickBroken), así que en la práctica
+        // este caso solo se va a dar ahí.
         if (item == ItemType.Lockpick && lockpickBroken)
         {
-            image.sprite = null;
-            image.enabled = false;
+            image.sprite = emptySprite;
+            image.enabled = emptySprite != null;
             return;
         }
 
@@ -292,14 +294,40 @@ public class InventoryInteraction : MonoBehaviour
     /// <summary>
     /// Llamar desde el evento "On Lockpick Broken" de SimpleDoor (Inspector),
     /// o desde cualquier otro lugar que necesite invalidar la ganzúa.
-    /// La oculta visualmente de donde esté (slot principal o secundario) y
-    /// bloquea que se pueda volver a usar.
+    ///
+    /// Mueve la ganzúa (esté donde esté: principal, secundario 1 o ya en
+    /// secundario 2) específicamente al slot secundario 2, la reemplaza por
+    /// el sprite de "vacío", y desactiva ese botón para que ya no se pueda
+    /// volver a clickear ni intercambiar con nada.
     /// </summary>
     public void OnLockpickBroken()
     {
         lockpickBroken = true;
+
+        if (primaryItem == ItemType.Lockpick)
+        {
+            // Lo que estaba en el slot 2 pasa a ocupar el principal,
+            // y la ganzúa rota toma su lugar en el slot 2.
+            primaryItem = secondaryItem2;
+            secondaryItem2 = ItemType.Lockpick;
+        }
+        else if (secondaryItem1 == ItemType.Lockpick)
+        {
+            // Mismo intercambio, pero entre secundario 1 y secundario 2.
+            secondaryItem1 = secondaryItem2;
+            secondaryItem2 = ItemType.Lockpick;
+        }
+        // Si ya estaba en secundario 2, no hace falta mover nada.
+
+        // El slot 2 queda bloqueado: no se puede volver a clickear,
+        // así que tampoco se puede volver a intercambiar con otro slot.
+        if (secondaryButton2 != null)
+        {
+            secondaryButton2.interactable = false;
+        }
+
         RefreshUI();
 
-        if (debugLogs) Debug.Log("La ganzúa se rompió y ya no está disponible.");
+        if (debugLogs) Debug.Log("[Inventory] La ganzúa se rompió, se movió al slot 2 y quedó bloqueada.");
     }
 }

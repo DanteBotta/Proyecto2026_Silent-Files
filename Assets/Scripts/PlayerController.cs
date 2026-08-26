@@ -33,7 +33,10 @@ public class PlayerController : MonoBehaviour
     //Velocidad que rota el personaje hacie la dirección del moviento
     [Header("Rotación del personaje")]
     public float rotationSpeed = 12f;
- 
+
+    [Header("Minijuego de ganzúa")]
+    public LockpickMinigameController lockpickManager;
+
     // --- Estado interno ---
     private CharacterController controller; //Crea una variable para gurdar el CharacterController como variable
     private Vector3 velocity; //Guarda velocidad vertical (gravedad, no hay salto)
@@ -69,8 +72,12 @@ public class PlayerController : MonoBehaviour
     //Se repite cada frame
     private void Update()
     {
-        HandleMovement(); //Función que se encarga del movimiento
-        ApplyGravity(); //Función que se encarga de la gravedad y caida
+        if (lockpickManager == null || !lockpickManager.MinijuegoEnCurso)
+        {
+            HandleMovement();
+        }
+
+        ApplyGravity();
     }
  
     private void HandleMovement()

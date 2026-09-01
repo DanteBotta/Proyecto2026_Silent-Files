@@ -20,11 +20,6 @@ public class PlayerController : MonoBehaviour
     public float walkNoiseRadius = 3f;
     public float runNoiseRadius = 8f;
     public float crouchNoiseRadius = 0f;
-
-    //Multiplicador de Velocidad, al tener cosas disminuye y vas más lento
-    [Header("Multiplicador de Peso e inventario")]
-    [Range(0.1f, 1f)]
-    public float weightSpeedMultiplier = 1f;
  
     //Gravedad sobre el personaje (la de la Tierra)
     [Header("Gravedad")]
@@ -46,7 +41,6 @@ public class PlayerController : MonoBehaviour
     // qué tan rápido/ruidoso está siendo el jugador en este momento.
     public MovementState CurrentState => currentState; //Muestra en que estado del MovementState se encuentra
     public float CurrentNoiseRadius { get; private set; } //Guarda el sonido actual
-    public float CurrentSpeed { get; private set; } //Guarda la velocidad actual
  
     //Crea el dato del estado que se encuentra el jugador
     public enum MovementState{
@@ -64,19 +58,27 @@ public class PlayerController : MonoBehaviour
         //Como no tira error si no hay cámara, aviso que hay que asignar una
         if (cameraTransform == null)
         {
-            Debug.Log("No hay cámara asignada, sin cámara no funciona");
             Debug.Log("Debe asignar una cámara para su funcionamiento");
         }
     }
- 
+
+    private void Start()
+    {
+        //Asigna automaticamente el LockpickMinigameController
+        lockpickManager = FindAnyObjectByType<LockpickMinigameController>();
+    }
+
     //Se repite cada frame
     private void Update()
     {
+        //Si no existe el LockpickManager o si esta activo, no se ejecuta HandleRotationInput()
         if (lockpickManager == null || !lockpickManager.MinijuegoEnCurso)
         {
+            //Solo se mueve si el juego no esta activo
             HandleMovement();
         }
 
+        //La gravedad se aplica siempre, aunque no se mueva el personaje
         ApplyGravity();
     }
  
@@ -94,10 +96,7 @@ public class PlayerController : MonoBehaviour
         float targetSpeed = GetSpeedForState(currentState); //Determina la velocidad dependiendo del estado
         CurrentNoiseRadius = GetNoiseForState(currentState); //Determina el sonido generado segun el estado
  
-        // Aplicar penalización de peso (siempre, sin importar el estado)
-        targetSpeed *= weightSpeedMultiplier;
-        CurrentSpeed = targetSpeed; //Determina la velocidad final
- 
+     
         // Se encarga de mover y rotar al personaje
         // Convierte las teclas que presiona el jugador en una dirección basada en la orientación de la cámara
         // Hace que el personaje gire hacia donde se está desplazando.

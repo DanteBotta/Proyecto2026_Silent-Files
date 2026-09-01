@@ -9,7 +9,7 @@ public class CameraController : MonoBehaviour
     [Header("Objeto que sigue")]
     public Transform target;
  
-    [Header("Configuración de la Cámara (respecto al jugador)")]
+    [Header("Configuración de la Cámara (respecto al target)")]
     public float distance = 8f; //Distancia
     public float height = 10f; //Altura
     [Range(0f, 90f)]
@@ -28,24 +28,29 @@ public class CameraController : MonoBehaviour
     public LockpickMinigameController lockpickManager;
 
     // --- Estado interno ---
-    private float currentYaw; // Ángulo actual que esta la cámara
-    private float targetYaw; // Ángulo al que debe rotar, luego de presionar Q o E
-    private float yawVelocity; // Ayuda matemática para suavizar el giro
+    private float AnguloActual; // Ángulo actual que esta la cámara
+    private float AnguloObjetivo; // Ángulo al que debe rotar, luego de presionar Q o E
+    private float AnguloVelocidad; // Ayuda matemática para suavizar el giro
  
     //Se ejecuta una vez al iniciar el juego
     private void Start()
     {
         //Define la rotación de la cámara actual
-        currentYaw = transform.eulerAngles.y;
-        targetYaw = currentYaw; //El objetivo inicial sea el mismo, para que la cámara no rote apenas comienza
+        AnguloActual = transform.eulerAngles.y;
+        AnguloObjetivo = AnguloActual; //El objetivo inicial sea el mismo, para que la cámara no rote apenas comienza
+
+        //Asigna automaticamente el LockpickMinigameController
+        lockpickManager = FindAnyObjectByType<LockpickMinigameController>();
     }
  
     //Se repite cada frame
     private void Update()
     {
+        //Si no existe el LockpickManager o si esta activo, no se ejecuta HandleRotationInput()
         if (lockpickManager != null && lockpickManager.MinijuegoEnCurso)
             return;
 
+        //Llama a la función que detecta si se debe rotar la cámara (Q o E)
         HandleRotationInput();
     }
  
@@ -64,25 +69,25 @@ public class CameraController : MonoBehaviour
         //Asigna el objetivo de rotación dependiendo de la tecla
         if (Input.GetKeyDown(rotateLeftKey)) //Si debe rotar a la izquierda
         {
-            targetYaw -= rotationStep;
+            AnguloObjetivo -= rotationStep;
         }
         else if (Input.GetKeyDown(rotateRightKey)) //Si debe rotar a la derecha
         {
-            targetYaw += rotationStep;
+            AnguloObjetivo += rotationStep;
         }
  
         // SmoothDampAngle da una rotación más estable y consistente entre
         // distintos framerates que un Lerp simple, y maneja bien el "wrap"
         // de 360° a 0° sin saltos raros.
-        currentYaw = Mathf.SmoothDampAngle(currentYaw, targetYaw, ref yawVelocity, rotationSmoothTime);
+        AnguloActual = Mathf.SmoothDampAngle(AnguloActual, AnguloObjetivo, ref AnguloVelocidad, rotationSmoothTime);
     }
  
     //Calcula dónde debe colocarse la cámara
     private void UpdateCameraPosition()
     {
         // Calcular la posición deseada de la cámara alrededor del jugador,
-        // según el ángulo actual (currentYaw) y la inclinación (tiltAngle)
-        Quaternion rotation = Quaternion.Euler(tiltAngle, currentYaw, 0f);
+        // según el ángulo actual (AnguloActual) y la inclinación (tiltAngle)
+        Quaternion rotation = Quaternion.Euler(tiltAngle, AnguloActual, 0f);
         Vector3 desiredPosition = target.position - (rotation * Vector3.forward * distance);
         desiredPosition.y = target.position.y + height;
  

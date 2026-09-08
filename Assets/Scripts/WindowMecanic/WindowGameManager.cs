@@ -1,19 +1,23 @@
+using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
-using System.Collections;
+
+/// Window minigame: By holding [F] near a closed window, a signal appears at a random time
+/// Releasing the key at the right moment opens the window silently; releasing it too early, too late, or not releasing it at all generates different levels of noise and may not open it
 
 public class WindowGameManager : MonoBehaviour
 {
-    public ShowCanvasNearPlayer CanvasWindow; // Referencia al script que controla la activación del canvas según la distancia del jugador
-
-    public TextMeshProUGUI WindowStateText; // Referencia al texto que muestra el estado de la ventana (abierta, cerrada, bloqueada)
-    public TextMeshProUGUI WindowTitleText; // Referencia al texto que muestra el título de la ventana (instrucciones para el jugador)
-
-    public Image Image; // Referencia a la imagen que cambia de color según el estado del minijuego
-
-
-    // Estado de la ventana: abierta, cerrada o bloqueada
+    // Enumerations for possible noise levels and window states
+    public enum NivelRuido
+    {
+        Nulo,
+        Bajo,
+        Medio,
+        Alto
+    }
     public enum EstadoVentana
     {
         Bloqueada,
@@ -21,296 +25,331 @@ public class WindowGameManager : MonoBehaviour
         Abierta
     }
 
-    // Decidir como esta la ventana desde inspector
-    public EstadoVentana estado = EstadoVentana.Cerrada;
+    // Custom UnityEvent that takes a NivelRuido parameter, allowing for event-driven noise generation handling
+    [Serializable] // This tells Unity "this class can be saved and displayed in the Inspector"
+    public class RuidoUnityEvent : UnityEvent<NivelRuido> { }
 
+    [Header("Referencias")]
+    public ShowCanvasNearPlayer CanvasWindow; // Script that decides if the player is close enough for the window UI to appear.
+    public TextMeshProUGUI WindowStateText; // Text that shows the current state of the window (closed, open, blocked, etc.)
+    public TextMeshProUGUI WindowTitleText; // Text that shows the title or instruction of the window
+    public Image Image; // Image that provides visual feedback for the minigame
 
-    private Coroutine coroutineSenal; // Guarda una referencia a la Coroutine que está esperando para mostrar la señal
+    [Header("Estado")]
+    public EstadoVentana estado = EstadoVentana.Cerrada; // The current state of the window
+    // Which can be blocked, closed, or open
 
-    private float tiempoSenal; // Guarda el momento exacto en el que apareció la señal
+    [Header("Tecla")]
+    public KeyCode teclaInteraccion = KeyCode.F; // The key the player must hold to start and release to open the window
 
-    private bool minijuegoActivo = false; // Indica si el minijuego está activo (el jugador está manteniendo presionada la tecla E)
+    [Header("Tiempos de la señal")]
+    [Tooltip("Tiempo mínimo antes de la señal")]
+    public float tiempoEsperaMin = 1f; // Minimum time before the signal appears
 
-    private bool senalMostrada = false; // Indica si la señal ya fue mostrada al jugador
+    [Tooltip("Tiempo máximo antes de la señal")]
+    public float tiempoEsperaMax = 3f; // Maximum time before the signal appears
 
+    [Tooltip("Cuánto tiempo tiene el jugador para soltar la tecla después de que aparece la señal")]
+    public float ventanaReaccion = 0.5f; // Maximum time the player has to release the key after the signal appears before it is considered too late
 
-    void Start()
+    [Header("Umbrales de reacción")]
+    public float umbralPerfecto = 0.2f; // Threshold for a perfect reaction time
+    public float umbralAceptable = 0.5f; // Threshold for an acceptable reaction time (beyond this, it is considered too late)
+
+    public float tiempoMostrarResultado = 1f; // How much time to show the result (perfect, acceptable, too late) before returning to the normal state
+
+    [Header("Resultado de cada caso: ¿abre la ventana? ¿qué ruido genera?")]
+    // These variables define the outcome of each possible case: whether the window opens and what level of noise is generated
+
+    // if releases the key before the signal appears
+    public NivelRuido ruidoSiSueltaAntes = NivelRuido.Bajo;
+    public bool abreSiSueltaAntes = false;
+    // if releases the key perfectly
+    public NivelRuido ruidoSiPerfecto = NivelRuido.Nulo;
+    public bool abreSiPerfecto = true;
+    // if releases the key after the signal appears but within the acceptable threshold
+    public NivelRuido ruidoSiAceptable = NivelRuido.Medio;
+    public bool abreSiAceptable = true;
+    // if releases the key too late
+    public NivelRuido ruidoSiTarde = NivelRuido.Alto;
+    public bool abreSiTarde = false;
+
+    [Header("Colores de feedback por resultado")]
+    // These colors are used to provide visual feedback to the player based on their performance in the minigame
+    public Color colorEsperando = Color.gray;
+    public Color colorSenal = Color.green;
+    public Color colorPerfecto = Color.green;
+    public Color colorAceptable = Color.yellow;
+    public Color colorFallo = Color.red;
+    public Color colorNeutral = Color.white;
+
+    [Header("Textos")]
+    // These texts are displayed in the UI to inform the player about the current state of the window and the minigame
+    public string textoEsperandoEstado = "Abriendo...";
+    public string textoEsperandoTitulo = "ESPERA...";
+    public string textoSenalEstado = "¡SUELTA!";
+    public string textoSenalTitulo = "¡AHORA!";
+    public string textoCerradaEstado = "Ventana (cerrada)";
+    public string textoCerradaTitulo = "Mantén [F]";
+    public string textoAbiertaEstado = "Ventana (abierta)";
+    public string textoAbiertaTitulo = "Presiona [F] para entrar";
+    public string textoBloqueadaEstado = "Ventana (bloqueada)";
+    public string textoBloqueadaTitulo = "No puedes abrirla";
+    public string textoSoltoAntes = "La soltaste demasiado pronto";
+    public string textoDemasiadoTarde = "¡Demasiado tarde!";
+
+    [Header("Eventos")] // These events allow other scripts to respond to the minigame's outcomes
+    [Tooltip("Se dispara cada vez que el minijuego genera ruido, con el nivel correspondiente")]
+    public RuidoUnityEvent onRuidoGenerado;
+
+    [Tooltip("Se dispara cuando la ventana se abre exitosamente")]
+    public UnityEvent onVentanaAbierta;
+
+    // --- Estado interno ---
+    private Coroutine coroutineSenal; // It stores a reference to the coroutine that is waiting for a random time to display the signal
+    private float tiempoSenal; // The exact moment the signal appeared, to calculate how long it took the player to react.
+    private bool minijuegoActivo = false; // Indicates whether the minigame is currently active (the player is holding the key and waiting for the signal)
+    private bool senalMostrada = false; // Indicates whether the signal has been shown to the player yet
+
+    private void Start()
     {
-        Image.gameObject.SetActive(false); // Desactivar la imagen al inicio
-
-        // Se actualiza la UI dependiendo de el estado inicial de la ventana
-        ActualizarUI();
+        Image.gameObject.SetActive(false); // Initially, the feedback image is hidden until the player is close enough to interact with the window.
+        ActualizarUI(); // Function to update the UI texts based on the current state of the window at the start of the game.
     }
 
-
-    void Update()
+    private void Update()
     {
-        // Si el jugador no está cerca
         if (!CanvasWindow.FuncionCanvas)
         {
             Image.gameObject.SetActive(false);
             return;
         }
 
-        // Mostrar imagen
-        Image.gameObject.SetActive(true);
-
-
-        // =========================
-        // VENTANA CERRADA
-        // =========================
+        // La imagen de feedback (la de "mantener F") solo se muestra mientras
+        // la ventana todavía no está abierta. Una vez abierta, desaparece.
+        Image.gameObject.SetActive(estado != EstadoVentana.Abierta);
 
         if (estado == EstadoVentana.Cerrada)
         {
-            // Empezar a mantener E
-            if (Input.GetKeyDown(KeyCode.F) && !minijuegoActivo)
+            if (Input.GetKeyDown(teclaInteraccion) && !minijuegoActivo)
             {
                 IniciarMinijuego();
             }
 
-
-            // Soltar E
-            if (Input.GetKeyUp(KeyCode.F) && minijuegoActivo)
+            if (Input.GetKeyUp(teclaInteraccion) && minijuegoActivo)
             {
                 SoltarTecla();
             }
         }
-
-
-        // =========================
-        // VENTANA ABIERTA
-        // =========================
-
         else if (estado == EstadoVentana.Abierta)
         {
-            WindowStateText.text = "Ventana (abierta)";
-            WindowTitleText.text = "Presiona [F] para entrar";
+            WindowStateText.text = textoAbiertaEstado;
+            WindowTitleText.text = textoAbiertaTitulo;
 
             // Acá después ponemos la animación de entrar
         }
-
-
-        // =========================
-        // VENTANA BLOQUEADA
-        // =========================
-
         else if (estado == EstadoVentana.Bloqueada)
         {
-            WindowStateText.text = "Ventana (bloqueada)";
-            WindowTitleText.text = "No puedes abrirla";
+            WindowStateText.text = textoBloqueadaEstado;
+            WindowTitleText.text = textoBloqueadaTitulo;
         }
     }
-
 
     // =========================
     // INICIAR MINIJUEGO
     // =========================
 
-    void IniciarMinijuego()
+    private void IniciarMinijuego()
     {
         minijuegoActivo = true;
         senalMostrada = false;
 
-        WindowStateText.text = "Abriendo...";
-        WindowTitleText.text = "ESPERA...";
+        WindowStateText.text = textoEsperandoEstado;
+        WindowTitleText.text = textoEsperandoTitulo;
 
-        Image.color = Color.gray;
+        Image.color = colorEsperando;
 
         coroutineSenal = StartCoroutine(EsperarSenal());
     }
-
 
     // =========================
     // ESPERAR SEÑAL
     // =========================
 
-    IEnumerator EsperarSenal()
+    private IEnumerator EsperarSenal()
     {
-        // Tiempo aleatorio entre 1 y 3 segundos
-        float tiempoEspera = Random.Range(1f, 3f);
+        float tiempoEspera = UnityEngine.Random.Range(tiempoEsperaMin, tiempoEsperaMax);
 
         yield return new WaitForSeconds(tiempoEspera);
 
-
-        // Si el jugador ya soltó E, no hacemos nada
         if (!minijuegoActivo)
             yield break;
 
-
-        // Guardamos el momento EXACTO de la señal
         tiempoSenal = Time.time;
-
         senalMostrada = true;
 
+        WindowStateText.text = textoSenalEstado;
+        WindowTitleText.text = textoSenalTitulo;
 
-        // Cambiar UI
-        WindowStateText.text = "¡SUELTA!";
-        WindowTitleText.text = "¡AHORA!";
+        Image.color = colorSenal;
 
-        Image.color = Color.green;
+        yield return new WaitForSeconds(ventanaReaccion);
 
-
-        // =========================
-        // ESPERAR MÁXIMO 0.5 SEGUNDOS
-        // =========================
-
-        yield return new WaitForSeconds(0.5f);
-
-
-        // Si todavía está activo significa
-        // que el jugador NO soltó E a tiempo
+        // Si todavía está activo, el jugador no soltó a tiempo
         if (minijuegoActivo)
         {
             FalloPorTardanza();
         }
     }
 
-
     // =========================
-    // SOLTAR E
+    // SOLTAR TECLA
     // =========================
 
-    void SoltarTecla()
+    private void SoltarTecla()
     {
-        // Si soltó antes de la señal
+        // Caso: soltó antes de que apareciera la señal
         if (!senalMostrada)
         {
-            StopCoroutine(coroutineSenal);
+            if (coroutineSenal != null)
+            {
+                StopCoroutine(coroutineSenal);
+                coroutineSenal = null;
+            }
 
             minijuegoActivo = false;
 
-            WindowStateText.text = "Ventana (cerrada)";
-            WindowTitleText.text = "La soltaste demasiado pronto";
+            WindowStateText.text = textoCerradaEstado;
+            WindowTitleText.text = textoSoltoAntes;
 
-            Image.color = Color.white;
+            Image.color = colorNeutral;
 
             Debug.Log("Fallo: soltaste antes de la señal.");
 
-            // Ruido bajo
-            HacerRuido("Bajo");
-
+            ResolverResultado(abreSiSueltaAntes, ruidoSiSueltaAntes);
             return;
         }
 
-
-        // Tiempo exacto en el que soltó
         float tiempoSoltar = Time.time;
-
-
-        // Tiempo de reacción
         float reaccion = tiempoSoltar - tiempoSenal;
-
 
         Debug.Log("Tiempo de reacción: " + reaccion.ToString("F3") + " segundos");
 
-
-        // Ya terminó el intento
         minijuegoActivo = false;
 
-
-        // Detener coroutine
         if (coroutineSenal != null)
         {
             StopCoroutine(coroutineSenal);
             coroutineSenal = null;
         }
 
-
         // =========================
         // PERFECTO
         // =========================
-
-        if (reaccion >= 0f && reaccion <= 0.2f)
+        if (reaccion >= 0f && reaccion <= umbralPerfecto)
         {
-            estado = EstadoVentana.Abierta;
-
-            WindowStateText.text = "Ventana (abierta)";
-            WindowTitleText.text = "Presiona [F] para entrar";
-
-            Image.color = Color.green;
-
-            HacerRuido("Ninguno");
-
+            Image.color = colorPerfecto;
             Debug.Log("¡PERFECTO!");
+            ResolverResultado(abreSiPerfecto, ruidoSiPerfecto);
         }
-
-
         // =========================
-        // TARDE
+        // ACEPTABLE (abre, pero con más ruido)
         // =========================
-
-        else if (reaccion > 0.2f && reaccion <= 0.5f)
+        else if (reaccion > umbralPerfecto && reaccion <= umbralAceptable)
         {
-            estado = EstadoVentana.Abierta;
-
-            WindowStateText.text = "Ventana (abierta)";
-            WindowTitleText.text = "Presiona [F] para entrar";
-
-            Image.color = Color.yellow;
-
-            HacerRuido("Medio");
-
+            Image.color = colorAceptable;
             Debug.Log("Abierta, pero hiciste ruido.");
+            ResolverResultado(abreSiAceptable, ruidoSiAceptable);
         }
-
-
         // =========================
         // DEMASIADO TARDE
         // =========================
-
         else
         {
             FalloPorTardanza();
         }
     }
 
-
     // =========================
     // FALLO POR TARDANZA
     // =========================
 
-    void FalloPorTardanza()
+    private void FalloPorTardanza()
     {
         minijuegoActivo = false;
 
-        estado = EstadoVentana.Cerrada;
+        Image.color = colorFallo;
 
-        WindowStateText.text = "Ventana (cerrada)";
-        WindowTitleText.text = "¡Demasiado tarde!";
-
-        Image.color = Color.red;
-
-        HacerRuido("Maximo");
+        WindowTitleText.text = textoDemasiadoTarde;
 
         Debug.Log("Fallo: demasiado tarde.");
+
+        ResolverResultado(abreSiTarde, ruidoSiTarde);
     }
 
-    // Función para actualizar la UI según el estado de la ventana
-    void ActualizarUI()
+    // =========================
+    // RESOLVER RESULTADO (abre o no + ruido, según los parámetros del caso)
+    // =========================
+
+    private void ResolverResultado(bool abre, NivelRuido ruido)
     {
-        if (estado == EstadoVentana.Bloqueada) // Si la ventana está bloqueada, mostrar el texto correspondiente
-        {
-            WindowStateText.text = "Ventana (bloqueada)";
-            WindowTitleText.text = "No puedes abrirla";
-        }
+        HacerRuido(ruido);
+        StartCoroutine(ResolverResultadoRoutine(abre));
+    }
 
-        else if (estado == EstadoVentana.Cerrada) // Si la ventana está cerrada, mostrar el texto correspondiente
-        {
-            WindowStateText.text = "Ventana (cerrada)";
-            WindowTitleText.text = "Mantén [F]";
-        }
+    private IEnumerator ResolverResultadoRoutine(bool abre)
+    {
+        // El color y el texto de "PERFECTO"/"FALLO"/etc ya se pusieron
+        // antes de llamar a este método (en SoltarTecla/FalloPorTardanza).
+        // Acá solo esperamos y después aplicamos el resultado final.
 
-        else if (estado == EstadoVentana.Abierta) // Si la ventana está abierta, mostrar el texto correspondiente
+        yield return new WaitForSeconds(tiempoMostrarResultado);
+
+        if (abre)
         {
-            WindowStateText.text = "Ventana (abierta)";
-            WindowTitleText.text = "Presiona [F] para entrar";
+            estado = EstadoVentana.Abierta;
+            WindowStateText.text = textoAbiertaEstado;
+            WindowTitleText.text = textoAbiertaTitulo;
+            onVentanaAbierta?.Invoke();
+            // La Image se oculta sola en el próximo Update, porque el estado ya es Abierta
+        }
+        else
+        {
+            estado = EstadoVentana.Cerrada;
+            WindowStateText.text = textoCerradaEstado;
+            WindowTitleText.text = textoCerradaTitulo;
+            Image.color = colorNeutral; // vuelve al color normal
         }
     }
 
+    // Function to update the UI texts based on the current state of the window
+    // Is called whenever the state changes to ensure the player sees the correct information
+    private void ActualizarUI()
+    {
+        if (estado == EstadoVentana.Bloqueada) // if is blocked
+        {
+            WindowStateText.text = textoBloqueadaEstado;
+            WindowTitleText.text = textoBloqueadaTitulo;
+        }
+        else if (estado == EstadoVentana.Cerrada) // if is closed
+        {
+            WindowStateText.text = textoCerradaEstado;
+            WindowTitleText.text = textoCerradaTitulo;
+        }
+        else if (estado == EstadoVentana.Abierta) // if is open
+        {
+            WindowStateText.text = textoAbiertaEstado;
+            WindowTitleText.text = textoAbiertaTitulo;
+        }
+    }
 
-    // Función para simular el ruido que hace el jugador al abrir la ventana, dependiendo de su tiempo de reacción
-    void HacerRuido(string nivel)
+    // =========================
+    // RUIDO
+    // =========================
+
+    private void HacerRuido(NivelRuido nivel)
     {
         Debug.Log("Ruido: " + nivel);
+        onRuidoGenerado?.Invoke(nivel);
     }
 }

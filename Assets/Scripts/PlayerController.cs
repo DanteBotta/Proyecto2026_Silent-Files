@@ -29,6 +29,10 @@ public class PlayerController : MonoBehaviour
     [Header("Rotación del personaje")]
     public float rotationSpeed = 12f;
 
+    // Referencia al Animator para controlar animaciones del personaje
+    [Header("Animator")]
+    public Animator animator;
+
     [Header("Minijuego de ganzúa")]
     public LockpickMinigameController lockpickManager;
 
@@ -95,8 +99,12 @@ public class PlayerController : MonoBehaviour
  
         float targetSpeed = GetSpeedForState(currentState); //Determina la velocidad dependiendo del estado
         CurrentNoiseRadius = GetNoiseForState(currentState); //Determina el sonido generado segun el estado
- 
-     
+
+        // Controlar la animación según la velocidad
+        float animationSpeed = inputDir.magnitude >= 0.1f ? targetSpeed : 0f;
+
+        animator.SetFloat("movment", animationSpeed);
+
         // Se encarga de mover y rotar al personaje
         // Convierte las teclas que presiona el jugador en una dirección basada en la orientación de la cámara
         // Hace que el personaje gire hacia donde se está desplazando.

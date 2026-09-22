@@ -63,7 +63,7 @@ public class ConfigurationVariables : MonoBehaviour
         idiomaDropdown.value = 0;
 
         //Valor inicial de slider de volumen
-        Slider_MasterVolume.value = 67;
+        Slider_MasterVolume.value = 100;
         Slider_Music.value = 100;
         Slider_EffectVolume.value = 100;
 
@@ -75,7 +75,7 @@ public class ConfigurationVariables : MonoBehaviour
         // 0 = 1280 x 720 ; 1 = 1366 x 768 ; 2 = 1600 x 900 ; 3 = 1920 x 1080
         resolucionDropdown.value = 3;
 
-        Slider_Saturacion.value = 50;
+        Slider_Saturacion.value = 0.5f;
     }
 
     // Update is called once per frame
@@ -108,9 +108,10 @@ public class ConfigurationVariables : MonoBehaviour
 
         }
 
-        Saturacion = Slider_Saturacion.value / 100;
+        Saturacion = Slider_Saturacion.value;
     }
 
+    // Uso esta función para poder conseguir el valor del slider y mostrarlo con el texto correspondiente
     public string ObtenerValor(float valor)
     {
         if (valor == 0)

@@ -85,13 +85,23 @@ public class ConfigurationVariables : MonoBehaviour
 
 
         // Variables for the sounds
-        Text_MasterVolume.text = "Volumen Maestro:" + ObtenerValor(Slider_MasterVolume.value);
+        if (LanguageManager.Instance.idiomaActual == 0)
+        {
+            // ESPAÑOL
+            Text_MasterVolume.text = "Volumen Maestro: " + ObtenerValor(Slider_MasterVolume.value);
+            Text_Music.text = "Música: " + ObtenerValor(Slider_Music.value);
+            Text_EffectVolume.text = "Efectos: " + ObtenerValor(Slider_EffectVolume.value);
+        }
+        else
+        {
+            // INGLÉS
+            Text_MasterVolume.text = "Master Volume: " + ObtenerValor(Slider_MasterVolume.value);
+            Text_Music.text = "Music: " + ObtenerValor(Slider_Music.value);
+            Text_EffectVolume.text = "Effects: " + ObtenerValor(Slider_EffectVolume.value);
+        }
+
         MasterVolume = Slider_MasterVolume.value / 100;
-
-        Text_Music.text = "Musica:" + ObtenerValor(Slider_Music.value);
         MusicVolume = Slider_Music.value / 100;
-
-        Text_EffectVolume.text = "Efectos:" + ObtenerValor(Slider_EffectVolume.value);
         EffectVolume = Slider_EffectVolume.value / 100;
 
         // Variables for the quality and resolution

@@ -6670,6 +6670,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LanguageManager
   idiomaActual: 0
+  dropdownIdioma: {fileID: 1307761785}
+  dropdownCalidad: {fileID: 1876401489}
 --- !u!4 &1658901778
 Transform:
   m_ObjectHideFlags: 0

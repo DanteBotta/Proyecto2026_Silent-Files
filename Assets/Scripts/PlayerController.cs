@@ -13,18 +13,18 @@ public class PlayerController : MonoBehaviour
 
     [Header("Velocidades de movimiento")]
     public float walkSpeed = 4f;
-    public float runSpeed = 7f; 
+    public float runSpeed = 7f;
     public float crouchSpeed = 2f;
- 
+
     [Header("Ruido generado")]
     public float walkNoiseRadius = 3f;
     public float runNoiseRadius = 8f;
     public float crouchNoiseRadius = 0f;
- 
+
     //Gravedad sobre el personaje (la de la Tierra)
     [Header("Gravedad")]
     public float gravity = -9.81f;
- 
+
     //Velocidad que rota el personaje hacie la dirección del moviento
     [Header("Rotación del personaje")]
     public float rotationSpeed = 12f;
@@ -33,26 +33,29 @@ public class PlayerController : MonoBehaviour
     [Header("Animator")]
     public Animator animator;
 
-    [Header("Minijuego de ganzúa")]
-    public LockpickMinigameController lockpickManager;
-
     // --- Estado interno ---
     private CharacterController controller; //Crea una variable para gurdar el CharacterController como variable
     private Vector3 velocity; //Guarda velocidad vertical (gravedad, no hay salto)
     private MovementState currentState = MovementState.Walking; //Empieza en caminando
- 
+
+    // Se pone en true mientras algo externo (ej: el minijuego de ganzúa) necesita
+    // que el jugador no se mueva. Se controla desde afuera con SetMovementLocked(),
+    // enganchado en el Inspector a InteractionManager.onInteraccionBloqueada / onInteraccionLiberada.
+    private bool movementLocked = false;
+
     // Varialbes para que otros scripts puedan leer, pero no modificar
     // qué tan rápido/ruidoso está siendo el jugador en este momento.
     public MovementState CurrentState => currentState; //Muestra en que estado del MovementState se encuentra
     public float CurrentNoiseRadius { get; private set; } //Guarda el sonido actual
- 
+
     //Crea el dato del estado que se encuentra el jugador
-    public enum MovementState{
+    public enum MovementState
+    {
         Crouching,
         Walking,
         Running
     }
-    
+
     //Se ejecuta apenas empieza el codigo, antes que todo el resto
     private void Awake()
     {
@@ -66,26 +69,28 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void Start()
+    /// <summary>
+    /// Bloquea o libera el movimiento del jugador. Enganchar en el Inspector a
+    /// InteractionManager.onInteraccionBloqueada (true) y onInteraccionLiberada (false).
+    /// </summary>
+    public void SetMovementLocked(bool locked)
     {
-        //Asigna automaticamente el LockpickMinigameController
-        lockpickManager = FindAnyObjectByType<LockpickMinigameController>();
+        movementLocked = locked;
     }
 
     //Se repite cada frame
     private void Update()
     {
-        //Si no existe el LockpickManager o si esta activo, no se ejecuta HandleRotationInput()
-        if (lockpickManager == null || !lockpickManager.MinijuegoEnCurso)
+        //Solo se mueve si nada externo lo está bloqueando (ej: minijuego de ganzúa)
+        if (!movementLocked)
         {
-            //Solo se mueve si el juego no esta activo
             HandleMovement();
         }
 
         //La gravedad se aplica siempre, aunque no se mueva el personaje
         ApplyGravity();
     }
- 
+
     private void HandleMovement()
     {
         // Input de WASD o flechas
@@ -93,10 +98,10 @@ public class PlayerController : MonoBehaviour
         float vertical = Input.GetAxisRaw("Vertical");
         //Crea un Vector para mover al personaje dependiendo de los input, en horizontal y vertical
         Vector3 inputDir = new Vector3(horizontal, 0f, vertical).normalized; //.normalized hace que ir diagonal no sea mas rápido
- 
+
         // Determinar el estado de movimiento según las teclas modificadoras
         currentState = DetermineMovementState(inputDir);
- 
+
         float targetSpeed = GetSpeedForState(currentState); //Determina la velocidad dependiendo del estado
         CurrentNoiseRadius = GetNoiseForState(currentState); //Determina el sonido generado segun el estado
 
@@ -111,26 +116,26 @@ public class PlayerController : MonoBehaviour
         if (inputDir.magnitude >= 0.1f && cameraTransform != null) //Verifica que se este moviendo y si hay una cámara asginada
         {
             //Determina la dirección dependiendo de la dirección de la cámara, define que es adelante y que son los lados
-            Vector3 camForward = cameraTransform.forward; 
+            Vector3 camForward = cameraTransform.forward;
             Vector3 camRight = cameraTransform.right;
             //En caso de que la cámara esta inclinada, lo ignora (no se mueve hacia abajo/arriba)
-            camForward.y = 0f; 
+            camForward.y = 0f;
             camRight.y = 0f;
             //Evita que al moverse en diagonal puedas ser más rápido
             camForward.Normalize();
             camRight.Normalize();
- 
+
             //Mueve el personaje en la dirección de la cámara, en la dirección y velocidad
             Vector3 moveDirection = (camForward * inputDir.z + camRight * inputDir.x).normalized;
             controller.Move(moveDirection * targetSpeed * Time.deltaTime);
- 
+
             // Crea una rotación para que el personaje mire hacia la dirección del movimiento
             Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
             //Mide la rotación actual (transform.rotation), hasta donde debe rotar (targetRotation), y a que velocidad rota (rotationSpeed)
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }
     }
- 
+
     //Función que se encarga de determinar el estado de velocidad que esta
     //Usa el dato MovementState para devolver directamente el estado
     private MovementState DetermineMovementState(Vector3 inputDir)
@@ -139,18 +144,20 @@ public class PlayerController : MonoBehaviour
         bool isMoving = inputDir.magnitude >= 0.1f;
 
         //Si esta corriendo 
-        if (Input.GetKey(KeyCode.LeftShift) && isMoving){
+        if (Input.GetKey(KeyCode.LeftShift) && isMoving)
+        {
             return MovementState.Running;
         }
- 
+
         //Si esta agachado/silencioso
-        if (Input.GetKey(KeyCode.LeftControl)){
+        if (Input.GetKey(KeyCode.LeftControl))
+        {
             return MovementState.Crouching;
         }
         //Si no, esta caminando normal
         return MovementState.Walking;
     }
- 
+
     //Se encarga de determinar la velocidad dependiendo del estado
     private float GetSpeedForState(MovementState state)
     {
@@ -166,7 +173,7 @@ public class PlayerController : MonoBehaviour
                 return walkSpeed;
         }
     }
- 
+
     //Se encarga de determinar el sonido generado dependiendo del estado
     private float GetNoiseForState(MovementState state)
     {
@@ -182,17 +189,17 @@ public class PlayerController : MonoBehaviour
                 return walkNoiseRadius;
         }
     }
-    
+
     //Se encarga de determinar la velocidad vertical (de caida) en caso de estar cayendo
     //Al no usar RigidBody se debe hacer manualmente
     private void ApplyGravity()
     {
         //Reinicia la velocidad de caida cada vez que toca el piso, para evitar que se sume cada vez que caes
-        if (controller.isGrounded && velocity.y < 0) 
+        if (controller.isGrounded && velocity.y < 0)
         {
             velocity.y = -2f; // Pequeño valor negativo para mantenerlo pegado al piso
         }
- 
+
         velocity.y += gravity * Time.deltaTime; //Acelera gradualmente, según gravedad
         controller.Move(velocity * Time.deltaTime); //Mueve al personaje
     }

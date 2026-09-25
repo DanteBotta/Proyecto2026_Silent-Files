@@ -1,21 +1,17 @@
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
 
 /// <summary>
-/// Inventario de 3 slots:
-/// 1 principal + 2 secundarios.
-/// Al hacer click en cualquier slot, ese objeto pasa a ser el principal.
-/// También detecta clicks del mouse sobre puertas y usa el objeto principal.
+/// Inventario de 3 slots: 1 principal + 2 secundarios.
+/// - Click en un slot secundario (o tecla 1 / 2): intercambia ese objeto con el principal.
+/// - Implementa IToolProvider: el InteractionManager le pregunta directamente qué
+///   herramienta está en el slot principal, ya no hace falta que este script
+///   detecte puertas por su cuenta (eso lo hace el InteractionManager con la tecla F).
 ///
-/// FIX importante: "interactionDistance" ahora tiene un default más alto
-/// (20f en vez de 6f). El raycast sale desde la posición de la CÁMARA, no
-/// desde el jugador. Si tu CameraController usa distance=8 y height=10, la
-/// cámara queda a más de 12 unidades de distancia recta del jugador, así
-/// que una interactionDistance de 6 nunca iba a poder llegar a nada cercano
-/// al jugador. Ajustá este valor según la distancia real de tu cámara.
+/// Para conectarlo: arrastrá este GameObject al campo "proveedorHerramientaComponent"
+/// del InteractionManager.
 /// </summary>
-public class InventoryInteraction : MonoBehaviour
+public class InventoryInteraction : MonoBehaviour, IToolProvider
 {
     public enum ItemType
     {
@@ -52,26 +48,19 @@ public class InventoryInteraction : MonoBehaviour
     public float selectedScale = 1.15f;
     public float secondaryScale = 1f;
 
-    [Header("Interacción con puertas")]
-    public Camera interactionCamera;
-
-    [Tooltip("IMPORTANTE: el raycast sale desde la posición de la CÁMARA, no del jugador. " +
-             "Si tu cámara está lejos (top-down elevado), este valor tiene que ser mayor " +
-             "que la distancia cámara-jugador + el alcance que quieras dar. Con una cámara " +
-             "típica top-down (distance=8, height=10) probá con 20 o más.")]
-    public float interactionDistance = 20f;
-
-    public LayerMask doorLayer = ~0;
+    [Header("Teclas rápidas")]
+    [Tooltip("Tecla que intercambia el slot secundario 1 con el principal.")]
+    public KeyCode teclaSlot1 = KeyCode.Alpha1;
+    [Tooltip("Tecla que intercambia el slot secundario 2 con el principal.")]
+    public KeyCode teclaSlot2 = KeyCode.Alpha2;
 
     [Header("Estado de herramientas")]
     [Tooltip("Se pone en true automáticamente cuando la ganzúa se rompe. No se edita a mano.")]
     public bool lockpickBroken = false;
 
     [Header("Debug")]
-    [Tooltip("Mientras esté activo, imprime en consola qué está pasando en cada click " +
-             "(qué golpeó el raycast, si encontró una puerta, etc). Desactivalo cuando ya " +
-             "confirmes que todo funciona, para no llenar la consola.")]
-    public bool debugLogs = true;
+    [Tooltip("Mientras esté activo, imprime en consola los cambios de slot y el estado de la ganzúa.")]
+    public bool debugLogs = false;
 
     private RectTransform primaryRect;
     private RectTransform secondaryRect1;
@@ -79,14 +68,6 @@ public class InventoryInteraction : MonoBehaviour
 
     private void Awake()
     {
-        if (interactionCamera == null)
-            interactionCamera = Camera.main;
-
-        if (interactionCamera == null && debugLogs)
-        {
-            Debug.Log("InventoryInteraction: Camera.main es null");
-        }
-
         if (primaryImage != null)
             primaryRect = primaryImage.rectTransform;
 
@@ -110,18 +91,39 @@ public class InventoryInteraction : MonoBehaviour
 
     private void Update()
     {
-        if (!Input.GetMouseButtonDown(0))
-            return;
+        if (Input.GetKeyDown(teclaSlot1)) SelectSlot(1);
+        if (Input.GetKeyDown(teclaSlot2)) SelectSlot(2);
+    }
 
-        // Si estamos haciendo click sobre el inventario (o cualquier UI),
-        // no intentamos interactuar con una puerta.
-        if (EventSystem.current != null &&
-            EventSystem.current.IsPointerOverGameObject())
+    // =========================================================
+    // IToolProvider — acá es donde el InteractionManager pregunta
+    // qué herramienta está equipada en este momento.
+    // =========================================================
+
+    public ToolType GetHerramientaEquipada()
+    {
+        return ItemTypeToToolType(primaryItem);
+    }
+
+    private ToolType ItemTypeToToolType(ItemType item)
+    {
+        switch (item)
         {
-            return;
-        }
+            case ItemType.Hand:
+                return ToolType.Mano;
 
-        TryInteractWithDoor();
+            case ItemType.Lockpick:
+                // Si está rota, es como no tener nada equipado: el InteractionManager
+                // no va a poder iniciar el minijuego con ToolType.Ninguna.
+                return lockpickBroken ? ToolType.Ninguna : ToolType.Ganzua;
+
+            case ItemType.Lever:
+                return ToolType.Palanca;
+
+            case ItemType.None:
+            default:
+                return ToolType.Ninguna;
+        }
     }
 
     // =========================================================
@@ -144,6 +146,8 @@ public class InventoryInteraction : MonoBehaviour
         {
             Swap(ref primaryItem, ref secondaryItem2);
         }
+
+        if (debugLogs) Debug.Log($"[Inventory] Slot principal ahora: {primaryItem}");
 
         RefreshUI();
     }
@@ -214,85 +218,11 @@ public class InventoryInteraction : MonoBehaviour
     }
 
     // =========================================================
-    // CLICK SOBRE PUERTA
-    // =========================================================
-
-    private void TryInteractWithDoor()
-    {
-        if (interactionCamera == null)
-            interactionCamera = Camera.main;
-
-        if (interactionCamera == null)
-        {
-            Debug.LogError("InventoryInteraction: no hay una cámara asignada.");
-            return;
-        }
-
-        Ray ray = interactionCamera.ScreenPointToRay(Input.mousePosition);
-
-        if (debugLogs)
-        {
-            Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.red, 1f);
-        }
-
-        if (!Physics.Raycast(
-            ray,
-            out RaycastHit hit,
-            interactionDistance,
-            doorLayer))
-        {
-            if (debugLogs) Debug.Log("[Inventory] El raycast no golpeó nada dentro de " + interactionDistance + " unidades.");
-            return;
-        }
-
-        if (debugLogs) Debug.Log("[Inventory] Raycast golpeó: " + hit.collider.gameObject.name);
-
-        SimpleDoor door = hit.collider.GetComponentInParent<SimpleDoor>();
-
-        if (door == null)
-        {
-            if (debugLogs) Debug.Log("[Inventory] El objeto golpeado no tiene SimpleDoor (ni en él ni en sus padres).");
-            return;
-        }
-
-        if (debugLogs) Debug.Log("[Inventory] Interactuando con la puerta usando: " + primaryItem);
-
-        UseItemOnDoor(door);
-    }
-
-    // =========================================================
-    // USAR OBJETO
-    // =========================================================
-
-    private void UseItemOnDoor(SimpleDoor door)
-    {
-        switch (primaryItem)
-        {
-            case ItemType.Hand:
-                door.UseHand();
-                break;
-
-            case ItemType.Lockpick:
-                if (lockpickBroken)
-                {
-                    if (debugLogs) Debug.Log("[Inventory] Intentaste usar la ganzúa, pero está rota.");
-                    return;
-                }
-                door.UseLockpick();
-                break;
-
-            case ItemType.Lever:
-                door.UseLever();
-                break;
-        }
-    }
-
-    // =========================================================
     // GANZÚA ROTA
     // =========================================================
 
     /// <summary>
-    /// Llamar desde el evento "On Lockpick Broken" de SimpleDoor (Inspector),
+    /// Llamar desde el evento "On Ganzúa Rota" del InteractionManager (Inspector),
     /// o desde cualquier otro lugar que necesite invalidar la ganzúa.
     ///
     /// Mueve la ganzúa (esté donde esté: principal, secundario 1 o ya en
@@ -329,5 +259,21 @@ public class InventoryInteraction : MonoBehaviour
         RefreshUI();
 
         if (debugLogs) Debug.Log("[Inventory] La ganzúa se rompió, se movió al slot 2 y quedó bloqueada.");
+    }
+
+    /// <summary>
+    /// Llamar cuando el jugador consiga/repare una ganzúa nueva, para reactivar el slot 2.
+    /// No la mueve de lugar ni cambia qué hay ahí — solo levanta el bloqueo del botón.
+    /// </summary>
+    public void OnLockpickRepaired()
+    {
+        lockpickBroken = false;
+
+        if (secondaryButton2 != null)
+            secondaryButton2.interactable = true;
+
+        RefreshUI();
+
+        if (debugLogs) Debug.Log("[Inventory] La ganzúa fue reparada/reemplazada.");
     }
 }

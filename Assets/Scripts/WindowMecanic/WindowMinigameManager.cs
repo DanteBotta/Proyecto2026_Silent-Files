@@ -16,7 +16,8 @@ public class WindowMinigameManager : MonoBehaviour
     public TextMeshProUGUI TextoEstado; // Texto del estado de ventana
     public Image SpriteImage; // Imagen de la ventana
     public Image SpriteBoton; // Imagen del boton
-    public Image ImageF;
+    public Image ImageF; // Imagen de F del canvas de world space, para eliminarlo
+    public Canvas CanvasInventario;
 
     [Header("Cámara que muestra la layer UIWorld")]
     public Camera UICamera; // Cámara que muestra los UI en world space
@@ -168,6 +169,7 @@ public class WindowMinigameManager : MonoBehaviour
         SpriteImage.enabled = true;
         SpriteBoton.enabled = true;
         UICamera.enabled = false;
+        CanvasInventario.enabled = false;
         ConfigurarDesenfoque(true);
         MostrarBoton("MinijuegoVentana/Botones/Gris");
 
@@ -183,6 +185,7 @@ public class WindowMinigameManager : MonoBehaviour
         SpriteImage.enabled = false;
         SpriteBoton.enabled = false;
         UICamera.enabled = true;
+        CanvasInventario.enabled = true;
         ConfigurarDesenfoque(false);
 
         JuegoIniciado = false;

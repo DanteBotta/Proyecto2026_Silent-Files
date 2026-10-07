@@ -15,6 +15,8 @@ public class ShowCanvasNearPlayer : MonoBehaviour
 
     void Start()
     {
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+
         // Get the Canvas component attached to this GameObject
         canvas = GetComponent<Canvas>();
 

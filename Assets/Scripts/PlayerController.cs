@@ -61,12 +61,6 @@ public class PlayerController : MonoBehaviour
     {
         //Asigan el CharacterController a una variable
         controller = GetComponent<CharacterController>();
-
-        //Como no tira error si no hay cámara, aviso que hay que asignar una
-        if (cameraTransform == null)
-        {
-            Debug.Log("Debe asignar una cámara para su funcionamiento");
-        }
     }
 
     /// <summary>
@@ -76,6 +70,11 @@ public class PlayerController : MonoBehaviour
     public void SetMovementLocked(bool locked)
     {
         movementLocked = locked;
+    }
+
+    private void Start()
+    {
+        cameraTransform = FindAnyObjectByType<CameraController>().transform;
     }
 
     //Se repite cada frame

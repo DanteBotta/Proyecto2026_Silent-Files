@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &7111457511164740784
+--- !u!1001 &6526343592403653260
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -8,6 +8,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 6e076ad8ec4ef4b68a4af3c614d64268,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6e076ad8ec4ef4b68a4af3c614d64268,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6e076ad8ec4ef4b68a4af3c614d64268,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 6e076ad8ec4ef4b68a4af3c614d64268,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -63,6 +78,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 3443909653670781864, guid: 6e076ad8ec4ef4b68a4af3c614d64268,
+        type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -70,30 +90,30 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6e076ad8ec4ef4b68a4af3c614d64268,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 7611604612383150657}
+      addedObject: {fileID: 6172554811417300903}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6e076ad8ec4ef4b68a4af3c614d64268,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5594400749046971851}
+      addedObject: {fileID: 4926689070755862416}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6e076ad8ec4ef4b68a4af3c614d64268,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2704858850145491105}
+      addedObject: {fileID: 8253556232454207851}
   m_SourcePrefab: {fileID: 100100000, guid: 6e076ad8ec4ef4b68a4af3c614d64268, type: 3}
---- !u!1 &7958301704503376353 stripped
+--- !u!1 &6220407021977530333 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 6e076ad8ec4ef4b68a4af3c614d64268,
     type: 3}
-  m_PrefabInstance: {fileID: 7111457511164740784}
+  m_PrefabInstance: {fileID: 6526343592403653260}
   m_PrefabAsset: {fileID: 0}
---- !u!95 &7611604612383150657
+--- !u!95 &6172554811417300903
 Animator:
   serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7958301704503376353}
+  m_GameObject: {fileID: 6220407021977530333}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 6b42839dafc444aada36bf61d75d37ad, type: 2}
@@ -108,13 +128,13 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &5594400749046971851
+--- !u!114 &4926689070755862416
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7958301704503376353}
+  m_GameObject: {fileID: 6220407021977530333}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6e8be7d323259764ea0352578086e9d1, type: 3}
@@ -129,15 +149,14 @@ MonoBehaviour:
   crouchNoiseRadius: 0
   gravity: -9.81
   rotationSpeed: 12
-  animator: {fileID: 7611604612383150657}
-  lockpickManager: {fileID: 0}
---- !u!143 &2704858850145491105
+  animator: {fileID: 6172554811417300903}
+--- !u!143 &8253556232454207851
 CharacterController:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7958301704503376353}
+  m_GameObject: {fileID: 6220407021977530333}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2

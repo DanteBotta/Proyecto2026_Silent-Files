@@ -37,6 +37,8 @@ public class CameraController : MonoBehaviour
     //Se ejecuta una vez al iniciar el juego
     private void Start()
     {
+        target = GameObject.FindGameObjectWithTag("Player").transform;
+
         //Define la rotación de la cámara actual
         AnguloActual = transform.eulerAngles.y;
         AnguloObjetivo = AnguloActual; //El objetivo inicial sea el mismo, para que la cámara no rote apenas comienza

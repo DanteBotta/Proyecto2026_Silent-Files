@@ -24,6 +24,11 @@ public class WallFade : MonoBehaviour
     private List<Renderer> paraQuitar = new List<Renderer>(); // Renderers que ya no están tapando al objetivo y que deben dejar de ser controlados
     // List<Renderer> paraQuitar es una lista temporal de renderers que hay que dejar de controlar
 
+    private void Start()
+    {
+        Objetivo = GameObject.FindGameObjectWithTag("Player").transform;
+    }
+
     void Update()
     {
         Vector3 destino = Objetivo.position + Vector3.up * AlturaObjetivo; // Se obtiene el destino del spherecast

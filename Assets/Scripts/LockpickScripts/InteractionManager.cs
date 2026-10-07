@@ -86,6 +86,11 @@ public class InteractionManager : MonoBehaviour
         if (panelMinijuego != null) panelMinijuego.SetActive(false);
     }
 
+    private void Start()
+    {
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+    }
+
     private void Update()
     {
         if (MinijuegoEnCurso) return;

@@ -1385,6 +1385,7 @@ MonoBehaviour:
     type: 3}
   PuntoSpawn: {fileID: 1239488228}
   Panel: {fileID: 134178243}
+  PanelInventario: {fileID: 1634313144}
   Fecha: {fileID: 1890735724}
   Hora: {fileID: 2053826793}
   Ubicacion: {fileID: 387075656}
@@ -2028,7 +2029,7 @@ MonoBehaviour:
   SpriteImage: {fileID: 659860329}
   SpriteBoton: {fileID: 1111114451}
   ImageF: {fileID: 407882579}
-  CanvasInventario: {fileID: 0}
+  CanvasInventario: {fileID: 1634313147}
   UICamera: {fileID: 811803977}
   volume: {fileID: 1795279765}
   TiempoMinimoEspera: 1
@@ -5861,7 +5862,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1634313145
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -11,6 +11,7 @@ public class MissionBriefing : MonoBehaviour
 
     [Header("Panel")]
     public GameObject Panel;
+    public GameObject PanelInventario;
         
     [Header("Textos")]
     public TextMeshProUGUI Fecha;
@@ -37,6 +38,7 @@ public class MissionBriefing : MonoBehaviour
     private void Awake()
     {
         Instantiate(Personaje, PuntoSpawn.transform.position, PuntoSpawn.transform.rotation);
+        PanelInventario.SetActive(false);
     }
     void Start()
     {
@@ -134,7 +136,7 @@ public class MissionBriefing : MonoBehaviour
     void ContinuarMision()
     {
         Panel.SetActive(false);
-
+        PanelInventario.SetActive(true);
         Time.timeScale = 1;
     }
 }

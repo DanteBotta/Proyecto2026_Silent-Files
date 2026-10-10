@@ -118,9 +118,9 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _Max: 2
+    - _Max: 1
     - _Metallic: 0
-    - _Min: 1.5
+    - _Min: 0.8
     - _Mode: 3
     - _OcclusionStrength: 1
     - _Parallax: 0.02

@@ -107,7 +107,7 @@ Material:
     - _GlossyReflections: 1
     - _Max: 1
     - _Metallic: 0
-    - _Min: 1.5
+    - _Min: 0.8
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02

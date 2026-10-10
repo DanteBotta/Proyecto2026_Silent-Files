@@ -38,6 +38,9 @@ public class ExitMisionCar : MonoBehaviour
         Player = FindAnyObjectByType<PlayerController>().gameObject;
         ImageFilled.fillAmount = 0;
 
+        MainCamera.SetActive(true);
+        ExitMisionCamera.SetActive(false);
+
         // La pantalla comienza transparente
         Color color = PanelNegro.color;
         color.a = 0;
@@ -46,7 +49,7 @@ public class ExitMisionCar : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKey(KeyCode.F) && MisionTerminada)
+        if (Input.GetKey(KeyCode.F) && MisionTerminada && !NivelTerminado && ShowCanvasNearPlayer.FuncionCanvas)
         {
             fillAmount = Mathf.Clamp01(
                 fillAmount + Time.deltaTime

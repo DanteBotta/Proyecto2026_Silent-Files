@@ -5,32 +5,32 @@ using UnityEngine.UIElements;
 
 public class MissionBriefing : MonoBehaviour
 {
-    public GameObject Personaje;
-    public GameObject PuntoSpawn;
+    public GameObject Personaje; // Referencia al prefab del personaje que va a cargar
+    public GameObject PuntoSpawn; // El punto donde se va a generar el personaje
 
 
     [Header("Panel")]
-    public GameObject Panel;
-    public GameObject PanelInventario;
+    public GameObject Panel; // Referencia al panel que contiene el briefing
+    public GameObject PanelInventario; // Refrencia al panel del inventario que se oculta durante el briefing
         
     [Header("Textos")]
-    public TextMeshProUGUI Fecha;
-    public TextMeshProUGUI Hora;
-    public TextMeshProUGUI Ubicacion;
+    public TextMeshProUGUI Fecha; // Referencia al texto de la fecha
+    public TextMeshProUGUI Hora; // Referencia al texto de la hora
+    public TextMeshProUGUI Ubicacion; // Referencia al texto de la ubicación
+
+    public TextMeshProUGUI TituloMision; // Referencia al texto del título de la misión
+    public TextMeshProUGUI Descripcion; // Referencia al texto de la descripción de la misión
+    public TextMeshProUGUI Objetivo; // Referencia al texto del objetivo de la misión
+    public TextMeshProUGUI PresionaF; // Referencia al texto que indica presionar F para continuar
 
     public TextMeshProUGUI Linea1;
-
-    public TextMeshProUGUI TituloMision;
-    public TextMeshProUGUI Descripcion;
-    public TextMeshProUGUI Objetivo;
-
     public TextMeshProUGUI Linea2;
 
-    public TextMeshProUGUI PresionaF;
 
     [Header("Configuracion")]
-    public float VelocidadEscritura = 0.03f;
-    public float TiempoEntreTextos = 0.3f;
+    public float VelocidadEscritura = 0.03f; // La velocidad a la que se va a escribir los textos
+    public float TiempoEntreTextos = 0.3f; // El tiempo que se va a esperar entre cada texto
+    public bool ActivarBriefing = true; // Si se va a activar el briefing o no
 
     bool BriefingTerminado = false;
 
@@ -65,7 +65,7 @@ public class MissionBriefing : MonoBehaviour
 
     void Update()
     {
-        if (BriefingTerminado && Input.GetKeyDown(KeyCode.F))
+        if ((BriefingTerminado && Input.GetKeyDown(KeyCode.F)) || !ActivarBriefing) 
         {
             ContinuarMision();
         }

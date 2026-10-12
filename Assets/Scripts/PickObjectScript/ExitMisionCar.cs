@@ -1,4 +1,5 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,6 +14,7 @@ public class ExitMisionCar : MonoBehaviour
     [Header("Referencias")]
     public Image ImageFilled;
     public Canvas PanelInventario;
+    public TextMeshProUGUI TextoAlerta;
     public GameObject Player;
     public GameObject Car;
 
@@ -28,6 +30,7 @@ public class ExitMisionCar : MonoBehaviour
 
     public bool MisionTerminada = false;
     public bool NivelTerminado = false;
+    bool mostrandoAlerta = false;
 
     float fillAmount = 0;
     bool completado = false;
@@ -40,6 +43,8 @@ public class ExitMisionCar : MonoBehaviour
 
         MainCamera.SetActive(true);
         ExitMisionCamera.SetActive(false);
+
+        TextoAlerta.enabled = false;
 
         // La pantalla comienza transparente
         Color color = PanelNegro.color;
@@ -70,6 +75,12 @@ public class ExitMisionCar : MonoBehaviour
 
             StartCoroutine(ExitMision());
         }
+
+        if (Input.GetKey(KeyCode.F) && !MisionTerminada && !NivelTerminado && ShowCanvasNearPlayer.FuncionCanvas && !mostrandoAlerta)
+        {
+            StartCoroutine(MostrarAlerta());
+        }
+
     }
 
     IEnumerator ExitMision()
@@ -117,6 +128,19 @@ public class ExitMisionCar : MonoBehaviour
         Color colorFinal = PanelNegro.color;
         colorFinal.a = fin;
         PanelNegro.color = colorFinal;
+    }
+
+    IEnumerator MostrarAlerta()
+    {
+        mostrandoAlerta = true;
+
+        TextoAlerta.enabled = true;
+        TextoAlerta.text = "No se puede salir\r\nNo terminaste el objetivo principal";
+
+        yield return new WaitForSeconds(1.5f);
+
+        TextoAlerta.enabled = false;
+        mostrandoAlerta = false;
     }
 
     IEnumerator MoverAuto()

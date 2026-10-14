@@ -1434,6 +1434,63 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 301414807}
   m_CullTransparentMesh: 1
+--- !u!1 &352643078
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 352643080}
+  - component: {fileID: 352643079}
+  m_Layer: 0
+  m_Name: LockpickMinigameController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &352643079
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 352643078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c83c3d6c2a80124994fef25593c8209, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LockpickMinigameController
+  TopIndicatorPanel: {fileID: 1100726998}
+  TopIndicators:
+  - {fileID: 1921174673}
+  - {fileID: 891130776}
+  - {fileID: 646033171}
+  - {fileID: 688691331}
+  - {fileID: 624402913}
+  LockpickCircle: {fileID: 7597868807555408856}
+  GreenZone: {fileID: 1562146058113752520}
+  RotatingLine: {fileID: 3901366288170559895}
+  GreenFillAmount: 0.2
+  RotationSpeed: 180
+  ResultadoActual: 0
+--- !u!4 &352643080
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 352643078}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 4.25, y: 2.9749756, z: 4.25}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &376592330
 GameObject:
   m_ObjectHideFlags: 0
@@ -3955,60 +4012,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56fd407110cf5d2418aae652426415ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Door
-  state: 2
-  doorAnimator: {fileID: 0}
-  audioSource: {fileID: 0}
-  fallbackMeshRenderer: {fileID: 729122449}
-  promptCanvas: {fileID: 1400276421}
-  dificultadGanzua: {fileID: 11400000, guid: 2c9469b0820beb4468e83f847278ca3f, type: 2}
-  ruidoMano: 0.1
-  ruidoPalanca: 0.8
-  ruidoGanzua: 0.3
-  onOpenedWithHand:
-    animationTrigger: 
-    sound: {fileID: 0}
-    feedbackMessage: 
-    onTriggered:
-      m_PersistentCalls:
-        m_Calls: []
-  onClosedWithHand:
-    animationTrigger: 
-    sound: {fileID: 0}
-    feedbackMessage: 
-    onTriggered:
-      m_PersistentCalls:
-        m_Calls: []
-  onOpenedWithLever:
-    animationTrigger: 
-    sound: {fileID: 0}
-    feedbackMessage: 
-    onTriggered:
-      m_PersistentCalls:
-        m_Calls: []
-  onLockpickSuccess:
-    animationTrigger: 
-    sound: {fileID: 0}
-    feedbackMessage: 
-    onTriggered:
-      m_PersistentCalls:
-        m_Calls: []
-  onLockpickFailed:
-    animationTrigger: 
-    sound: {fileID: 0}
-    feedbackMessage: 
-    onTriggered:
-      m_PersistentCalls:
-        m_Calls: []
-  onBlocked:
-    animationTrigger: 
-    sound: {fileID: 0}
-    feedbackMessage: 
-    onTriggered:
-      m_PersistentCalls:
-        m_Calls: []
-  onFeedback:
-    m_PersistentCalls:
-      m_Calls: []
+  InventoryManager: {fileID: 0}
+  LockpickMinigameController: {fileID: 0}
+  ShowCanvasNearPlayer: {fileID: 1400276421}
+  estadoActual: 0
 --- !u!1 &756009340
 GameObject:
   m_ObjectHideFlags: 0
@@ -5438,81 +5445,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1100726996}
   m_CullTransparentMesh: 0
---- !u!1 &1101172374
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1101172376}
-  - component: {fileID: 1101172375}
-  m_Layer: 0
-  m_Name: InteractionManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1101172375
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1101172374}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bc33adba88ced834aa4550fb6d9cf3b8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InteractionManager
-  player: {fileID: 0}
-  proveedorHerramientaComponent: {fileID: 2102920495}
-  herramientaDebug: 1
-  puertas: []
-  panelMinijuego: {fileID: 3731600813177645073}
-  greenZoneImage: {fileID: 1562146058113752520}
-  lineTransform: {fileID: 3668784964264204273}
-  circleCanvasGroup: {fileID: 2083383938342259748}
-  indicadoresSuperiores:
-  - {fileID: 1921174673}
-  - {fileID: 891130776}
-  - {fileID: 646033171}
-  - {fileID: 688691331}
-  - {fileID: 624402913}
-  textoObjetivo: {fileID: 1580383902}
-  colorNeutral: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  colorAcierto: {r: 0, g: 1, b: 0, a: 1}
-  colorFallo: {r: 1, g: 0, b: 0, a: 1}
-  fadeDuration: 0.15
-  tiempoEntreCirculos: 0.1
-  tiempoMostrarResultado: 1
-  onInteraccionBloqueada:
-    m_PersistentCalls:
-      m_Calls: []
-  onInteraccionLiberada:
-    m_PersistentCalls:
-      m_Calls: []
-  onGanzuaRota:
-    m_PersistentCalls:
-      m_Calls: []
-  debugMode: 1
---- !u!4 &1101172376
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1101172374}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 54.17964, y: -0, z: 4.21075}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1111114449
 GameObject:
   m_ObjectHideFlags: 0
@@ -10461,7 +10393,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.8584906, g: 0.8584906, b: 0.8584906, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -11170,9 +11102,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 2102920493}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bfa5eae9e236f934f96a5506fe70ea8d, type: 3}
+  m_Script: {fileID: 11500000, guid: 1e03bc9548594474ea0fcc28c7537d62, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InventoryInteraction
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryManager
   primaryButton: {fileID: 1430250030}
   secondaryButton1: {fileID: 1162109391}
   secondaryButton2: {fileID: 1748369716}
@@ -11183,15 +11115,10 @@ MonoBehaviour:
   lockpickSprite: {fileID: 21300000, guid: df7da836cb5efed44844876362cefb5f, type: 3}
   leverSprite: {fileID: 21300000, guid: 1c9238733b99fcb4d9e9af5c25af7036, type: 3}
   emptySprite: {fileID: 21300000, guid: 98d0db61a1792c94480137204fe98663, type: 3}
-  primaryItem: 0
-  secondaryItem1: 1
-  secondaryItem2: 2
   selectedScale: 1.15
   secondaryScale: 1
   teclaSlot1: 50
   teclaSlot2: 49
-  lockpickBroken: 0
-  debugLogs: 0
 --- !u!23 &3868481829045906
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -25927,7 +25854,7 @@ SceneRoots:
   - {fileID: 521077964}
   - {fileID: 242718803}
   - {fileID: 2102920494}
-  - {fileID: 1101172376}
+  - {fileID: 352643080}
   - {fileID: 1177122312}
   - {fileID: 1795279766}
   - {fileID: 509907594}

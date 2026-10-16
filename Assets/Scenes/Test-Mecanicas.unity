@@ -1463,6 +1463,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c83c3d6c2a80124994fef25593c8209, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LockpickMinigameController
+  InventoryPanel: {fileID: 1601195597}
+  RestaurarInventarioAlFinalizar: 1
   TopIndicatorPanel: {fileID: 1100726998}
   TopIndicators:
   - {fileID: 1921174673}
@@ -1473,8 +1475,20 @@ MonoBehaviour:
   LockpickCircle: {fileID: 7597868807555408856}
   GreenZone: {fileID: 1562146058113752520}
   RotatingLine: {fileID: 3901366288170559895}
-  GreenFillAmount: 0.2
-  RotationSpeed: 180
+  GreenFillAmount: 0.1
+  RotationSpeed: 250
+  GiroHorario: 1
+  LineAngleOffset: 0
+  TotalCirculos: 5
+  AciertosNecesarios: 3
+  ErroresMaximos: 3
+  DelayInicioCirculo: 0.5
+  DelayEntreCirculos: 0.2
+  DelayFinal: 0.5
+  ColorNormal: {r: 1, g: 1, b: 1, a: 1}
+  ColorAcierto: {r: 0, g: 1, b: 0, a: 1}
+  ColorError: {r: 1, g: 0, b: 0, a: 1}
+  MostrarDebugs: 0
   ResultadoActual: 0
 --- !u!4 &352643080
 Transform:
@@ -12245,7 +12259,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 21300000, guid: da8aed65ae82c74439682dc571d0b20b, type: 3}
-  m_Type: 3
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4

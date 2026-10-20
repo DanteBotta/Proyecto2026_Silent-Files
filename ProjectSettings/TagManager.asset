@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 3
   tags:
   - Pared
+  - Enemy
+  - Objectives
+  - Indicator
   layers:
   - Default
   - TransparentFX

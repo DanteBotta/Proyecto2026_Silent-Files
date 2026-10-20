@@ -2257,6 +2257,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: GuardiaGrande
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 8546537c347524b228c6ce5f2ac715cc,
+        type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4843,7 +4848,7 @@ GameObject:
   - component: {fileID: 827993152}
   m_Layer: 0
   m_Name: Cubo_Objetivo1
-  m_TagString: Untagged
+  m_TagString: Objectives
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5856,6 +5861,57 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1111114449}
   m_CullTransparentMesh: 1
+--- !u!1 &1114092129
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1114092131}
+  - component: {fileID: 1114092130}
+  m_Layer: 0
+  m_Name: MinimapaManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1114092130
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1114092129}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99733b2404a1954429a1fd7926469407, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MinimapaManager
+  IndicadorPlayer: {fileID: 7525539953940005134, guid: 96c9f515c24f5b64b8e8ab7d4464f351,
+    type: 3}
+  IndicadorEnemy: {fileID: 3550296456179248469, guid: c4b55b8ede3c3c44db83b7cdc4d571a0,
+    type: 3}
+  IndicadorObjetivo: {fileID: 8771188406338507713, guid: 73f49f7b6c0cb064e91be6c924816586,
+    type: 3}
+  AlturaIndicadores: 20
+--- !u!4 &1114092131
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1114092129}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 34.5361, y: 0, z: 15.12139}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1117722246
 GameObject:
   m_ObjectHideFlags: 0
@@ -7246,7 +7302,7 @@ GameObject:
   - component: {fileID: 1429818310}
   m_Layer: 0
   m_Name: Cubo_Objetivo1 (2)
-  m_TagString: Untagged
+  m_TagString: Objectives
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -8740,7 +8796,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1637090320
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8984,7 +9040,7 @@ GameObject:
   - component: {fileID: 1735685208}
   m_Layer: 0
   m_Name: Cubo_Objetivo1 (1)
-  m_TagString: Untagged
+  m_TagString: Objectives
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -10022,10 +10078,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 3285982751361681341}
-  - {fileID: 6803438848832753915}
-  - {fileID: 2678611422340238179}
   - {fileID: 1438271791}
+  - {fileID: 2135291268}
   m_Father: {fileID: 7261452212551688303}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1849757712
@@ -11745,6 +11799,62 @@ MonoBehaviour:
   secondaryScale: 1
   teclaSlot1: 50
   teclaSlot2: 49
+--- !u!1 &2135291267
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2135291268}
+  - component: {fileID: 2135291269}
+  m_Layer: 0
+  m_Name: ColliderTecho
+  m_TagString: Pared
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2135291268
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2135291267}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 3285982751361681341}
+  - {fileID: 6803438848832753915}
+  - {fileID: 2678611422340238179}
+  m_Father: {fileID: 1842796645}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &2135291269
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2135291267}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 112.7, y: 1, z: 88}
+  m_Center: {x: -81.26, y: 46, z: -40.07}
 --- !u!23 &3868481829045906
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -14624,10 +14734,9 @@ GameObject:
   - component: {fileID: 3285982751361681341}
   - component: {fileID: 5370873602524784724}
   - component: {fileID: 1574657264833372233}
-  - component: {fileID: 5370873602524784725}
   m_Layer: 0
   m_Name: Techo1
-  m_TagString: Pared
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -15998,11 +16107,11 @@ Transform:
   m_GameObject: {fileID: 7646283975198789699}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: -73.99162, y: 46.376568, z: -38.00352}
+  m_LocalPosition: {x: -73.991615, y: 46.376564, z: -38.003517}
   m_LocalScale: {x: 100, y: 18.049622, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1842796645}
+  m_Father: {fileID: 2135291268}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &2682087492905169253
 Transform:
@@ -16737,10 +16846,9 @@ GameObject:
   - component: {fileID: 6803438848832753915}
   - component: {fileID: 2020429248684228506}
   - component: {fileID: 7475701560402336218}
-  - component: {fileID: 7475701560402336219}
   m_Layer: 0
   m_Name: Techo2
-  m_TagString: Pared
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -16758,7 +16866,7 @@ Transform:
   m_LocalScale: {x: 100, y: 100, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1842796645}
+  m_Father: {fileID: 2135291268}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &3316992657859760257
 Transform:
@@ -19675,27 +19783,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1694479227613709921}
   m_Mesh: {fileID: -1550514412580984892, guid: b3c70a5ac16d46440a8b2ecdcbb4f8cf, type: 3}
---- !u!65 &5370873602524784725
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1694479227613709921}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1.1062673, y: 0.41723347, z: 0.26218385}
-  m_Center: {x: -0.8138455, y: 0.17336333, z: 0.5725192}
 --- !u!4 &5437621126169815109
 Transform:
   m_ObjectHideFlags: 0
@@ -21830,7 +21917,7 @@ Transform:
   m_LocalScale: {x: 100, y: 100, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1842796645}
+  m_Father: {fileID: 2135291268}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &6831543528455253854
 MeshRenderer:
@@ -23204,27 +23291,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &7475701560402336219
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3283905911271041838}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1.1079234, y: 0.45210627, z: 0.20924719}
-  m_Center: {x: -0.8136867, y: 0.61119616, z: 0.54633826}
 --- !u!23 &7477826779909006390
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -23497,35 +23563,13 @@ GameObject:
   - component: {fileID: 2678611422340238179}
   - component: {fileID: 6863857369941999159}
   - component: {fileID: 6011304760712973094}
-  - component: {fileID: 7646283975198789700}
   m_Layer: 0
   m_Name: DivisionTecho
-  m_TagString: Pared
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!65 &7646283975198789700
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7646283975198789699}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.9772396, y: 0.019999994, z: 0.24295741}
-  m_Center: {x: -0.07415507, y: -0.00000023841858, z: 0.1114787}
 --- !u!33 &7649864767140633188
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -26484,6 +26528,7 @@ SceneRoots:
   - {fileID: 2102920494}
   - {fileID: 352643080}
   - {fileID: 1177122312}
+  - {fileID: 1114092131}
   - {fileID: 1795279766}
   - {fileID: 509907594}
   - {fileID: 7261452212551688303}

@@ -11,8 +11,11 @@ public class MissionBriefing : MonoBehaviour
 
     [Header("Panel")]
     public GameObject Panel; // Referencia al panel que contiene el briefing
+
+    [Header("Panel a Ocultar")]
     public GameObject PanelInventario; // Refrencia al panel del inventario que se oculta durante el briefing
-        
+    public GameObject Minimapa; // Refrencia al minimapa que se oculta durante el briefing
+
     [Header("Textos")]
     public TextMeshProUGUI Fecha; // Referencia al texto de la fecha
     public TextMeshProUGUI Hora; // Referencia al texto de la hora
@@ -39,6 +42,7 @@ public class MissionBriefing : MonoBehaviour
     {
         Instantiate(Personaje, PuntoSpawn.transform.position, PuntoSpawn.transform.rotation);
         PanelInventario.SetActive(false);
+        Minimapa.SetActive(false);
     }
     void Start()
     {
@@ -137,6 +141,7 @@ public class MissionBriefing : MonoBehaviour
     {
         Panel.SetActive(false);
         PanelInventario.SetActive(true);
+        Minimapa.SetActive(true);
         Time.timeScale = 1;
     }
 }

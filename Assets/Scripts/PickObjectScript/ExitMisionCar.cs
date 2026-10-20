@@ -13,10 +13,13 @@ public class ExitMisionCar : MonoBehaviour
 
     [Header("Referencias")]
     public Image ImageFilled;
-    public Canvas PanelInventario;
     public TextMeshProUGUI TextoAlerta;
     public GameObject Player;
     public GameObject Car;
+
+    [Header("Panel a Ocultar")]
+    public Canvas PanelInventario;
+    public Canvas Minimapa;
 
     [Header("Fade de pantalla")]
     public Image PanelNegro;
@@ -72,6 +75,7 @@ public class ExitMisionCar : MonoBehaviour
         {
             completado = true;
             PanelInventario.enabled = false;
+            Minimapa.enabled = false;
 
             StartCoroutine(ExitMision());
         }

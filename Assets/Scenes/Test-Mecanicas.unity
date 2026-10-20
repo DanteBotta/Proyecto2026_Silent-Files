@@ -2924,6 +2924,7 @@ MonoBehaviour:
   PuntoSpawn: {fileID: 1239488228}
   Panel: {fileID: 134178243}
   PanelInventario: {fileID: 1634313144}
+  Minimapa: {fileID: 369902591}
   Fecha: {fileID: 1890735724}
   Hora: {fileID: 2053826793}
   Ubicacion: {fileID: 387075656}
@@ -3329,7 +3330,6 @@ RectTransform:
   m_Children:
   - {fileID: 8551392393753254015}
   - {fileID: 1100726997}
-  - {fileID: 930912835}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -4295,7 +4295,7 @@ MonoBehaviour:
   InventoryManager: {fileID: 0}
   LockpickMinigameController: {fileID: 0}
   ShowCanvasNearPlayer: {fileID: 1400276421}
-  estadoActual: 0
+  estadoActual: 2
 --- !u!1 &756009340
 GameObject:
   m_ObjectHideFlags: 0
@@ -5200,41 +5200,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 922635812}
   m_CullTransparentMesh: 1
---- !u!1 &930912834
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 930912835}
-  m_Layer: 5
-  m_Name: CircleSpawnPoint
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &930912835
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 930912834}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 608217653}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &941269472
 GameObject:
   m_ObjectHideFlags: 0
@@ -6967,7 +6932,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 811803978}
-  - {fileID: 2094039873}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 55, y: 0, z: 0}
 --- !u!114 &1399291440
@@ -9127,10 +9091,11 @@ MonoBehaviour:
   MainCamera: {fileID: 1399291434}
   ExitMisionCamera: {fileID: 191426727}
   ImageFilled: {fileID: 886700532}
-  PanelInventario: {fileID: 1634313147}
   TextoAlerta: {fileID: 1877047449}
   Player: {fileID: 0}
   Car: {fileID: 919132148553890428}
+  PanelInventario: {fileID: 1634313147}
+  Minimapa: {fileID: 369902594}
   PanelNegro: {fileID: 1943459844}
   DuracionFade: 1
   TiempoNegro: 0.5
@@ -11428,6 +11393,7 @@ GameObject:
   - component: {fileID: 2094039873}
   - component: {fileID: 2094039876}
   - component: {fileID: 2094039874}
+  - component: {fileID: 2094039877}
   m_Layer: 0
   m_Name: MinimapCamera
   m_TagString: Untagged
@@ -11443,13 +11409,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2094039872}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.30070576, y: 0, z: 0, w: 0.953717}
-  m_LocalPosition: {x: 0, y: 10, z: -5}
+  m_LocalRotation: {x: 0.5, y: -0.5, z: 0.5, w: 0.5}
+  m_LocalPosition: {x: 9.12, y: 18.961521, z: -2.8713942}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1399291438}
-  m_LocalEulerAnglesHint: {x: 35, y: 0, z: 0}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 90}
 --- !u!114 &2094039874
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11545,6 +11511,20 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &2094039877
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2094039872}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c899a2db9ddd874449ba866b65623d64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraFollowCamera
+  player: {fileID: 0}
+  AlturaExtra: 200
 --- !u!1 &2102920493
 GameObject:
   m_ObjectHideFlags: 0
@@ -26329,6 +26309,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 170076735}
   - {fileID: 1399291438}
+  - {fileID: 2094039873}
   - {fileID: 191426731}
   - {fileID: 472292358}
   - {fileID: 378936128}

@@ -11,13 +11,14 @@ public class ConfigurationOpen : MonoBehaviour
     public GameObject PanelConfiguracion;
     public GameObject PanelSalir;
 
-    bool PanelSalirAbierto = false;
+    bool PanelAbierto = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         PanelInterrution.SetActive(false);
         PanelConfiguracion.SetActive(false);
+        PanelSalir.SetActive(false);
     }
 
     // Update is called once per frame
@@ -25,16 +26,17 @@ public class ConfigurationOpen : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (!PanelSalirAbierto)
+            if (!PanelAbierto)
             {
                 PanelInterrution.SetActive(true);
+                PanelConfiguracion.SetActive(false);
                 PanelSalir.SetActive(true);
-                PanelSalirAbierto = true;
+                PanelAbierto = true;
             }
             else
             {
                 CerrarPaneles();
-                PanelSalirAbierto = false;
+                PanelAbierto = false;
             }
             
         }
@@ -49,6 +51,7 @@ public class ConfigurationOpen : MonoBehaviour
     {
         PanelInterrution.SetActive(true);
         PanelConfiguracion.SetActive(true);
+        PanelAbierto = true;
     }
 
     public void CerrarJuego()
@@ -65,6 +68,6 @@ public class ConfigurationOpen : MonoBehaviour
         PanelInterrution.SetActive(false);
         PanelConfiguracion.SetActive(false);
         PanelSalir.SetActive(false);
-        PanelSalirAbierto = false;
+        PanelAbierto = false;
     }
 }

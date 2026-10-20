@@ -1274,8 +1274,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.033, y: 0.02, z: 0.021}
-  m_Center: {x: 0.0035, y: 0, z: 0}
+  m_Size: {x: 0.0325627, y: 0.02, z: 0.021}
+  m_Center: {x: 0.0037186493, y: -3.4239633e-17, z: -2.8434334e-25}
 --- !u!65 &295982040
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2269,22 +2269,22 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 1212337681}
-    - targetCorrespondingSourceObject: {fileID: -1399824274647784560, guid: 8546537c347524b228c6ce5f2ac715cc,
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8546537c347524b228c6ce5f2ac715cc,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1135992709}
-    - targetCorrespondingSourceObject: {fileID: -1399824274647784560, guid: 8546537c347524b228c6ce5f2ac715cc,
+      addedObject: {fileID: 1212337686}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8546537c347524b228c6ce5f2ac715cc,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1135992708}
-    - targetCorrespondingSourceObject: {fileID: -1399824274647784560, guid: 8546537c347524b228c6ce5f2ac715cc,
+      addedObject: {fileID: 1212337685}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8546537c347524b228c6ce5f2ac715cc,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1135992707}
-    - targetCorrespondingSourceObject: {fileID: -1399824274647784560, guid: 8546537c347524b228c6ce5f2ac715cc,
+      addedObject: {fileID: 1212337684}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8546537c347524b228c6ce5f2ac715cc,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1135992706}
+      addedObject: {fileID: 1212337683}
   m_SourcePrefab: {fileID: 100100000, guid: 8546537c347524b228c6ce5f2ac715cc, type: 3}
 --- !u!1 &475547975
 GameObject:
@@ -6105,94 +6105,6 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
---- !u!1 &1135992703 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: -1399824274647784560, guid: 8546537c347524b228c6ce5f2ac715cc,
-    type: 3}
-  m_PrefabInstance: {fileID: 472292358}
-  m_PrefabAsset: {fileID: 0}
---- !u!195 &1135992706
-NavMeshAgent:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1135992703}
-  m_Enabled: 1
-  m_AgentTypeID: 0
-  m_Radius: 0.054355003
-  m_Speed: 3.5
-  m_Acceleration: 8
-  avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 0.055185325
-  m_BaseOffset: 0.027592663
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
---- !u!114 &1135992707
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1135992703}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 363db9526449a1348bfe325f9eaf2936, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::NormalGuards
-  agent: {fileID: 0}
-  displacementFromDanger: 10
---- !u!114 &1135992708
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1135992703}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 24b62bbfda1ce0946b8f58c230487200, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FieldOfView
-  delay: 0.2
-  radius: 7
-  angle: 180
-  playerRef: {fileID: 0}
-  targetMask:
-    serializedVersion: 2
-    m_Bits: 0
-  obstructionMask:
-    serializedVersion: 2
-    m_Bits: 0
-  canSeePlayer: 0
-  distanceToPlayer: 0
-  seguirJugadorScript: {fileID: 0}
-  suspicion: 0
---- !u!114 &1135992709
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1135992703}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7dad3171b80bbd445a216550cb0214a2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AI
-  navMeshAgent: {fileID: 0}
-  destinations: []
-  followPlayer: 0
-  distanceToFollowPlayer: 10
-  distanceToFollowPath: 2
-  player: {fileID: 0}
-  soundArrivalDistance: 0.5
-  soundNavMeshSearchRadius: 2
 --- !u!1 &1162109387
 GameObject:
   m_ObjectHideFlags: 0
@@ -6412,6 +6324,88 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 4, y: 4, z: 2.5}
   m_Center: {x: 0, y: 2, z: 0}
+--- !u!195 &1212337683
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1212337678}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!114 &1212337684
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1212337678}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 363db9526449a1348bfe325f9eaf2936, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NormalGuards
+  agent: {fileID: 0}
+  displacementFromDanger: 10
+--- !u!114 &1212337685
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1212337678}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dad3171b80bbd445a216550cb0214a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AI
+  navMeshAgent: {fileID: 0}
+  destinations: []
+  followPlayer: 0
+  distanceToFollowPlayer: 10
+  distanceToFollowPath: 2
+  player: {fileID: 0}
+  soundArrivalDistance: 0.5
+  soundNavMeshSearchRadius: 2
+--- !u!114 &1212337686
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1212337678}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24b62bbfda1ce0946b8f58c230487200, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FieldOfView
+  delay: 0.2
+  radius: 7
+  angle: 180
+  playerRef: {fileID: 0}
+  targetMask:
+    serializedVersion: 2
+    m_Bits: 0
+  obstructionMask:
+    serializedVersion: 2
+    m_Bits: 0
+  canSeePlayer: 0
+  distanceToPlayer: 0
+  seguirJugadorScript: {fileID: 0}
+  suspicion: 0
 --- !u!1 &1239488228
 GameObject:
   m_ObjectHideFlags: 0
@@ -7783,8 +7777,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.21, y: 1, z: 11.9}
-  m_Center: {x: 2.64, y: 0, z: -0.95}
+  m_Size: {x: 0.21000007, y: 3.360379, z: 11.9}
+  m_Center: {x: 2.64, y: 1.1801896, z: -0.9499999}
 --- !u!1 &1505928912
 GameObject:
   m_ObjectHideFlags: 0
@@ -13457,7 +13451,7 @@ Transform:
   m_GameObject: {fileID: 9195525294097361909}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: 1.0222421, y: 22.563225, z: -45.100437}
+  m_LocalPosition: {x: 1.0222421, y: 22.62, z: -45.100437}
   m_LocalScale: {x: 19.419224, y: 79.18797, z: 88.94242}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -17815,7 +17809,7 @@ Transform:
   m_GameObject: {fileID: 8912725986621922868}
   serializedVersion: 2
   m_LocalRotation: {x: -0.00000005338508, y: 0.7071068, z: 0.7071067, w: -0.000000053385072}
-  m_LocalPosition: {x: -14.411545, y: 17.87613, z: -44.074215}
+  m_LocalPosition: {x: -14.411545, y: 17.53, z: -44.074215}
   m_LocalScale: {x: -1429.9197, y: -556.78503, z: -7.127953}
   m_ConstrainProportionsScale: 0
   m_Children: []

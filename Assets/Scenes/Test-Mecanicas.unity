@@ -2220,7 +2220,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 8546537c347524b228c6ce5f2ac715cc,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.37088162
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8546537c347524b228c6ce5f2ac715cc,
         type: 3}
@@ -2230,7 +2230,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 8546537c347524b228c6ce5f2ac715cc,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.9286802
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8546537c347524b228c6ce5f2ac715cc,
         type: 3}
@@ -2245,7 +2245,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 8546537c347524b228c6ce5f2ac715cc,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 136.46
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8546537c347524b228c6ce5f2ac715cc,
         type: 3}
@@ -5896,6 +5896,8 @@ MonoBehaviour:
     type: 3}
   IndicadorObjetivo: {fileID: 8771188406338507713, guid: 73f49f7b6c0cb064e91be6c924816586,
     type: 3}
+  IndicadorAuto: {fileID: 8771188406338507713, guid: 3f72fa04da893a14e95c38ed38652f75,
+    type: 3}
   AlturaIndicadores: 20
 --- !u!4 &1114092131
 Transform:
@@ -6430,7 +6432,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AI
   navMeshAgent: {fileID: 0}
   destinations: []
-  followPlayer: 0
+  followPlayer: 1
   distanceToFollowPlayer: 10
   distanceToFollowPath: 2
   player: {fileID: 0}
@@ -8796,7 +8798,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1637090320
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13493,7 +13495,7 @@ GameObject:
   - component: {fileID: 919132148553890429}
   m_Layer: 0
   m_Name: AutoSalida
-  m_TagString: Untagged
+  m_TagString: Car
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -8,6 +8,7 @@ TagManager:
   - Enemy
   - Objectives
   - Indicator
+  - Car
   layers:
   - Default
   - TransparentFX

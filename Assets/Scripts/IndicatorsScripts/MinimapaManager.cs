@@ -6,6 +6,7 @@ public class MinimapaManager : MonoBehaviour
     public GameObject IndicadorPlayer;
     public GameObject IndicadorEnemy;
     public GameObject IndicadorObjetivo;
+    public GameObject IndicadorAuto;
 
     [Header("Altura de los indicadores")]
     public float AlturaIndicadores = 10f;
@@ -15,6 +16,7 @@ public class MinimapaManager : MonoBehaviour
         CrearIndicadores("Player", IndicadorPlayer);
         CrearIndicadores("Enemy", IndicadorEnemy);
         CrearIndicadores("Objectives", IndicadorObjetivo);
+        CrearIndicadores("Car", IndicadorAuto);
 
         AsignarSeguimiento();
     }

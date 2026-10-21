@@ -22,6 +22,6 @@ public class FollowObject : MonoBehaviour
         transform.position = objeto.position
             + Vector3.up * manager.AlturaIndicadores;
 
-        transform.rotation = Quaternion.Euler(90f, objeto.eulerAngles.z, 0f);
+        transform.rotation = Quaternion.Euler(90f, objeto.eulerAngles.y, 0f);
     }
 }

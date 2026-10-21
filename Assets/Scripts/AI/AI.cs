@@ -23,6 +23,9 @@ public class AI : MonoBehaviour, IHear
         (playerDetected || (followPlayer &&
         Vector3.Distance(transform.position, player.transform.position) <= distanceToFollowPlayer));
 
+    [Header ("Animator Reference")]
+    private Animator animator;
+
     private bool CanNavigate => navMeshAgent != null &&
         navMeshAgent.isActiveAndEnabled && navMeshAgent.isOnNavMesh;
 
@@ -30,6 +33,8 @@ public class AI : MonoBehaviour, IHear
     {
         if (navMeshAgent == null)
             navMeshAgent = GetComponent<NavMeshAgent>();
+
+        animator = GetComponent<Animator>();
     }
 
     private void Start()
@@ -40,6 +45,14 @@ public class AI : MonoBehaviour, IHear
             if (controller != null)
                 player = controller.gameObject;
         }
+    }
+
+    void Update()
+    {
+        if (animator == null || navMeshAgent == null)
+            return;
+
+        animator.SetFloat("Velocidad", navMeshAgent.velocity.magnitude);
     }
 
     // Resolve movement after vision and player movement have updated.

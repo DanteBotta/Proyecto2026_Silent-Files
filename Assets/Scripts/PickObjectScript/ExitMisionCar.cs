@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class ExitMisionCar : MonoBehaviour
 {
     public ShowCanvasNearPlayer ShowCanvasNearPlayer;
+    public MissionBriefing MissionBriefing;
 
     [Header("Camaras")]
     public GameObject MainCamera;
@@ -41,6 +42,7 @@ public class ExitMisionCar : MonoBehaviour
     void Start()
     {
         ShowCanvasNearPlayer = GetComponent<ShowCanvasNearPlayer>();
+        MissionBriefing = FindAnyObjectByType<MissionBriefing>();
         Player = FindAnyObjectByType<PlayerController>().gameObject;
         ImageFilled.fillAmount = 0;
 
@@ -57,6 +59,18 @@ public class ExitMisionCar : MonoBehaviour
 
     void Update()
     {
+        // Esperar a que el briefing haya terminado Y la misión haya empezado
+        if (!MissionBriefing.MisionIniciada)
+        {
+            return;
+        }
+
+        // Esperar a que se suelte la F usada para empezar la misión
+        if (MissionBriefing.BloquearFHastaSoltar)
+        {
+            return;
+        }
+
         if (Input.GetKey(KeyCode.F) && MisionTerminada && !NivelTerminado && ShowCanvasNearPlayer.FuncionCanvas)
         {
             fillAmount = Mathf.Clamp01(

@@ -1,147 +1,224 @@
-using System.Collections;
+ï»¿using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class MissionBriefing : MonoBehaviour
 {
-    public GameObject Personaje; // Referencia al prefab del personaje que va a cargar
-    public GameObject PuntoSpawn; // El punto donde se va a generar el personaje
-
+    [Header("Personaje")]
+    public GameObject Personaje;
+    public GameObject PuntoSpawn;
 
     [Header("Panel")]
-    public GameObject Panel; // Referencia al panel que contiene el briefing
+    public GameObject Panel;
 
     [Header("Panel a Ocultar")]
-    public GameObject PanelInventario; // Refrencia al panel del inventario que se oculta durante el briefing
-    public GameObject Minimapa; // Refrencia al minimapa que se oculta durante el briefing
+    public GameObject PanelInventario;
+    public GameObject Minimapa;
 
     [Header("Textos")]
-    public TextMeshProUGUI Fecha; // Referencia al texto de la fecha
-    public TextMeshProUGUI Hora; // Referencia al texto de la hora
-    public TextMeshProUGUI Ubicacion; // Referencia al texto de la ubicación
+    public TextMeshProUGUI Fecha;
+    public TextMeshProUGUI Hora;
+    public TextMeshProUGUI Ubicacion;
 
-    public TextMeshProUGUI TituloMision; // Referencia al texto del título de la misión
-    public TextMeshProUGUI Descripcion; // Referencia al texto de la descripción de la misión
-    public TextMeshProUGUI Objetivo; // Referencia al texto del objetivo de la misión
-    public TextMeshProUGUI PresionaF; // Referencia al texto que indica presionar F para continuar
+    public TextMeshProUGUI TituloMision;
+    public TextMeshProUGUI Descripcion;
+    public TextMeshProUGUI Objetivo;
+    public TextMeshProUGUI PresionaF;
 
     public TextMeshProUGUI Linea1;
     public TextMeshProUGUI Linea2;
 
-
     [Header("Configuracion")]
-    public float VelocidadEscritura = 0.03f; // La velocidad a la que se va a escribir los textos
-    public float TiempoEntreTextos = 0.3f; // El tiempo que se va a esperar entre cada texto
-    public bool ActivarBriefing = true; // Si se va a activar el briefing o no
+    public float VelocidadEscritura = 0.03f;
+    public float TiempoEntreTextos = 0.3f;
+    public bool ActivarBriefing = true;
 
-    bool BriefingTerminado = false;
+    [Header("Estado")]
+    public bool BriefingTerminado = false;
+    public bool SalteandoBriefing = false;
+    public bool BloquearFHastaSoltar = false;
+    public bool MisionIniciada = false;
 
+    private bool personajeInstanciado = false;
 
     private void Awake()
     {
-        Instantiate(Personaje, PuntoSpawn.transform.position, PuntoSpawn.transform.rotation);
         PanelInventario.SetActive(false);
         Minimapa.SetActive(false);
+        InstanciarPersonaje();
     }
-    void Start()
+
+    private void Start()
     {
+        Time.timeScale = 0f;
+
+        if (!ActivarBriefing)
+        {
+            Panel.SetActive(false);
+            TerminarBriefing();
+            ContinuarMision();
+            return;
+        }
+
         Panel.SetActive(true);
 
         Fecha.text = "";
         Hora.text = "";
         Ubicacion.text = "";
-
         Linea1.text = "";
-
         TituloMision.text = "";
         Descripcion.text = "";
         Objetivo.text = "";
-
         Linea2.text = "";
-
         PresionaF.text = "";
-
-        Time.timeScale = 0;
 
         StartCoroutine(MostrarBriefing());
     }
 
-    void Update()
+    private void Update()
     {
-        if ((BriefingTerminado && Input.GetKeyDown(KeyCode.F)) || !ActivarBriefing) 
+        if (!ActivarBriefing)
         {
-            ContinuarMision();
+            return;
         }
 
-        if (!BriefingTerminado && Input.GetKeyDown(KeyCode.F))
+        // Liberar el bloqueo cuando se suelta la F
+        if (BloquearFHastaSoltar)
         {
-            // Si el briefing no ha terminado y se presiona F, se completa inmediatamente
+            if (Input.GetKeyUp(KeyCode.F))
+            {
+                BloquearFHastaSoltar = false;
+            }
+
+            return;
+        }
+
+        // Una vez iniciada la misiÃ³n, este script ya no usa la F
+        if (MisionIniciada)
+        {
+            return;
+        }
+
+        if (!Input.GetKeyDown(KeyCode.F))
+        {
+            return;
+        }
+
+        if (!BriefingTerminado)
+        {
             StopAllCoroutines();
+
             Fecha.text = "FECHA\t\t: 06.10.2026";
             Hora.text = "HORA\t\t: 02:37 AM";
-            Ubicacion.text = "UBICACIÓN\t\t: LANUS, ARGENTINA";
+            Ubicacion.text = "UBICACIÃ“N\t\t: LANUS, ARGENTINA";
             Linea1.text = "________________________________________________________________________";
-            TituloMision.text = "MISIÓN 01 - El Falsificador";
-            Descripcion.text = "El mejor falsificador de identidades de la ciudad vive aquí";
-            Objetivo.text = "OBJETIVO                : INGRESAR SIN SER DETECTADO Y RECUPERAR   \t\t\t      DOCUMENTOS";
+            TituloMision.text = "MISIÃ“N 01 - El Falsificador";
+            Descripcion.text = "El mejor falsificador de identidades de la ciudad vive aquÃ­";
+            Objetivo.text = "OBJETIVO : INGRESAR SIN SER DETECTADO Y RECUPERAR DOCUMENTOS";
             Linea2.text = "________________________________________________________________________";
             PresionaF.text = "Presiona [ F ] para EMPEZAR";
+
+            SalteandoBriefing = true;
             BriefingTerminado = true;
+            BloquearFHastaSoltar = true;
+
+            return;
         }
+
+        BloquearFHastaSoltar = true;
+        ContinuarMision();
     }
 
-    IEnumerator MostrarBriefing()
+    private IEnumerator MostrarBriefing()
     {
-        yield return StartCoroutine(EscribirTexto(Fecha, "FECHA\t\t: 06.10.2026"));
+        yield return StartCoroutine(
+            EscribirTexto(Fecha, "FECHA\t\t: 06.10.2026"));
+
         yield return new WaitForSecondsRealtime(TiempoEntreTextos);
 
-        yield return StartCoroutine(EscribirTexto(Hora, "HORA\t\t: 02:37 AM"));
+        yield return StartCoroutine(
+            EscribirTexto(Hora, "HORA\t\t: 02:37 AM"));
+
         yield return new WaitForSecondsRealtime(TiempoEntreTextos);
 
-        yield return StartCoroutine(EscribirTexto(Ubicacion, "UBICACIÓN\t\t: LANUS, ARGENTINA"));
+        yield return StartCoroutine(
+            EscribirTexto(Ubicacion, "UBICACIï¿½N\t\t: LANUS, ARGENTINA"));
+
         yield return new WaitForSecondsRealtime(TiempoEntreTextos);
 
         Linea1.text = "________________________________________________________________________";
 
-        yield return StartCoroutine(EscribirTexto(TituloMision, "MISIÓN 01 - El Falsificador"));
+        yield return StartCoroutine(
+            EscribirTexto(TituloMision, "MISIï¿½N 01 - El Falsificador"));
+
         yield return new WaitForSecondsRealtime(TiempoEntreTextos);
 
-        yield return StartCoroutine(EscribirTexto(Descripcion, "El mejor falsificador de identidades de la ciudad vive aquí"));
+        yield return StartCoroutine(
+            EscribirTexto(Descripcion, "El mejor falsificador de identidades de la ciudad vive aquï¿½"));
+
         yield return new WaitForSecondsRealtime(TiempoEntreTextos);
 
-        yield return StartCoroutine(EscribirTexto(Objetivo, "OBJETIVO                : INGRESAR SIN SER DETECTADO Y RECUPERAR   \t\t\t      DOCUMENTOS"));
+        yield return StartCoroutine(
+            EscribirTexto(Objetivo, "OBJETIVO : INGRESAR SIN SER DETECTADO Y RECUPERAR DOCUMENTOS"));
+
         yield return new WaitForSecondsRealtime(TiempoEntreTextos);
 
         Linea2.text = "________________________________________________________________________";
 
-        // Espera 1 segundo antes de mostrar el botón
         yield return new WaitForSecondsRealtime(1f);
 
         PresionaF.text = "Presiona [ F ] para EMPEZAR";
 
-        BriefingTerminado = true;
-
-
+        TerminarBriefing();
     }
 
-    IEnumerator EscribirTexto(TextMeshProUGUI texto, string contenido)
+    private IEnumerator EscribirTexto(
+        TextMeshProUGUI texto, string contenido)
     {
         texto.text = "";
 
         foreach (char letra in contenido)
         {
             texto.text += letra;
-
             yield return new WaitForSecondsRealtime(VelocidadEscritura);
         }
     }
 
-    void ContinuarMision()
+    private void TerminarBriefing()
     {
+        BriefingTerminado = true;
+    }
+
+    private void InstanciarPersonaje()
+    {
+        if (personajeInstanciado)
+        {
+            return;
+        }
+
+        Instantiate(
+            Personaje,
+            PuntoSpawn.transform.position,
+            PuntoSpawn.transform.rotation
+        );
+
+        personajeInstanciado = true;
+    }
+
+    private void ContinuarMision()
+    {
+        if (!BriefingTerminado)
+        {
+            return;
+        }
+
         Panel.SetActive(false);
         PanelInventario.SetActive(true);
         Minimapa.SetActive(true);
-        Time.timeScale = 1;
+
+        Time.timeScale = 1f;
+
+        SalteandoBriefing = false;
+        MisionIniciada = true;
     }
 }

@@ -18,6 +18,8 @@ public class Door : MonoBehaviour
     }
     public EstadoPuerta estadoActual;
 
+    bool PuertaAbierta = false;
+
     void Start()
     {
         InventoryManager = FindAnyObjectByType<InventoryManager>();
@@ -30,31 +32,68 @@ public class Door : MonoBehaviour
         {
             InventoryManager.Herramienta herramientaActual = InventoryManager.ObjetoEnMano;
 
-            if (estadoActual == EstadoPuerta.Abierta)
+            if ((herramientaActual == InventoryManager.Herramienta.Mano)) // Se interactua con la mano
             {
-                // La puerta ya esta abierta
-            }
-            else if (herramientaActual == InventoryManager.Herramienta.Mano && estadoActual == EstadoPuerta.Cerrada)
-            {
-                // Lo que pasa si está equipada la mano
-            }
-            else if (herramientaActual == InventoryManager.Herramienta.Ganzua && estadoActual == EstadoPuerta.Trabada)
-            {
-                // Lo que pasa si está equipada la ganzúa
-                if (!LockpickMinigameController.MinigameRunning)
+                if (estadoActual == EstadoPuerta.Cerrada) // Puerta Cerrada
                 {
-                    LockpickMinigameController.StartLockpickMinigame();
-                    StartCoroutine(EsperarResultadoLockpickMinigame());
+                    Debug.Log("Abriste puerta con la mano");
+                    estadoActual = EstadoPuerta.Abierta;
+                    PuertaAbierta = true;
+                }
+                else if (estadoActual == EstadoPuerta.Abierta) // Puerta Abierta
+                {
+                    Debug.Log("Cerraste puerta con la mano");
+                    estadoActual = EstadoPuerta.Cerrada;
+                    PuertaAbierta = false;
+                }
+                else if (estadoActual == EstadoPuerta.Trabada) // Puerta Trabada
+                {
+                    Debug.Log("La puerta esta bloqueada, no se puede abrir con la mano");
                 }
             }
-            else if (herramientaActual == InventoryManager.Herramienta.Palanca && estadoActual == EstadoPuerta.Trabada)
+            
+
+            else if (herramientaActual == InventoryManager.Herramienta.Ganzua) // Se interactua con la ganzua
             {
-                // Lo que pasa si está equipada la palanca
+                if (estadoActual == EstadoPuerta.Cerrada) // Puerta Cerrada
+                {
+                    Debug.Log("La puerta esta cerrada, no es necesario usar ganzua");
+                }
+                else if (estadoActual == EstadoPuerta.Abierta) // Puerta Abierta
+                {
+                    Debug.Log("Puerta Abierta");
+                }
+                else if (estadoActual == EstadoPuerta.Trabada) // Puerta Trabada, se puede intentar abrir con la ganzúa
+                {
+                    if (!LockpickMinigameController.MinigameRunning)
+                    {
+                        LockpickMinigameController.StartLockpickMinigame();
+                        StartCoroutine(EsperarResultadoLockpickMinigame());
+                    }
+                }
+                
+            }
+            else if (herramientaActual == InventoryManager.Herramienta.Palanca)
+            {
+                if (estadoActual == EstadoPuerta.Cerrada) // Puerta Cerrada
+                {
+                    Debug.Log("La puerta esta cerrada, no es necesario usar palanca");
+                }
+                else if (estadoActual == EstadoPuerta.Abierta) // Puerta Abierta
+                {
+                    Debug.Log("Puerta Abierta");
+                }
+                else if (estadoActual == EstadoPuerta.Trabada) // Puerta Trabada, se puede abrir con la palanca
+                {
+                    estadoActual = EstadoPuerta.Cerrada;
+                    PuertaAbierta = true;
+                }
             }
         }
         else
         {
             // Lo que pasa si la puerta esta bloqueada (no se puede abrir)
+            Debug.Log("La puerta no se puede abrir, esta bloqueada");
         }
     }
 
@@ -67,13 +106,15 @@ public class Door : MonoBehaviour
         {
             // Salio bien
             estadoActual = EstadoPuerta.Cerrada; // desbloqueada, o Abierta si queres abrirla directo
-            Debug.Log("Puerta desbloqueada");
+            PuertaAbierta = true;
+            Debug.Log("Puerta desbloqueada con la ganzua");
         }
         else
         {
             // Salio mal
             estadoActual = EstadoPuerta.Trabada;
-            Debug.Log("No pudiste abrir la puerta");
+            PuertaAbierta = false;
+            Debug.Log("No pudiste abrir la puerta con la ganzua");
         }
     }
 }

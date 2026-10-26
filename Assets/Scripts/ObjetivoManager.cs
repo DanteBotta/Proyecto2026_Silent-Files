@@ -17,7 +17,6 @@ public class ObjetivoManager : MonoBehaviour
     int CantidadTotalObjetivos => PickObjects.Length;
     public int CantidadObjetivosCompletados;
 
-    private bool mostrandoTexto = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -38,14 +37,11 @@ public class ObjetivoManager : MonoBehaviour
 
     public IEnumerator MostrarCantObjetivos()
     {
-        mostrandoTexto = true;
-
         TextoObjetivos.enabled = true;
         TextoObjetivos.text = CantidadObjetivosCompletados + " / " + CantidadTotalObjetivos + " documentos recuperados";
 
         yield return new WaitForSeconds(TiempoMostrarTexto);
 
         TextoObjetivos.enabled = false;
-        mostrandoTexto = false;
     }
 }

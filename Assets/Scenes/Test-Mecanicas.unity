@@ -7395,13 +7395,13 @@ MonoBehaviour:
   playerRef: {fileID: 0}
   targetMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   obstructionMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 512
   canSeePlayer: 0
   distanceToPlayer: 0
-  seguirJugadorScript: {fileID: 0}
+  seguirJugadorScript: {fileID: 1212337685}
   suspicion: 0
 --- !u!1 &1229957993
 GameObject:

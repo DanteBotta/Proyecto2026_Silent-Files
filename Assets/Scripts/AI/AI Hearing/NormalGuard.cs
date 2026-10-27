@@ -1,11 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using GamePlay;
+using UnityEngine;
+using UnityEngine.AI;
 
-using UnityEngine.AI; //For use of Navmesh agent
-
-public class NormalGuards : MonoBehaviour, IHear
+public class NormalGuard : MonoBehaviour, IHear
 {
     [SerializeField] private NavMeshAgent agent = null;
 
@@ -14,27 +11,31 @@ public class NormalGuards : MonoBehaviour, IHear
 
     private AI enemyAI;
 
+    private bool CanNavigate => agent != null &&
+        agent.isActiveAndEnabled && agent.isOnNavMesh;
+
     void Awake() 
     {
         enemyAI = GetComponentInParent<AI>();
 
-        if (agent == null && !TryGetComponent(out agent))        
-            Debug.LogWarning(name + " doesn't have an agent!");        
+        if (agent == null)
+            agent = GetComponentInParent<NavMeshAgent>();
+
+        if (agent == null)
+            Debug.LogWarning(name + " doesn't have an agent!");
     }
 
     public void RespondToSound(Sound sound)
     {
+        if (sound == null || !isActiveAndEnabled)
+            return;
+
         if (enemyAI != null)
         {
             enemyAI.RespondToSound(sound);
             return;
         }
-        /* 
-        *   Put fun things here
-        *   Examples:
-        *   Animate the NPC, Play a sound clip ("What was that?!"), Throw some UI up, Check if the sound is more important than current task
-        */
-    
+
         if (sound.soundType == Sound.SoundType.Interesting)
             MoveTo(sound.pos);
         else if (sound.soundType == Sound.SoundType.Dangerous) //Must have this case so that it doesn't run away from the default sound type
@@ -47,7 +48,7 @@ public class NormalGuards : MonoBehaviour, IHear
 
     private void MoveTo(Vector3 pos) 
     {
-        agent.SetDestination(pos);
-        agent.isStopped = false;
+        if (CanNavigate && agent.SetDestination(pos))
+            agent.isStopped = false;
     }
 }

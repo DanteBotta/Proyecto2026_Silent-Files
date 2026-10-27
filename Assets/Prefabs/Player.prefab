@@ -156,7 +156,10 @@ MonoBehaviour:
   crouchSpeed: 2
   walkNoiseRadius: 3
   runNoiseRadius: 8
-  crouchNoiseRadius: 0
+  crouchNoiseRadius: 1
+  walkStepInterval: 0.5
+  runStepInterval: 0.3
+  crouchStepInterval: 0.8
   gravity: -9.81
   rotationSpeed: 12
   animator: {fileID: 6172554811417300903}

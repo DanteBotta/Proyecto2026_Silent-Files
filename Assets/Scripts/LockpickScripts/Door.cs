@@ -3,12 +3,18 @@ using System.Collections;
 using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.Events;
+using GamePlay;
 
 public class Door : MonoBehaviour
 {
     public InventoryManager InventoryManager;
     public LockpickMinigameController LockpickMinigameController;
     public ShowCanvasNearPlayer ShowCanvasNearPlayer;
+
+    [Header("Ruido")]
+    [SerializeField, Min(0f)] private float radioRuidoApertura = 5f;
+    [Tooltip("Punto de interacción cerca del suelo. Sin asignar, usa la posición del jugador al abrir la puerta.")]
+    [SerializeField] private Transform origenRuido;
 
     public enum EstadoPuerta
     {
@@ -43,6 +49,12 @@ public class Door : MonoBehaviour
                         Debug.Log("Abriste puerta con la mano");
                         estadoActual = EstadoPuerta.Abierta;
                         PuertaAbierta = true;
+                        Vector3 posicionRuido = origenRuido != null
+                            ? origenRuido.position
+                            : ShowCanvasNearPlayer.player != null
+                                ? ShowCanvasNearPlayer.player.position
+                                : transform.position;
+                        Sounds.MakeSound(new Sound(posicionRuido, radioRuidoApertura, Sound.SoundType.Interesting));
                     }
                     else if (estadoActual == EstadoPuerta.Abierta) // Puerta Abierta
                     {

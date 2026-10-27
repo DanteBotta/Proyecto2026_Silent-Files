@@ -5,6 +5,7 @@ using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 using System;
 using System.Collections;
+using GamePlay;
 
 public class WindowMinigameManager : MonoBehaviour
 {
@@ -32,6 +33,11 @@ public class WindowMinigameManager : MonoBehaviour
     public float MargenReaccion = 0.5f;
     public float TiempoMostrarResultado = 1.5f;
 
+    [Header("Ruido")]
+    [SerializeField, Min(0f)] private float radioRuidoFallo = 10f;
+    [Tooltip("Punto de interacción cerca del suelo. Sin asignar, usa el sitio donde el jugador comenzó la interacción.")]
+    [SerializeField] private Transform origenRuido;
+
 
     bool JuegoIniciado = false;
     bool AnimacionTerminada = false;
@@ -46,6 +52,7 @@ public class WindowMinigameManager : MonoBehaviour
     float TiempoInicioResultado;
     bool VentanaAbierta = false;
     bool ResultadoExitoso = false;
+    Vector3 posicionInteraccion;
 
     void Awake()
     {
@@ -116,34 +123,26 @@ public class WindowMinigameManager : MonoBehaviour
                 // Se pasó el margen y todavía mantiene F
                 if (DebeSoltar && (TiempoTranscurrido - TiempoEspera) > MargenReaccion)
                 {
-                    MostrarBoton("MinijuegoVentana/Botones/Fracaso");
-                    Debug.Log("No soltaste a tiempo");
-                    AnimationImages.Detener();
-
-                    MostrandoResultado = true;
-                    TiempoInicioResultado = Time.time;
-                    ResultadoExitoso = false;
-
-                    EvitarRepeticion = 0;
+                    RegistrarFallo("MinijuegoVentana/Botones/Fracaso", "No soltaste a tiempo");
+                    return;
                 }
             }
 
-            if (Input.GetKeyUp(KeyCode.F))
+            if (Input.GetKeyUp(KeyCode.F) && EvitarRepeticion > 0)
             {
-                if (!DebeSoltar)
+                // Al soltar, GetKey ya es falso: calcular el tiempo de este frame.
+                TiempoTranscurrido = Time.time - TiempoInicio;
+
+                if (TiempoTranscurrido < TiempoEspera)
                 {
                     // SOLTÓ ANTES
-                    MostrarBoton("MinijuegoVentana/Botones/Gris");
-                    Debug.Log("Soltaste antes de tiempo");
-                    AnimationImages.Detener();
-
-                    MostrandoResultado = true;
-                    TiempoInicioResultado = Time.time;
-                    ResultadoExitoso = false;
-
-                    EvitarRepeticion = 0;
+                    RegistrarFallo("MinijuegoVentana/Botones/Gris", "Soltaste antes de tiempo");
                 }
-                else if ((TiempoTranscurrido - TiempoEspera) <= MargenReaccion)
+                else if ((TiempoTranscurrido - TiempoEspera) > MargenReaccion)
+                {
+                    RegistrarFallo("MinijuegoVentana/Botones/Fracaso", "No soltaste a tiempo");
+                }
+                else
                 {
                     // ÉXITO
                     MostrarBoton("MinijuegoVentana/Botones/Exito");
@@ -164,8 +163,32 @@ public class WindowMinigameManager : MonoBehaviour
         }
     }
 
+    void RegistrarFallo(string boton, string mensaje)
+    {
+        if (MostrandoResultado)
+            return;
+
+        MostrarBoton(boton);
+        Debug.Log(mensaje);
+        AnimationImages.Detener();
+
+        MostrandoResultado = true;
+        TiempoInicioResultado = Time.time;
+        ResultadoExitoso = false;
+        DebeSoltar = false;
+        EvitarRepeticion = 0;
+
+        Vector3 posicionRuido = origenRuido != null ? origenRuido.position : posicionInteraccion;
+        Sounds.MakeSound(new Sound(posicionRuido, radioRuidoFallo, Sound.SoundType.Interesting));
+    }
+
     IEnumerator ActivarMinijuego()
     {
+        // El canvas está elevado: conservar el punto desde el que se inició la interacción.
+        posicionInteraccion = ShowCanvasNearPlayer != null && ShowCanvasNearPlayer.player != null
+            ? ShowCanvasNearPlayer.player.position
+            : transform.position;
+
         SpriteImage.enabled = true;
         SpriteBoton.enabled = true;
         UICamera.enabled = false;

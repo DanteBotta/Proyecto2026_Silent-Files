@@ -7352,7 +7352,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 363db9526449a1348bfe325f9eaf2936, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::NormalGuards
+  m_EditorClassIdentifier: Assembly-CSharp::NormalGuard
   agent: {fileID: 0}
   displacementFromDanger: 10
 --- !u!114 &1212337685

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using GamePlay;
 using UnityEngine;
 
 /// Controla el movimiento del jugador
@@ -17,9 +18,14 @@ public class PlayerController : MonoBehaviour
     public float crouchSpeed = 2f;
 
     [Header("Ruido generado")]
-    public float walkNoiseRadius = 3f;
-    public float runNoiseRadius = 8f;
-    public float crouchNoiseRadius = 0f;
+    [Min(0f)] public float walkNoiseRadius = 3f;
+    [Min(0f)] public float runNoiseRadius = 8f;
+    [Min(0f)] public float crouchNoiseRadius = 1f;
+
+    [Header("Tiempo entre pasos (segundos)")]
+    [Min(0.05f)] public float walkStepInterval = 0.5f;
+    [Min(0.05f)] public float runStepInterval = 0.3f;
+    [Min(0.05f)] public float crouchStepInterval = 0.8f;
 
     //Gravedad sobre el personaje (la de la Tierra)
     [Header("Gravedad")]
@@ -37,6 +43,7 @@ public class PlayerController : MonoBehaviour
     private CharacterController controller; //Crea una variable para gurdar el CharacterController como variable
     private Vector3 velocity; //Guarda velocidad vertical (gravedad, no hay salto)
     private MovementState currentState = MovementState.Walking; //Empieza en caminando
+    private float footstepTimer;
 
     // Se pone en true mientras algo externo (ej: el minijuego de ganzúa) necesita
     // que el jugador no se mueva. Se controla desde afuera con SetMovementLocked(),
@@ -70,24 +77,41 @@ public class PlayerController : MonoBehaviour
     public void SetMovementLocked(bool locked)
     {
         movementLocked = locked;
+        if (locked)
+        {
+            CurrentNoiseRadius = 0f;
+            footstepTimer = 0f;
+            if (animator != null)
+                animator.SetFloat("movment", 0f);
+        }
     }
 
     private void Start()
     {
-        cameraTransform = FindAnyObjectByType<CameraController>().transform;
+        if (cameraTransform == null)
+        {
+            CameraController cameraController = FindAnyObjectByType<CameraController>();
+            if (cameraController != null)
+                cameraTransform = cameraController.transform;
+        }
     }
 
     //Se repite cada frame
     private void Update()
     {
+        Vector3 positionBeforeMovement = transform.position;
+
         //Solo se mueve si nada externo lo está bloqueando (ej: minijuego de ganzúa)
         if (!movementLocked)
         {
             HandleMovement();
         }
 
+        Vector3 movement = transform.position - positionBeforeMovement;
+
         //La gravedad se aplica siempre, aunque no se mueva el personaje
         ApplyGravity();
+        UpdateFootstepNoise(movement);
     }
 
     private void HandleMovement()
@@ -102,12 +126,12 @@ public class PlayerController : MonoBehaviour
         currentState = DetermineMovementState(inputDir);
 
         float targetSpeed = GetSpeedForState(currentState); //Determina la velocidad dependiendo del estado
-        CurrentNoiseRadius = GetNoiseForState(currentState); //Determina el sonido generado segun el estado
 
         // Controlar la animación según la velocidad
         float animationSpeed = inputDir.magnitude >= 0.1f ? targetSpeed : 0f;
 
-        animator.SetFloat("movment", animationSpeed);
+        if (animator != null)
+            animator.SetFloat("movment", animationSpeed);
 
         // Se encarga de mover y rotar al personaje
         // Convierte las teclas que presiona el jugador en una dirección basada en la orientación de la cámara
@@ -132,6 +156,41 @@ public class PlayerController : MonoBehaviour
             Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
             //Mide la rotación actual (transform.rotation), hasta donde debe rotar (targetRotation), y a que velocidad rota (rotationSpeed)
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+        }
+    }
+
+    private void UpdateFootstepNoise(Vector3 movement)
+    {
+        movement.y = 0f;
+
+        // Solo hay pasos al desplazarse realmente sobre el suelo, no contra una pared.
+        if (movementLocked || Time.deltaTime <= 0f || !controller.isGrounded ||
+            movement.magnitude <= 0.01f * Time.deltaTime)
+        {
+            CurrentNoiseRadius = 0f;
+            footstepTimer = 0f;
+            return;
+        }
+
+        CurrentNoiseRadius = Mathf.Max(0f, GetNoiseForState(currentState));
+        footstepTimer -= Time.deltaTime;
+        if (footstepTimer > 0f)
+            return;
+
+        if (CurrentNoiseRadius > 0f)
+            Sounds.MakeSound(new Sound(transform.position, CurrentNoiseRadius, Sound.SoundType.Interesting));
+
+        switch (currentState)
+        {
+            case MovementState.Running:
+                footstepTimer = Mathf.Max(0.05f, runStepInterval);
+                break;
+            case MovementState.Crouching:
+                footstepTimer = Mathf.Max(0.05f, crouchStepInterval);
+                break;
+            default:
+                footstepTimer = Mathf.Max(0.05f, walkStepInterval);
+                break;
         }
     }
 

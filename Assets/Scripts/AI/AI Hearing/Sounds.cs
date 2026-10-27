@@ -7,13 +7,19 @@ namespace GamePlay
     {
         public static void MakeSound(Sound sound)
         {
-            Collider[] colliders = Physics.OverlapSphere(sound.pos, sound.range);
+            if (sound == null || sound.range <= 0f)
+                return;
+
+            Collider[] colliders = Physics.OverlapSphere(sound.pos, sound.range,
+                Physics.AllLayers, QueryTriggerInteraction.Collide);
             var notified = new HashSet<IHear>();
 
             foreach (Collider collider in colliders)
             {
-                // Child colliders can hear for the AI on their parent.
-                IHear hearer = collider.GetComponentInParent<IHear>();
+                // La IA y su adaptador NormalGuard deben contar como un solo receptor.
+                IHear hearer = collider.GetComponentInParent<AI>();
+                if (hearer == null)
+                    hearer = collider.GetComponentInParent<IHear>();
                 if (hearer != null && notified.Add(hearer))
                     hearer.RespondToSound(sound);
             }

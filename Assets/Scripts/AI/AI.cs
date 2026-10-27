@@ -6,6 +6,8 @@ public class AI : MonoBehaviour, IHear
 {
     public NavMeshAgent navMeshAgent;
     public Transform[] destinations;
+    [Tooltip("Descanso en segundos para cada elemento de Destinations, en el mismo orden. 0 = sin descanso.")]
+    [Min(0f)] public float[] destinationRestTimes = new float[0];
     private int i = 0;
 
     public bool followPlayer;
@@ -18,6 +20,8 @@ public class AI : MonoBehaviour, IHear
 
     private bool playerDetected;
     private bool investigatingSound;
+    private bool restingAtDestination;
+    private float restEndTime;
 
     public bool IsChasingPlayer => player != null &&
         (playerDetected || (followPlayer &&
@@ -28,6 +32,16 @@ public class AI : MonoBehaviour, IHear
 
     private bool CanNavigate => navMeshAgent != null &&
         navMeshAgent.isActiveAndEnabled && navMeshAgent.isOnNavMesh;
+
+    private void OnValidate()
+    {
+        int destinationCount = destinations != null ? destinations.Length : 0;
+        if (destinationRestTimes == null || destinationRestTimes.Length != destinationCount)
+            System.Array.Resize(ref destinationRestTimes, destinationCount);
+
+        for (int index = 0; index < destinationRestTimes.Length; index++)
+            destinationRestTimes[index] = Mathf.Max(0f, destinationRestTimes[index]);
+    }
 
     private void Awake()
     {
@@ -110,6 +124,7 @@ public class AI : MonoBehaviour, IHear
             path.status != NavMeshPathStatus.PathComplete || !navMeshAgent.SetPath(path))
             return;
 
+        restingAtDestination = false;
         navMeshAgent.isStopped = false;
         investigatingSound = true;
     }
@@ -119,15 +134,41 @@ public class AI : MonoBehaviour, IHear
         if (!CanNavigate || destinations == null || destinations.Length == 0)
             return;
 
+        if (restingAtDestination)
+        {
+            if (Time.time < restEndTime)
+                return;
+
+            restingAtDestination = false;
+        }
+
         i %= destinations.Length;
         if (destinations[i] == null)
+        {
+            i = (i + 1) % destinations.Length;
             return;
+        }
 
         navMeshAgent.isStopped = false;
         navMeshAgent.destination = destinations[i].position;
 
-        if (Vector3.Distance(transform.position, destinations[i].position) <= distanceToFollowPath)
+        float arrivalDistance = Mathf.Max(distanceToFollowPath, navMeshAgent.stoppingDistance);
+        if (Vector3.Distance(transform.position, destinations[i].position) <= arrivalDistance)
+        {
+            float restDuration = destinationRestTimes != null && i < destinationRestTimes.Length
+                ? Mathf.Max(0f, destinationRestTimes[i])
+                : 0f;
+
+            // El punto ya fue visitado: una interrupción continuará hacia el siguiente.
             i = (i + 1) % destinations.Length;
+
+            if (restDuration > 0f)
+            {
+                restingAtDestination = true;
+                restEndTime = Time.time + restDuration;
+                navMeshAgent.isStopped = true;
+            }
+        }
     }
 
     public void FollowPlayer()
@@ -135,6 +176,7 @@ public class AI : MonoBehaviour, IHear
         if (!CanNavigate || player == null)
             return;
 
+        restingAtDestination = false;
         investigatingSound = false;
         navMeshAgent.isStopped = false;
         navMeshAgent.destination = player.transform.position;

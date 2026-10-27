@@ -4045,6 +4045,8 @@ MonoBehaviour:
   TiempoMaximoEspera: 3
   MargenReaccion: 0.5
   TiempoMostrarResultado: 2
+  radioRuidoFallo: 10
+  origenRuido: {fileID: 0}
 --- !u!114 &632469084
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4702,6 +4704,8 @@ MonoBehaviour:
   InventoryManager: {fileID: 0}
   LockpickMinigameController: {fileID: 0}
   ShowCanvasNearPlayer: {fileID: 0}
+  radioRuidoApertura: 5
+  origenRuido: {fileID: 0}
   estadoActual: 2
 --- !u!1 &756009340
 GameObject:
@@ -7371,6 +7375,9 @@ MonoBehaviour:
   destinations:
   - {fileID: 1084545580}
   - {fileID: 1742983273}
+  destinationRestTimes:
+  - 4
+  - 0
   followPlayer: 0
   distanceToFollowPlayer: 10
   distanceToFollowPath: 2

@@ -109,6 +109,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 8253556232454207851}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6e076ad8ec4ef4b68a4af3c614d64268,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7308825561291492601}
   m_SourcePrefab: {fileID: 100100000, guid: 6e076ad8ec4ef4b68a4af3c614d64268, type: 3}
 --- !u!1 &6220407021977530333 stripped
 GameObject:
@@ -188,3 +192,15 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &7308825561291492601
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6220407021977530333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3dbab0cf63c49e68c75c02fb8986d0a, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerEnemyCollision

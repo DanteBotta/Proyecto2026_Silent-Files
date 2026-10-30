@@ -26,19 +26,7 @@ public class ConfigurationOpen : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (!PanelAbierto)
-            {
-                PanelInterrution.SetActive(true);
-                PanelConfiguracion.SetActive(false);
-                PanelSalir.SetActive(true);
-                PanelAbierto = true;
-            }
-            else
-            {
-                CerrarPaneles();
-                PanelAbierto = false;
-            }
-            
+            AbrirPanelSalir();
         }
     }
 
@@ -52,6 +40,22 @@ public class ConfigurationOpen : MonoBehaviour
         PanelInterrution.SetActive(true);
         PanelConfiguracion.SetActive(true);
         PanelAbierto = true;
+    }
+
+    public void AbrirPanelSalir()
+    {
+        if (!PanelAbierto)
+        {
+            PanelInterrution.SetActive(true);
+            PanelConfiguracion.SetActive(false);
+            PanelSalir.SetActive(true);
+            PanelAbierto = true;
+        }
+        else
+        {
+            CerrarPaneles();
+            PanelAbierto = false;
+        }
     }
 
     public void CerrarJuego()

@@ -80,6 +80,9 @@ public class IntroJuego : MonoBehaviour
             duracionFadeNegro);
 
         juegoEmpezo = true;
+        pantallaNegra.gameObject.SetActive(false);
+        imagenIntro.gameObject.SetActive(false);
+        textoIntro.gameObject.SetActive(false);
     }
 
     private IEnumerator Fade(

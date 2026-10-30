@@ -22,6 +22,7 @@ public class AI : MonoBehaviour, IHear
     private bool investigatingSound;
     private bool restingAtDestination;
     private float restEndTime;
+    private GuardDoorPassage doorPassage;
 
     public bool IsChasingPlayer => player != null &&
         (playerDetected || (followPlayer &&
@@ -48,7 +49,23 @@ public class AI : MonoBehaviour, IHear
         if (navMeshAgent == null)
             navMeshAgent = GetComponent<NavMeshAgent>();
 
+        doorPassage = GuardDoorPassage.EnsureFor(navMeshAgent);
+        if (doorPassage != null)
+            doorPassage.enabled = isActiveAndEnabled;
+
         animator = GetComponent<Animator>();
+    }
+
+    private void OnEnable()
+    {
+        if (doorPassage != null)
+            doorPassage.enabled = true;
+    }
+
+    private void OnDisable()
+    {
+        if (doorPassage != null)
+            doorPassage.enabled = false;
     }
 
     private void Start()
@@ -80,6 +97,10 @@ public class AI : MonoBehaviour, IHear
             FollowPlayer();
             return;
         }
+
+        // Keep the current route while the door opens. Sound and chase can still replace it.
+        if (doorPassage != null && doorPassage.IsWaitingForDoor)
+            return;
 
         if (investigatingSound)
         {
@@ -132,6 +153,9 @@ public class AI : MonoBehaviour, IHear
     public void EnemyPath()
     {
         if (!CanNavigate || destinations == null || destinations.Length == 0)
+            return;
+
+        if (doorPassage != null && doorPassage.IsWaitingForDoor)
             return;
 
         if (restingAtDestination)

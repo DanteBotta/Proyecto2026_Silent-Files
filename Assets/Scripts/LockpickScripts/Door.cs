@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections;
-using System.ComponentModel;
 using UnityEngine;
-using UnityEngine.Events;
 using GamePlay;
 
-public class Door : MonoBehaviour
+public partial class Door : MonoBehaviour
 {
     public InventoryManager InventoryManager;
     public LockpickMinigameController LockpickMinigameController;
@@ -25,18 +23,25 @@ public class Door : MonoBehaviour
     }
     public EstadoPuerta estadoActual;
 
-    bool PuertaAbierta = false;
+    // Door passage and animation state live in Door.Passage.cs.
 
     void Start()
     {
-        InventoryManager = FindAnyObjectByType<InventoryManager>();
-        LockpickMinigameController = FindAnyObjectByType<LockpickMinigameController>();
-        ShowCanvasNearPlayer = GetComponentInChildren<ShowCanvasNearPlayer>();
+        if (InventoryManager == null)
+            InventoryManager = FindAnyObjectByType<InventoryManager>();
+        if (LockpickMinigameController == null)
+            LockpickMinigameController = FindAnyObjectByType<LockpickMinigameController>();
+        if (ShowCanvasNearPlayer == null)
+            ShowCanvasNearPlayer = GetComponentInChildren<ShowCanvasNearPlayer>();
     }
 
     void Update()
     {
-        if (ShowCanvasNearPlayer.FuncionCanvas && Input.GetKeyDown(KeyCode.F))
+        if (guardasEnPaso.Count > 0 || fase == FaseMovimiento.Abriendo || fase == FaseMovimiento.Cerrando)
+            return;
+
+        if (ShowCanvasNearPlayer != null && InventoryManager != null &&
+            ShowCanvasNearPlayer.FuncionCanvas && Input.GetKeyDown(KeyCode.F))
         {
             InventoryManager.Herramienta herramientaActual = InventoryManager.ObjetoEnMano; // Obtener la herramienta actual del jugador
 
@@ -47,8 +52,7 @@ public class Door : MonoBehaviour
                     if (estadoActual == EstadoPuerta.Cerrada) // Puerta Cerrada
                     {
                         Debug.Log("Abriste puerta con la mano");
-                        estadoActual = EstadoPuerta.Abierta;
-                        PuertaAbierta = true;
+                        CambiarEstado(EstadoPuerta.Abierta);
                         Vector3 posicionRuido = origenRuido != null
                             ? origenRuido.position
                             : ShowCanvasNearPlayer.player != null
@@ -59,8 +63,7 @@ public class Door : MonoBehaviour
                     else if (estadoActual == EstadoPuerta.Abierta) // Puerta Abierta
                     {
                         Debug.Log("Cerraste puerta con la mano");
-                        estadoActual = EstadoPuerta.Cerrada;
-                        PuertaAbierta = false;
+                        CambiarEstado(EstadoPuerta.Cerrada);
                     }
                     else if (estadoActual == EstadoPuerta.Trabada) // Puerta Trabada
                     {
@@ -81,7 +84,7 @@ public class Door : MonoBehaviour
                     }
                     else if (estadoActual == EstadoPuerta.Trabada) // Puerta Trabada, se puede intentar abrir con la ganzúa
                     {
-                        if (!LockpickMinigameController.MinigameRunning)
+                        if (LockpickMinigameController != null && !LockpickMinigameController.MinigameRunning)
                         {
                             LockpickMinigameController.StartLockpickMinigame();
                             StartCoroutine(EsperarResultadoLockpickMinigame());
@@ -101,8 +104,7 @@ public class Door : MonoBehaviour
                     }
                     else if (estadoActual == EstadoPuerta.Trabada) // Puerta Trabada, se puede abrir con la palanca
                     {
-                        estadoActual = EstadoPuerta.Cerrada;
-                        PuertaAbierta = true;
+                        CambiarEstado(EstadoPuerta.Cerrada);
                     }
                 }
             }
@@ -118,21 +120,24 @@ public class Door : MonoBehaviour
 
     IEnumerator EsperarResultadoLockpickMinigame()
     {
+        int revisionAlComenzar = revisionEstado;
         // Espera hasta que el minijuego termine
         yield return new WaitUntil(() => LockpickMinigameController.MinigameFinished);
+
+        // Un resultado anterior al paso del guarda no debe sobrescribir la restauración.
+        if (revisionEstado != revisionAlComenzar || guardasEnPaso.Count > 0)
+            yield break;
 
         if (LockpickMinigameController.MinigameSuccess)
         {
             // Salio bien
-            estadoActual = EstadoPuerta.Cerrada; // desbloqueada, o Abierta si queres abrirla directo
-            PuertaAbierta = true;
+            CambiarEstado(EstadoPuerta.Cerrada);
             Debug.Log("Puerta desbloqueada con la ganzua");
         }
         else
         {
             // Salio mal
-            estadoActual = EstadoPuerta.Trabada;
-            PuertaAbierta = false;
+            CambiarEstado(EstadoPuerta.Trabada);
             Debug.Log("No pudiste abrir la puerta con la ganzua");
         }
     }

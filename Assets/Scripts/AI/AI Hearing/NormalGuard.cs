@@ -10,6 +10,7 @@ public class NormalGuard : MonoBehaviour, IHear
     private float displacementFromDanger = 10f;
 
     private AI enemyAI;
+    private GuardDoorPassage doorPassage;
 
     private bool CanNavigate => agent != null &&
         agent.isActiveAndEnabled && agent.isOnNavMesh;
@@ -23,6 +24,22 @@ public class NormalGuard : MonoBehaviour, IHear
 
         if (agent == null)
             Debug.LogWarning(name + " doesn't have an agent!");
+
+        doorPassage = GuardDoorPassage.EnsureFor(agent);
+        if (enemyAI == null && doorPassage != null)
+            doorPassage.enabled = isActiveAndEnabled;
+    }
+
+    private void OnEnable()
+    {
+        if (enemyAI == null && doorPassage != null)
+            doorPassage.enabled = true;
+    }
+
+    private void OnDisable()
+    {
+        if (enemyAI == null && doorPassage != null)
+            doorPassage.enabled = false;
     }
 
     public void RespondToSound(Sound sound)

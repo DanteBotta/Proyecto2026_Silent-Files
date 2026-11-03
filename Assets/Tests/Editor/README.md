@@ -27,3 +27,15 @@ Unity.exe -batchmode -nographics -projectPath "RUTA_AL_PROYECTO" -runTests -test
 No agregar `-quit`: el Test Runner termina Unity cuando finalizan las pruebas.
 Si el proyecto ya esta abierto, ejecutar desde su Test Runner o usar una copia
 aislada; no abrirlo simultaneamente en otra instancia del editor.
+
+Camaras de seguridad
+====================
+
+Ejecutar tambien `SecurityCameraTests`, `CameraPresentationTests` y
+`GuardCameraAlertTests`. Cubren el FOV instantaneo, obstrucciones, color del cono,
+rotacion independiente del framerate, eventos sin repeticion, multiples guardias,
+posicion conocida fija, movimiento NavMesh, prioridades y compatibilidad con puertas.
+La suite de presentacion tambien comprueba el volumen 3D y su recorte contra
+paredes planas/oblicuas, objetos parciales y obstaculos que se mueven o desactivan.
+Los casos de integracion entran a Play Mode y generan su navegacion en memoria.
+La configuracion del sistema esta documentada en `Docs/CamarasSeguridad.md`.

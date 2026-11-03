@@ -2,6 +2,8 @@ using GamePlay;
 using UnityEngine;
 using UnityEngine.AI;
 
+// Resolve FOV reports (50) before movement, then let GuardDoorPassage (100) enforce door waits.
+[DefaultExecutionOrder(75)]
 public class AI : MonoBehaviour, IHear
 {
     public NavMeshAgent navMeshAgent;
@@ -20,13 +22,18 @@ public class AI : MonoBehaviour, IHear
 
     private bool playerDetected;
     private bool investigatingSound;
+    private bool investigatingPlayerReport;
+    private bool playerReportNeedsPath;
     private bool restingAtDestination;
     private float restEndTime;
     private GuardDoorPassage doorPassage;
 
     public bool IsChasingPlayer => player != null &&
-        (playerDetected || (followPlayer &&
+        (playerDetected || (!investigatingPlayerReport && followPlayer &&
         Vector3.Distance(transform.position, player.transform.position) <= distanceToFollowPlayer));
+
+    public bool IsInvestigatingPlayerReport => investigatingPlayerReport;
+    public Vector3 LastKnownPlayerPosition { get; private set; }
 
     [Header ("Animator Reference")]
     private Animator animator;
@@ -98,11 +105,23 @@ public class AI : MonoBehaviour, IHear
             return;
         }
 
-        // Keep the current route while the door opens. Sound and chase can still replace it.
+        // A report can arrive before the agent is on its NavMesh. Keep the snapshot until ready.
+        // It also replaces an interrupted patrol/sound route while a door is opening.
+        if (investigatingPlayerReport && playerReportNeedsPath)
+        {
+            playerReportNeedsPath = false;
+            if (TrySetInvestigationPath(LastKnownPlayerPosition))
+                return;
+
+            investigatingPlayerReport = false;
+            navMeshAgent.ResetPath();
+        }
+
+        // Keep the current route while the door opens. Investigations and chase can replace it.
         if (doorPassage != null && doorPassage.IsWaitingForDoor)
             return;
 
-        if (investigatingSound)
+        if (investigatingSound || investigatingPlayerReport)
         {
             if (navMeshAgent.pathPending)
                 return;
@@ -114,6 +133,7 @@ public class AI : MonoBehaviour, IHear
                 return;
 
             investigatingSound = false;
+            investigatingPlayerReport = false;
             navMeshAgent.ResetPath();
         }
 
@@ -124,35 +144,64 @@ public class AI : MonoBehaviour, IHear
     {
         playerDetected = detected;
         if (detected)
+        {
             investigatingSound = false;
+            investigatingPlayerReport = false;
+            playerReportNeedsPath = false;
+        }
+    }
+
+    /// <summary>
+    /// Receives a position observed by a camera or another alert source. Only this AI owns
+    /// navigation; the report never grants ongoing knowledge of the player's Transform.
+    /// </summary>
+    public void ReportPlayerDetection(Vector3 lastKnownPosition)
+    {
+        // The guard's own confirmed detection has priority over a remote observation.
+        if (playerDetected && player != null)
+            return;
+
+        LastKnownPlayerPosition = lastKnownPosition;
+        investigatingPlayerReport = true;
+        playerReportNeedsPath = true;
+        investigatingSound = false;
+        restingAtDestination = false;
     }
 
     public void RespondToSound(Sound sound)
     {
-        if (sound == null || !isActiveAndEnabled || IsChasingPlayer || !CanNavigate)
+        if (sound == null || !isActiveAndEnabled || IsChasingPlayer ||
+            investigatingPlayerReport || !CanNavigate)
             return;
 
+        if (TrySetInvestigationPath(sound.pos))
+            investigatingSound = true;
+    }
+
+    // Both hearing and camera alerts use the existing complete-path investigation policy.
+    private bool TrySetInvestigationPath(Vector3 position)
+    {
         var filter = new NavMeshQueryFilter
         {
             agentTypeID = navMeshAgent.agentTypeID,
             areaMask = navMeshAgent.areaMask
         };
-        if (!NavMesh.SamplePosition(sound.pos, out NavMeshHit hit, soundNavMeshSearchRadius, filter))
-            return;
+        if (!NavMesh.SamplePosition(position, out NavMeshHit hit, soundNavMeshSearchRadius, filter))
+            return false;
 
         var path = new NavMeshPath();
         if (!navMeshAgent.CalculatePath(hit.position, path) ||
             path.status != NavMeshPathStatus.PathComplete || !navMeshAgent.SetPath(path))
-            return;
+            return false;
 
         restingAtDestination = false;
         navMeshAgent.isStopped = false;
-        investigatingSound = true;
+        return true;
     }
 
     public void EnemyPath()
     {
-        if (!CanNavigate || destinations == null || destinations.Length == 0)
+        if (!CanNavigate || investigatingPlayerReport || destinations == null || destinations.Length == 0)
             return;
 
         if (doorPassage != null && doorPassage.IsWaitingForDoor)
@@ -197,11 +246,13 @@ public class AI : MonoBehaviour, IHear
 
     public void FollowPlayer()
     {
-        if (!CanNavigate || player == null)
+        if (!CanNavigate || player == null || (investigatingPlayerReport && !playerDetected))
             return;
 
         restingAtDestination = false;
         investigatingSound = false;
+        investigatingPlayerReport = false;
+        playerReportNeedsPath = false;
         navMeshAgent.isStopped = false;
         navMeshAgent.destination = player.transform.position;
     }

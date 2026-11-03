@@ -14,6 +14,15 @@ public partial class Door : MonoBehaviour
     [Tooltip("Punto de interacción cerca del suelo. Sin asignar, usa la posición del jugador al abrir la puerta.")]
     [SerializeField] private Transform origenRuido;
 
+    [Header("Rotación")]
+    public Transform Bisagra;
+    public float AnguloApertura = 90f;
+    public float VelocidadRotacion = 3f;
+
+    private Quaternion RotacionCerrada;
+    private Quaternion RotacionAbierta;
+    private Quaternion RotacionObjetivo;
+
     public enum EstadoPuerta
     {
         Abierta,
@@ -27,18 +36,34 @@ public partial class Door : MonoBehaviour
 
     void Start()
     {
+        // Buscar el Canvas desde el objeto raíz de la puerta
+        Transform raizPuerta = transform.parent.parent;
+
+        // Obtener la bisagra (padre del objeto que tiene Door.cs)
+        Bisagra = transform.parent;
+
+        // Guardar rotaciones inicial y abierta
+        RotacionCerrada = Bisagra.localRotation;
+
+        RotacionAbierta = RotacionCerrada *
+            Quaternion.Euler(0, AnguloApertura, 0);
+
+        RotacionObjetivo = RotacionCerrada;
+        
         if (InventoryManager == null)
             InventoryManager = FindAnyObjectByType<InventoryManager>();
         if (LockpickMinigameController == null)
             LockpickMinigameController = FindAnyObjectByType<LockpickMinigameController>();
         if (ShowCanvasNearPlayer == null)
-            ShowCanvasNearPlayer = GetComponentInChildren<ShowCanvasNearPlayer>();
+            ShowCanvasNearPlayer = raizPuerta.GetComponentInChildren<ShowCanvasNearPlayer>(true);
     }
 
     void Update()
     {
         if (guardasEnPaso.Count > 0 || fase == FaseMovimiento.Abriendo || fase == FaseMovimiento.Cerrando)
             return;
+
+        Bisagra.localRotation = Quaternion.Slerp(Bisagra.localRotation, RotacionObjetivo, VelocidadRotacion * Time.deltaTime);
 
         if (ShowCanvasNearPlayer != null && InventoryManager != null &&
             ShowCanvasNearPlayer.FuncionCanvas && Input.GetKeyDown(KeyCode.F))
@@ -53,6 +78,8 @@ public partial class Door : MonoBehaviour
                     {
                         Debug.Log("Abriste puerta con la mano");
                         CambiarEstado(EstadoPuerta.Abierta);
+                        RotacionObjetivo = RotacionAbierta;
+
                         Vector3 posicionRuido = origenRuido != null
                             ? origenRuido.position
                             : ShowCanvasNearPlayer.player != null
@@ -64,6 +91,7 @@ public partial class Door : MonoBehaviour
                     {
                         Debug.Log("Cerraste puerta con la mano");
                         CambiarEstado(EstadoPuerta.Cerrada);
+                        RotacionObjetivo = RotacionCerrada;
                     }
                     else if (estadoActual == EstadoPuerta.Trabada) // Puerta Trabada
                     {
@@ -115,7 +143,6 @@ public partial class Door : MonoBehaviour
                 Debug.Log("La puerta no se puede abrir, esta bloqueada");
             }
         }
-        
     }
 
     IEnumerator EsperarResultadoLockpickMinigame()

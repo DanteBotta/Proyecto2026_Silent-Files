@@ -1,3 +1,5 @@
+
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -7,6 +9,7 @@ public class PauseMenuController : MonoBehaviour
 {
     public Image PanelMenuPausa;
     public MissionBriefing MissionBriefing;
+    public WindowMinigameManager[] WindowMinigames;
 
     [Header("Canvas a ocultar")]
     public Canvas CanvasMinimapa;
@@ -14,17 +17,33 @@ public class PauseMenuController : MonoBehaviour
 
     bool MenuPausaDesplegado = false;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         PanelMenuPausa.gameObject.SetActive(false);
         MissionBriefing = FindAnyObjectByType<MissionBriefing>();
+        WindowMinigames = FindObjectsByType<WindowMinigameManager>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape) && MissionBriefing.BriefingTerminado)
+        if (!MissionBriefing.BriefingTerminado)
+            return;
+
+        // Comprobar si hay algún minijuego activo
+        WindowMinigames = FindObjectsByType<WindowMinigameManager>();
+
+        foreach (WindowMinigameManager Minijuego in WindowMinigames)
+        {
+            if (Minijuego.MinijuegoActivo)
+                return;
+        }
+
+        // Si un minijuego se cerró con este mismo ESC, no abrir el menú
+        if (WindowMinigameManager.FrameCierrePorEsc == Time.frameCount)
+            return;
+
+        // ESC para abrir o cerrar el menú de pausa
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (!MenuPausaDesplegado)
             {
@@ -34,7 +53,6 @@ public class PauseMenuController : MonoBehaviour
                 CanvasMinimapa.gameObject.SetActive(false);
                 CanvasInventario.gameObject.SetActive(false);
 
-                // Pausar el juego
                 Time.timeScale = 0f;
             }
             else
@@ -46,8 +64,8 @@ public class PauseMenuController : MonoBehaviour
 
     public void BotonContinuar()
     {
-        // Reanudar el juego
         Time.timeScale = 1f;
+
         PanelMenuPausa.gameObject.SetActive(false);
         MenuPausaDesplegado = false;
 

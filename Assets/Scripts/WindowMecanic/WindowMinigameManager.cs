@@ -33,11 +33,16 @@ public class WindowMinigameManager : MonoBehaviour
     public float MargenReaccion = 0.5f;
     public float TiempoMostrarResultado = 1.5f;
 
+    [Header("Animator de la ventana")]
+    public Animator AnimatorVentana;
+
     [Header("Ruido")]
     [SerializeField, Min(0f)] private float radioRuidoFallo = 10f;
     [Tooltip("Punto de interacción cerca del suelo. Sin asignar, usa el sitio donde el jugador comenzó la interacción.")]
     [SerializeField] private Transform origenRuido;
 
+    // Frame en el que se cerró un minijuego con ESC (para que el menú de pausa lo ignore)
+    public static int FrameCierrePorEsc = -1;
 
     bool JuegoIniciado = false;
     bool AnimacionTerminada = false;
@@ -54,10 +59,23 @@ public class WindowMinigameManager : MonoBehaviour
     bool ResultadoExitoso = false;
     Vector3 posicionInteraccion;
 
+    bool PrimeraVezF = false;
+    bool FalloRojo = false;
+
+    public bool MinijuegoActivo => JuegoIniciado;
+    // Se puede salir con ESC solo antes de empezar a apretar F, o tras un fallo
+    bool PuedeSalirConEsc =>
+        JuegoIniciado &&
+        !(MostrandoResultado && ResultadoExitoso) &&   // en éxito no se puede salir
+        (MostrandoResultado || EvitarRepeticion == 0); // fallo, o todavía sin apretar F
+
     void Awake()
     {
         ShowCanvasNearPlayer = GetComponent<ShowCanvasNearPlayer>();
         AnimationImages = GetComponent<AnimationImages>();
+
+        // Obtener el Animator del padre
+        AnimatorVentana = GetComponentInParent<Animator>();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -73,6 +91,15 @@ public class WindowMinigameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // ESC para salir del minijuego (solo si está activo y en un estado permitido)
+        if (Input.GetKeyDown(KeyCode.Escape) && PuedeSalirConEsc)
+        {
+            FrameCierrePorEsc = Time.frameCount;
+            AnimationImages.Detener();
+            DesactivarMinijuego();
+            return;
+        }
+
         if (ShowCanvasNearPlayer.FuncionCanvas && Input.GetKeyDown(KeyCode.F) && !JuegoIniciado && !VentanaAbierta)
         {
             StartCoroutine(ActivarMinijuego());
@@ -104,6 +131,9 @@ public class WindowMinigameManager : MonoBehaviour
             {
                 if (EvitarRepeticion == 0)
                 {
+                    PrimeraVezF = true;
+                    FalloRojo = false;
+
                     AnimationImages.Reproducir("MinijuegoVentana/InteraccionVentana/StruglingWindow", true);
                     MostrarBoton("MinijuegoVentana/Botones/Apretado");
                     EvitarRepeticion++;
@@ -154,6 +184,7 @@ public class WindowMinigameManager : MonoBehaviour
                     MostrandoResultado = true;
                     TiempoInicioResultado = Time.time;
                     ResultadoExitoso = true;
+                    AnimatorVentana.SetBool("Abrir", true);
 
                     AnimationImages.Reproducir("MinijuegoVentana/InteraccionVentana/OpeningWindow", false );
 
@@ -167,6 +198,8 @@ public class WindowMinigameManager : MonoBehaviour
     {
         if (MostrandoResultado)
             return;
+
+        FalloRojo = boton.Contains("Fracaso");
 
         MostrarBoton(boton);
         Debug.Log(mensaje);
@@ -205,6 +238,8 @@ public class WindowMinigameManager : MonoBehaviour
 
     void DesactivarMinijuego()
     {
+        StopAllCoroutines(); // por si estaba en la animación inicial
+
         SpriteImage.enabled = false;
         SpriteBoton.enabled = false;
         UICamera.enabled = true;
@@ -212,8 +247,12 @@ public class WindowMinigameManager : MonoBehaviour
         ConfigurarDesenfoque(false);
 
         JuegoIniciado = false;
+        AnimacionTerminada = false;
+        MostrandoResultado = false;
+        DebeSoltar = false;
+        EvitarRepeticion = 0;
 
-        if (VentanaAbierta)
+        if (VentanaAbierta && ImageF != null)
         {
             Destroy(ImageF.gameObject);
         }

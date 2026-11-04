@@ -23,6 +23,9 @@ public partial class Door : MonoBehaviour
     private Quaternion RotacionAbierta;
     private Quaternion RotacionObjetivo;
 
+    [Header("Debug")]
+    public bool MostrarDebugs = false;
+
     public enum EstadoPuerta
     {
         Abierta,
@@ -76,7 +79,7 @@ public partial class Door : MonoBehaviour
                 {
                     if (estadoActual == EstadoPuerta.Cerrada) // Puerta Cerrada
                     {
-                        Debug.Log("Abriste puerta con la mano");
+                        DebugPuerta("Abriste puerta con la mano");
                         CambiarEstado(EstadoPuerta.Abierta);
                         RotacionObjetivo = RotacionAbierta;
 
@@ -89,13 +92,13 @@ public partial class Door : MonoBehaviour
                     }
                     else if (estadoActual == EstadoPuerta.Abierta) // Puerta Abierta
                     {
-                        Debug.Log("Cerraste puerta con la mano");
+                        DebugPuerta("Cerraste puerta con la mano");
                         CambiarEstado(EstadoPuerta.Cerrada);
                         RotacionObjetivo = RotacionCerrada;
                     }
                     else if (estadoActual == EstadoPuerta.Trabada) // Puerta Trabada
                     {
-                        Debug.Log("La puerta esta bloqueada, no se puede abrir con la mano");
+                        DebugPuerta("La puerta esta bloqueada, no se puede abrir con la mano");
                     }
                 }
 
@@ -104,11 +107,11 @@ public partial class Door : MonoBehaviour
                 {
                     if (estadoActual == EstadoPuerta.Cerrada) // Puerta Cerrada
                     {
-                        Debug.Log("La puerta esta cerrada, no es necesario usar ganzua");
+                        DebugPuerta("La puerta esta cerrada, no es necesario usar ganzua");
                     }
                     else if (estadoActual == EstadoPuerta.Abierta) // Puerta Abierta
                     {
-                        Debug.Log("Puerta Abierta");
+                        DebugPuerta("Puerta Abierta");
                     }
                     else if (estadoActual == EstadoPuerta.Trabada) // Puerta Trabada, se puede intentar abrir con la ganzúa
                     {
@@ -124,11 +127,11 @@ public partial class Door : MonoBehaviour
                 {
                     if (estadoActual == EstadoPuerta.Cerrada) // Puerta Cerrada
                     {
-                        Debug.Log("La puerta esta cerrada, no es necesario usar palanca");
+                        DebugPuerta("La puerta esta cerrada, no es necesario usar palanca");
                     }
                     else if (estadoActual == EstadoPuerta.Abierta) // Puerta Abierta
                     {
-                        Debug.Log("Puerta Abierta");
+                        DebugPuerta("Puerta Abierta");
                     }
                     else if (estadoActual == EstadoPuerta.Trabada) // Puerta Trabada, se puede abrir con la palanca
                     {
@@ -140,7 +143,7 @@ public partial class Door : MonoBehaviour
             else
             {
                 // Lo que pasa si la puerta esta bloqueada (no se puede abrir)
-                Debug.Log("La puerta no se puede abrir, esta bloqueada");
+                DebugPuerta("La puerta no se puede abrir, esta bloqueada");
             }
         }
     }
@@ -159,13 +162,19 @@ public partial class Door : MonoBehaviour
         {
             // Salio bien
             CambiarEstado(EstadoPuerta.Cerrada);
-            Debug.Log("Puerta desbloqueada con la ganzua");
+            DebugPuerta("Puerta desbloqueada con la ganzua");
         }
         else
         {
             // Salio mal
             CambiarEstado(EstadoPuerta.Trabada);
-            Debug.Log("No pudiste abrir la puerta con la ganzua");
+            DebugPuerta("No pudiste abrir la puerta con la ganzua");
         }
     }
+    void DebugPuerta(string mensaje)
+    {
+        if (MostrarDebugs)
+            Debug.Log("[Puerta] " + mensaje, this);
+    }
 }
+

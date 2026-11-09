@@ -558,8 +558,10 @@ MonoBehaviour:
   Bisagra: {fileID: 0}
   AnguloApertura: -90
   VelocidadRotacion: 3
+  multiplicadorVelocidadPalanca: 2
+  TextoEstado: {fileID: 0}
   MostrarDebugs: 0
-  estadoActual: 0
+  estadoActual: 1
 --- !u!1 &107596842
 GameObject:
   m_ObjectHideFlags: 0
@@ -1048,21 +1050,6 @@ PrefabInstance:
     - target: {fileID: 6616661247229436690, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6616661247229436690, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
-        type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6616661247229436690, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
-        type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6616661247229436690, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
-        type: 3}
-      propertyPath: m_LocalScale.z
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6616661247229436690, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
@@ -4006,8 +3993,10 @@ MonoBehaviour:
   Bisagra: {fileID: 0}
   AnguloApertura: -90
   VelocidadRotacion: 3
+  multiplicadorVelocidadPalanca: 2
+  TextoEstado: {fileID: 0}
   MostrarDebugs: 0
-  estadoActual: 0
+  estadoActual: 1
 --- !u!1 &646033168
 GameObject:
   m_ObjectHideFlags: 0
@@ -8137,8 +8126,10 @@ MonoBehaviour:
   Bisagra: {fileID: 0}
   AnguloApertura: -90
   VelocidadRotacion: 3
+  multiplicadorVelocidadPalanca: 2
+  TextoEstado: {fileID: 0}
   MostrarDebugs: 0
-  estadoActual: 0
+  estadoActual: 1
 --- !u!1 &1399291434
 GameObject:
   m_ObjectHideFlags: 0
@@ -10354,8 +10345,10 @@ MonoBehaviour:
   Bisagra: {fileID: 0}
   AnguloApertura: -90
   VelocidadRotacion: 3
+  multiplicadorVelocidadPalanca: 2
+  TextoEstado: {fileID: 0}
   MostrarDebugs: 0
-  estadoActual: 0
+  estadoActual: 1
 --- !u!1001 &1676859072
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11301,6 +11294,8 @@ MonoBehaviour:
   Bisagra: {fileID: 0}
   AnguloApertura: -90
   VelocidadRotacion: 3
+  multiplicadorVelocidadPalanca: 2
+  TextoEstado: {fileID: 0}
   MostrarDebugs: 0
   estadoActual: 1
 --- !u!4 &1752446761 stripped
@@ -11789,8 +11784,10 @@ MonoBehaviour:
   Bisagra: {fileID: 0}
   AnguloApertura: -90
   VelocidadRotacion: 3
+  multiplicadorVelocidadPalanca: 2
+  TextoEstado: {fileID: 0}
   MostrarDebugs: 0
-  estadoActual: 0
+  estadoActual: 1
 --- !u!224 &1830116002 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6616661247229436690, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
@@ -11969,8 +11966,10 @@ MonoBehaviour:
   Bisagra: {fileID: 0}
   AnguloApertura: -90
   VelocidadRotacion: 3
+  multiplicadorVelocidadPalanca: 2
+  TextoEstado: {fileID: 0}
   MostrarDebugs: 0
-  estadoActual: 0
+  estadoActual: 1
 --- !u!1 &1867222903
 GameObject:
   m_ObjectHideFlags: 0

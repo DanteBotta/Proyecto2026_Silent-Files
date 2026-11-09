@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using UnityEngine;
+using TMPro;
 using GamePlay;
 
 public partial class Door : MonoBehaviour
@@ -18,10 +19,18 @@ public partial class Door : MonoBehaviour
     public Transform Bisagra;
     public float AnguloApertura = 90f;
     public float VelocidadRotacion = 3f;
+    [Tooltip("Cuántas veces más rápido se abre la puerta cuando se fuerza con la palanca.")]
+    [SerializeField, Min(1f)] private float multiplicadorVelocidadPalanca = 2f;
+
+    [Header("Texto de estado")]
+    [Tooltip("Texto que muestra el estado de la puerta. Sin asignar, usa el único texto hijo directo del Canvas hermano de la bisagra.")]
+    public TMP_Text TextoEstado;
 
     private Quaternion RotacionCerrada;
     private Quaternion RotacionAbierta;
     private Quaternion RotacionObjetivo;
+    private bool aperturaRapida;
+    private EstadoPuerta? estadoMostrado;
 
     [Header("Debug")]
     public bool MostrarDebugs = false;
@@ -35,7 +44,7 @@ public partial class Door : MonoBehaviour
     }
     public EstadoPuerta estadoActual;
 
-    // Door passage and animation state live in Door.Passage.cs.
+    // Door passage state lives in Door.Passage.cs.
 
     void Start()
     {
@@ -52,13 +61,52 @@ public partial class Door : MonoBehaviour
             Quaternion.Euler(0, AnguloApertura, 0);
 
         RotacionObjetivo = RotacionCerrada;
-        
+
         if (InventoryManager == null)
             InventoryManager = FindAnyObjectByType<InventoryManager>();
         if (LockpickMinigameController == null)
             LockpickMinigameController = FindAnyObjectByType<LockpickMinigameController>();
         if (ShowCanvasNearPlayer == null)
             ShowCanvasNearPlayer = raizPuerta.GetComponentInChildren<ShowCanvasNearPlayer>(true);
+        if (TextoEstado == null)
+            TextoEstado = BuscarTextoEstado(raizPuerta);
+
+        ActualizarTextoEstado();
+    }
+
+    // El Canvas es hijo de la raíz de la puerta (hermano de la bisagra) y el texto es hijo directo del Canvas.
+    private TMP_Text BuscarTextoEstado(Transform raizPuerta)
+    {
+        foreach (Transform hermano in raizPuerta)
+        {
+            if (hermano == Bisagra || hermano.GetComponent<Canvas>() == null)
+                continue;
+
+            foreach (Transform hijo in hermano)
+            {
+                TMP_Text texto = hijo.GetComponent<TMP_Text>();
+                if (texto != null)
+                    return texto;
+            }
+        }
+        return null;
+    }
+
+    // Sólo reescribe el texto cuando el estado cambió (se llama desde LateUpdate en Door.Passage.cs).
+    private void ActualizarTextoEstado()
+    {
+        if (TextoEstado == null || (estadoMostrado.HasValue && estadoMostrado.Value == estadoActual))
+            return;
+
+        estadoMostrado = estadoActual;
+        TextoEstado.text = estadoActual switch
+        {
+            EstadoPuerta.Abierta => "ABIERTA",
+            EstadoPuerta.Cerrada => "CERRADA",
+            EstadoPuerta.Trabada => "TRABADA",
+            EstadoPuerta.Bloqueada => "BLOQUEADA",
+            _ => string.Empty
+        };
     }
 
     void Update()
@@ -66,7 +114,11 @@ public partial class Door : MonoBehaviour
         if (guardasEnPaso.Count > 0 || fase == FaseMovimiento.Abriendo || fase == FaseMovimiento.Cerrando)
             return;
 
-        Bisagra.localRotation = Quaternion.Slerp(Bisagra.localRotation, RotacionObjetivo, VelocidadRotacion * Time.deltaTime);
+        // Abierta a la fuerza con la palanca: gira más rápido que la apertura normal.
+        float velocidad = aperturaRapida && estadoActual == EstadoPuerta.Abierta
+            ? VelocidadRotacion * multiplicadorVelocidadPalanca
+            : VelocidadRotacion;
+        Bisagra.localRotation = Quaternion.Slerp(Bisagra.localRotation, RotacionObjetivo, velocidad * Time.deltaTime);
 
         if (ShowCanvasNearPlayer != null && InventoryManager != null &&
             ShowCanvasNearPlayer.FuncionCanvas && Input.GetKeyDown(KeyCode.F))
@@ -80,6 +132,7 @@ public partial class Door : MonoBehaviour
                     if (estadoActual == EstadoPuerta.Cerrada) // Puerta Cerrada
                     {
                         DebugPuerta("Abriste puerta con la mano");
+                        aperturaRapida = false;
                         CambiarEstado(EstadoPuerta.Abierta);
                         RotacionObjetivo = RotacionAbierta;
 
@@ -93,6 +146,7 @@ public partial class Door : MonoBehaviour
                     else if (estadoActual == EstadoPuerta.Abierta) // Puerta Abierta
                     {
                         DebugPuerta("Cerraste puerta con la mano");
+                        aperturaRapida = false;
                         CambiarEstado(EstadoPuerta.Cerrada);
                         RotacionObjetivo = RotacionCerrada;
                     }
@@ -133,9 +187,12 @@ public partial class Door : MonoBehaviour
                     {
                         DebugPuerta("Puerta Abierta");
                     }
-                    else if (estadoActual == EstadoPuerta.Trabada) // Puerta Trabada, se puede abrir con la palanca
+                    else if (estadoActual == EstadoPuerta.Trabada) // Puerta Trabada, la palanca la fuerza y la abre de una
                     {
-                        CambiarEstado(EstadoPuerta.Cerrada);
+                        DebugPuerta("Forzaste la puerta con la palanca");
+                        aperturaRapida = true;
+                        CambiarEstado(EstadoPuerta.Abierta);
+                        RotacionObjetivo = RotacionAbierta;
                     }
                 }
             }
@@ -177,4 +234,3 @@ public partial class Door : MonoBehaviour
             Debug.Log("[Puerta] " + mensaje, this);
     }
 }
-

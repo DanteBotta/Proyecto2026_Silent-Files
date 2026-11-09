@@ -125,6 +125,8 @@ public partial class Door
     // Door.Update() no toca la bisagra, así que la mueve este método.
     private void LateUpdate()
     {
+        ActualizarTextoEstado();
+
         if (!BisagraLista)
             return;
 

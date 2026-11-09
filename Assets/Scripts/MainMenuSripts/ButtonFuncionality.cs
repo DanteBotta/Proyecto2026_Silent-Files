@@ -9,6 +9,7 @@ public class ConfigurationOpen : MonoBehaviour
 {
     public GameObject PanelInterrution;
     public GameObject PanelConfiguracion;
+    public GameObject PanelCreditos;
     public GameObject PanelSalir;
 
     bool PanelAbierto = false;
@@ -18,6 +19,7 @@ public class ConfigurationOpen : MonoBehaviour
     {
         PanelInterrution.SetActive(false);
         PanelConfiguracion.SetActive(false);
+        PanelCreditos.SetActive(false);
         PanelSalir.SetActive(false);
     }
 
@@ -42,12 +44,20 @@ public class ConfigurationOpen : MonoBehaviour
         PanelAbierto = true;
     }
 
+    public void AbrirPanelCreditos()
+    {
+        PanelInterrution.SetActive(true);
+        PanelCreditos.SetActive(true);
+        PanelAbierto = true;
+    }
+
     public void AbrirPanelSalir()
     {
         if (!PanelAbierto)
         {
             PanelInterrution.SetActive(true);
             PanelConfiguracion.SetActive(false);
+            PanelCreditos.SetActive(false);
             PanelSalir.SetActive(true);
             PanelAbierto = true;
         }
@@ -71,6 +81,7 @@ public class ConfigurationOpen : MonoBehaviour
     {
         PanelInterrution.SetActive(false);
         PanelConfiguracion.SetActive(false);
+        PanelCreditos.SetActive(false);
         PanelSalir.SetActive(false);
         PanelAbierto = false;
     }

@@ -331,8 +331,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShowCanvasNearPlayer
   player: {fileID: 0}
-  distanciaActivacion: 8
-  distanciaFuncion: 8
+  distanciaActivacion: 7
+  distanciaFuncion: 7
   FuncionCanvas: 0
   MostrarDebug: 0
 --- !u!114 &4148063129600124023

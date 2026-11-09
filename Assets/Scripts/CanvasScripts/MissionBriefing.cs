@@ -8,6 +8,10 @@ public class MissionBriefing : MonoBehaviour
     public GameObject Personaje;
     public GameObject PuntoSpawn;
 
+    [Header("Guardia")]
+    public GameObject Guardia;
+    public GameObject PuntoSpawnGuardia;
+
     [Header("Panel")]
     public GameObject Panel;
 
@@ -40,12 +44,15 @@ public class MissionBriefing : MonoBehaviour
     public bool MisionIniciada = false;
 
     private bool personajeInstanciado = false;
+    private bool gaurdiaInstanciado = false;
 
     private void Awake()
     {
         PanelInventario.SetActive(false);
         Minimapa.SetActive(false);
+
         InstanciarPersonaje();
+        InstanciarGuardia();
     }
 
     private void Start()
@@ -203,6 +210,22 @@ public class MissionBriefing : MonoBehaviour
         );
 
         personajeInstanciado = true;
+    }
+
+    private void InstanciarGuardia()
+    {
+        if (gaurdiaInstanciado)
+        {
+            return;
+        }
+
+        Instantiate(
+            Guardia,
+            PuntoSpawnGuardia.transform.position,
+            PuntoSpawnGuardia.transform.rotation
+        );
+
+        gaurdiaInstanciado = true;
     }
 
     private void ContinuarMision()

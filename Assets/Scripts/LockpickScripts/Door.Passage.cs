@@ -1,37 +1,46 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
+// Paso de guardas por puertas, estilo aldeano de Minecraft:
+// el guarda pide pasar -> la puerta se abre sola (rotando la bisagra por código),
+// el guarda cruza y, cuando termina de pasar, la puerta se cierra sola.
+// No usa animaciones ni apaga colliders: el collider de la hoja es hijo de la bisagra
+// y se mueve junto con el modelo.
 public partial class Door
 {
     [Header("Paso de guardas")]
-    [Tooltip("Colliders de la hoja que bloquean el paso. Vacío: busca los colliders sólidos de esta puerta.")]
+    [Tooltip("Colliders de la hoja. Sólo se usan para calcular el hueco de la puerta. Vacío: busca los colliders sólidos de esta puerta.")]
     [SerializeField] private Collider[] collidersBloqueo;
     [Tooltip("Volumen del hueco cerrado. Sin asignar, usa el primer BoxCollider de la hoja. Su posición se guarda al iniciar.")]
     [SerializeField] private BoxCollider volumenPaso;
-
-    [Header("Animación (opcional)")]
-    [Tooltip("Para Animation Events directos, el Animator debe estar en el mismo objeto que Door. También se puede controlar desde los eventos de solicitud.")]
-    [SerializeField] private Animator animatorPuerta;
-    [SerializeField] private string parametroAbierta = "Abierta";
-    [Tooltip("Activar cuando los clips llamen a NotificarPuertaAbierta y NotificarPuertaCerrada. Sin animación, dejar desactivado.")]
-    [SerializeField] private bool esperarEventosAnimacion;
-    [SerializeField] private UnityEvent alSolicitarApertura = new UnityEvent();
-    [SerializeField] private UnityEvent alSolicitarCierre = new UnityEvent();
+    [Tooltip("Velocidad (grados por segundo) con la que la puerta se abre y se cierra sola cuando pasa un guarda.")]
+    [SerializeField, Min(1f)] private float velocidadGuardaGrados = 240f;
 
     private enum FaseMovimiento { Cerrada, Abriendo, Abierta, Cerrando }
 
+    // Qué tan cerca (en grados) tiene que estar la bisagra de su objetivo para considerarla llegada.
+    private const float ToleranciaGrados = 1f;
+
     private static readonly List<Door> activeDoors = new List<Door>();
     public static IReadOnlyList<Door> ActiveDoors => activeDoors;
-    public bool IsPassable => isActiveAndEnabled && fase == FaseMovimiento.Abierta;
+
+    // Pasable sólo cuando la hoja realmente llegó a la posición abierta (también si la abrió el jugador).
+    public bool IsPassable => isActiveAndEnabled && fase == FaseMovimiento.Abierta && (!BisagraLista || EstaEn(RotacionAbierta));
 
     private readonly HashSet<GuardDoorPassage> guardasEnPaso = new HashSet<GuardDoorPassage>();
     private EstadoPuerta estadoAntesDelPaso;
     private FaseMovimiento fase;
-    private bool[] collidersHabilitados;
     private Bounds limitesPaso;
     private Matrix4x4 mundoAPaso;
     private int revisionEstado;
+
+    // Door.cs calcula las rotaciones en Start(); hasta entonces no se puede mover la bisagra.
+    private bool BisagraLista =>
+        Bisagra != null &&
+        (RotacionCerrada.x != 0f || RotacionCerrada.y != 0f || RotacionCerrada.z != 0f || RotacionCerrada.w != 0f);
+
+    private bool EstaEn(Quaternion objetivo) =>
+        BisagraLista && Quaternion.Angle(Bisagra.localRotation, objetivo) < ToleranciaGrados;
 
     private void Awake()
     {
@@ -46,19 +55,20 @@ public partial class Door
             collidersBloqueo = solidos.ToArray();
         }
 
-        collidersHabilitados = new bool[collidersBloqueo.Length];
-        for (int index = 0; index < collidersBloqueo.Length; index++)
+        if (volumenPaso == null)
         {
-            Collider bloqueo = collidersBloqueo[index];
-            if (bloqueo == null)
-                continue;
-
-            collidersHabilitados[index] = bloqueo.enabled;
-            if (volumenPaso == null && bloqueo is BoxCollider caja)
-                volumenPaso = caja;
+            foreach (Collider bloqueo in collidersBloqueo)
+            {
+                if (bloqueo is BoxCollider caja)
+                {
+                    volumenPaso = caja;
+                    break;
+                }
+            }
         }
 
-        // Animar/deshabilitar la hoja no debe mover el hueco que el guarda debe despejar.
+        // La hoja rota con la bisagra, pero el hueco que el guarda debe despejar queda fijo:
+        // se calcula una sola vez, con la puerta en su posición inicial.
         if (volumenPaso != null)
         {
             Transform caja = volumenPaso.transform;
@@ -82,9 +92,7 @@ public partial class Door
             }
         }
 
-        if (animatorPuerta == null)
-            animatorPuerta = GetComponent<Animator>();
-        AplicarEstadoInmediato();
+        fase = estadoActual == EstadoPuerta.Abierta ? FaseMovimiento.Abierta : FaseMovimiento.Cerrada;
     }
 
     private void OnEnable()
@@ -102,9 +110,51 @@ public partial class Door
             guardasEnPaso.Clear();
             revisionEstado++;
         }
-        AplicarEstadoInmediato();
+
+        // Si se desactiva en medio de un movimiento, la puerta queda directamente en su estado final.
+        bool abierta = estadoActual == EstadoPuerta.Abierta;
+        fase = abierta ? FaseMovimiento.Abierta : FaseMovimiento.Cerrada;
+        if (BisagraLista)
+        {
+            RotacionObjetivo = abierta ? RotacionAbierta : RotacionCerrada;
+            Bisagra.localRotation = RotacionObjetivo;
+        }
     }
 
+    // Mientras la puerta se mueve por un guarda (fase Abriendo/Cerrando o con guardas en paso),
+    // Door.Update() no toca la bisagra, así que la mueve este método.
+    private void LateUpdate()
+    {
+        if (!BisagraLista)
+            return;
+
+        if (fase == FaseMovimiento.Abriendo)
+        {
+            GirarHacia(RotacionAbierta);
+            if (EstaEn(RotacionAbierta))
+            {
+                Bisagra.localRotation = RotacionAbierta;
+                fase = FaseMovimiento.Abierta;
+            }
+        }
+        else if (fase == FaseMovimiento.Cerrando)
+        {
+            GirarHacia(RotacionCerrada);
+            if (EstaEn(RotacionCerrada))
+            {
+                Bisagra.localRotation = RotacionCerrada;
+                fase = FaseMovimiento.Cerrada;
+            }
+        }
+    }
+
+    private void GirarHacia(Quaternion objetivo)
+    {
+        Bisagra.localRotation = Quaternion.RotateTowards(
+            Bisagra.localRotation, objetivo, velocidadGuardaGrados * Time.deltaTime);
+    }
+
+    // El guarda pide pasar: la puerta empieza a abrirse. Hay que esperar a IsPassable antes de cruzar.
     public bool RequestGuardPassage(GuardDoorPassage guarda)
     {
         if (!isActiveAndEnabled || guarda == null)
@@ -115,15 +165,28 @@ public partial class Door
         if (guardasEnPaso.Count == 0)
             estadoAntesDelPaso = estadoActual;
         guardasEnPaso.Add(guarda);
-        CambiarEstado(EstadoPuerta.Abierta);
+
+        estadoActual = EstadoPuerta.Abierta;
+        revisionEstado++;
+        RotacionObjetivo = RotacionAbierta;
+        fase = EstaEn(RotacionAbierta) ? FaseMovimiento.Abierta : FaseMovimiento.Abriendo;
         return true;
     }
 
+    // El guarda ya pasó. Cuando se va el último, la puerta se cierra sola
+    // (también si el jugador la había dejado abierta).
     public void ReleaseGuardPassage(GuardDoorPassage guarda)
     {
         if (!guardasEnPaso.Remove(guarda) || guardasEnPaso.Count > 0)
             return;
-        CambiarEstado(estadoAntesDelPaso);
+
+        // La puerta siempre se cierra al terminar de pasar, incluso si ya estaba abierta.
+        // Si estaba trabada o bloqueada, recupera ese estado.
+        estadoActual = estadoAntesDelPaso == EstadoPuerta.Abierta ? EstadoPuerta.Cerrada : estadoAntesDelPaso;
+        revisionEstado++;
+
+        RotacionObjetivo = RotacionCerrada;
+        fase = EstaEn(RotacionCerrada) ? FaseMovimiento.Cerrada : FaseMovimiento.Cerrando;
     }
 
     // Las posiciones recibidas son los pies del agente, no el centro del modelo.
@@ -160,81 +223,32 @@ public partial class Door
 
     private static Vector3 Abs(Vector3 value) => new Vector3(Mathf.Abs(value.x), Mathf.Abs(value.y), Mathf.Abs(value.z));
 
-    private void CambiarEstado(EstadoPuerta nuevoEstado)
-    {
-        estadoActual = nuevoEstado;
-        revisionEstado++;
-        bool abrir = nuevoEstado == EstadoPuerta.Abierta;
-        if ((abrir && (fase == FaseMovimiento.Abierta || fase == FaseMovimiento.Abriendo)) ||
-            (!abrir && (fase == FaseMovimiento.Cerrada || fase == FaseMovimiento.Cerrando)))
-            return;
-
-        fase = abrir ? FaseMovimiento.Abriendo : FaseMovimiento.Cerrando;
-        ActualizarAnimator(abrir);
-        if (abrir)
-        {
-            alSolicitarApertura.Invoke();
-            if (!esperarEventosAnimacion)
-                NotificarPuertaAbierta();
-        }
-        else
-        {
-            alSolicitarCierre.Invoke();
-            if (!esperarEventosAnimacion)
-                NotificarPuertaCerrada();
-        }
-    }
-
-    // Animation Events: apertura cuando la hoja ya deja pasar; cierre al final del clip.
+    // Completan al instante el movimiento de apertura/cierre iniciado por un guarda.
+    // El juego no las necesita (LateUpdate llega solo), pero los tests las usan para simular que la puerta terminó de moverse.
     public void NotificarPuertaAbierta()
     {
         if (fase != FaseMovimiento.Abriendo)
             return;
+        if (BisagraLista)
+            Bisagra.localRotation = RotacionAbierta;
         fase = FaseMovimiento.Abierta;
-        ActualizarColliders(false);
     }
 
     public void NotificarPuertaCerrada()
     {
         if (fase != FaseMovimiento.Cerrando)
             return;
+        if (BisagraLista)
+            Bisagra.localRotation = RotacionCerrada;
         fase = FaseMovimiento.Cerrada;
-        ActualizarColliders(true);
     }
 
-    private void AplicarEstadoInmediato()
+    // Lo usa Door.cs cuando el jugador abre, cierra, destraba o traba la puerta.
+    // La rotación la sigue haciendo Door.Update() con el Slerp de siempre.
+    private void CambiarEstado(EstadoPuerta nuevoEstado)
     {
-        bool abierta = estadoActual == EstadoPuerta.Abierta;
-        fase = abierta ? FaseMovimiento.Abierta : FaseMovimiento.Cerrada;
-        ActualizarColliders(!abierta);
-        ActualizarAnimator(abierta);
-    }
-
-    private void ActualizarColliders(bool bloquear)
-    {
-        if (collidersHabilitados == null)
-            return;
-        for (int index = 0; index < collidersBloqueo.Length; index++)
-        {
-            if (collidersBloqueo[index] != null)
-                collidersBloqueo[index].enabled = bloquear && collidersHabilitados[index];
-        }
-    }
-
-    private void ActualizarAnimator(bool abierta)
-    {
-        if (animatorPuerta == null || animatorPuerta.runtimeAnimatorController == null ||
-            string.IsNullOrEmpty(parametroAbierta))
-            return;
-
-        // El controller actual todavía no tiene parámetros para las puertas.
-        foreach (AnimatorControllerParameter parametro in animatorPuerta.parameters)
-        {
-            if (parametro.name == parametroAbierta && parametro.type == AnimatorControllerParameterType.Bool)
-            {
-                animatorPuerta.SetBool(parametroAbierta, abierta);
-                break;
-            }
-        }
+        estadoActual = nuevoEstado;
+        revisionEstado++;
+        fase = nuevoEstado == EstadoPuerta.Abierta ? FaseMovimiento.Abierta : FaseMovimiento.Cerrada;
     }
 }

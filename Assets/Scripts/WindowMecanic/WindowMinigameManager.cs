@@ -17,14 +17,14 @@ public class WindowMinigameManager : MonoBehaviour
     public TextMeshProUGUI TextoEstado; // Texto del estado de ventana
     public Image SpriteImage; // Imagen de la ventana
     public Image SpriteBoton; // Imagen del boton
-    public Image ImageF; // Imagen de F del canvas de world space, para eliminarlo
+    public Image ImageF; // Imagen de F del canvas de world space (ahora se mantiene para cruzar la ventana)
     public Canvas CanvasInventario;
 
     [Header("Cámara que muestra la layer UIWorld")]
     public Camera UICamera; // Cámara que muestra los UI en world space
 
     // La referencia al post proscessing
-    public Volume volume; 
+    public Volume volume;
     private DepthOfField depthOfField;
 
     [Header("Configuración del Minijuego")]
@@ -40,6 +40,24 @@ public class WindowMinigameManager : MonoBehaviour
     [SerializeField, Min(0f)] private float radioRuidoFallo = 10f;
     [Tooltip("Punto de interacción cerca del suelo. Sin asignar, usa el sitio donde el jugador comenzó la interacción.")]
     [SerializeField] private Transform origenRuido;
+
+    [Header("Cruzar la ventana")]
+    [Tooltip("Imagen negra a pantalla completa (en un Canvas Screen Space - Overlay) con un CanvasGroup.")]
+    [SerializeField] private CanvasGroup pantallaNegra;
+    [Tooltip("Primer punto de teletransporte (un lado de la ventana).")]
+    [SerializeField] private Transform puntoTeletransporteA;
+    [Tooltip("Segundo punto de teletransporte (el otro lado de la ventana).")]
+    [SerializeField] private Transform puntoTeletransporteB;
+    [SerializeField, Min(0.01f)] private float duracionFadeEntrada = 0.6f;
+    [SerializeField, Min(0.01f)] private float duracionFadeSalida = 0.6f;
+    [SerializeField, Min(0f)] private float tiempoPantallaNegra = 0.3f;
+    [Tooltip("Copiar también la rotación del punto de destino al jugador.")]
+    [SerializeField] private bool copiarRotacionDestino = true;
+    [Tooltip("Scripts del jugador (movimiento, cámara, etc.) que se desactivan mientras cruza.")]
+    [SerializeField] private Behaviour[] scriptsJugadorADesactivar;
+
+    [Header("Distancias tras completar el minijuego")]
+    [SerializeField] private float distanciaTrasCompletar = 4f;
 
     // Frame en el que se cerró un minijuego con ESC (para que el menú de pausa lo ignore)
     public static int FrameCierrePorEsc = -1;
@@ -57,6 +75,8 @@ public class WindowMinigameManager : MonoBehaviour
     float TiempoInicioResultado;
     bool VentanaAbierta = false;
     bool ResultadoExitoso = false;
+    bool Cruzando = false;
+    bool DistanciasReducidas = false;
     Vector3 posicionInteraccion;
 
     bool PrimeraVezF = false;
@@ -86,6 +106,13 @@ public class WindowMinigameManager : MonoBehaviour
 
         SpriteBoton.enabled = false;
         SpriteImage.enabled = false;
+
+        if (pantallaNegra != null)
+        {
+            pantallaNegra.alpha = 0f;
+            pantallaNegra.blocksRaycasts = false;
+            pantallaNegra.interactable = false;
+        }
     }
 
     // Update is called once per frame
@@ -100,9 +127,17 @@ public class WindowMinigameManager : MonoBehaviour
             return;
         }
 
-        if (ShowCanvasNearPlayer.FuncionCanvas && Input.GetKeyDown(KeyCode.F) && !JuegoIniciado && !VentanaAbierta)
+        if (ShowCanvasNearPlayer.FuncionCanvas && Input.GetKeyDown(KeyCode.F) && !JuegoIniciado)
         {
-            StartCoroutine(ActivarMinijuego());
+            if (!VentanaAbierta)
+            {
+                StartCoroutine(ActivarMinijuego());
+            }
+            else if (!Cruzando && puntoTeletransporteA != null && puntoTeletransporteB != null)
+            {
+                // Ventana ya abierta: F para pasar al otro lado
+                StartCoroutine(CruzarVentana());
+            }
         }
 
         if (JuegoIniciado && AnimacionTerminada)
@@ -186,7 +221,7 @@ public class WindowMinigameManager : MonoBehaviour
                     ResultadoExitoso = true;
                     AnimatorVentana.SetBool("Abrir", true);
 
-                    AnimationImages.Reproducir("MinijuegoVentana/InteraccionVentana/OpeningWindow", false );
+                    AnimationImages.Reproducir("MinijuegoVentana/InteraccionVentana/OpeningWindow", false);
 
                     TextoEstado.text = "Ventana (abierta)";
                 }
@@ -252,10 +287,89 @@ public class WindowMinigameManager : MonoBehaviour
         DebeSoltar = false;
         EvitarRepeticion = 0;
 
-        if (VentanaAbierta && ImageF != null)
+        // Minijuego completado: la F se mantiene (ahora sirve para cruzar) y se reducen las distancias
+        if (VentanaAbierta)
         {
-            Destroy(ImageF.gameObject);
+            ReducirDistancias();
         }
+    }
+
+    void ReducirDistancias()
+    {
+        if (DistanciasReducidas || ShowCanvasNearPlayer == null)
+            return;
+
+        DistanciasReducidas = true;
+        ShowCanvasNearPlayer.distanciaActivacion = distanciaTrasCompletar;
+        ShowCanvasNearPlayer.distanciaFuncion = distanciaTrasCompletar;
+    }
+
+    // Fade a negro -> teletransporte al otro lado -> fade desde negro
+    IEnumerator CruzarVentana()
+    {
+        Cruzando = true;
+
+        Transform jugador = ShowCanvasNearPlayer != null ? ShowCanvasNearPlayer.player : null;
+
+        // Bloquear control del jugador mientras dura la transición
+        if (scriptsJugadorADesactivar != null)
+        {
+            foreach (Behaviour b in scriptsJugadorADesactivar)
+                if (b != null) b.enabled = false;
+        }
+
+        // Fade de entrada (pantalla pasa a negro)
+        yield return Fade(0f, 1f, duracionFadeEntrada);
+
+        // Mover al jugador al punto más lejano (el opuesto al más cercano)
+        if (jugador != null && puntoTeletransporteA != null && puntoTeletransporteB != null)
+        {
+            float distA = (jugador.position - puntoTeletransporteA.position).sqrMagnitude;
+            float distB = (jugador.position - puntoTeletransporteB.position).sqrMagnitude;
+            Transform destino = distA <= distB ? puntoTeletransporteB : puntoTeletransporteA;
+
+            CharacterController cc = jugador.GetComponent<CharacterController>();
+            if (cc != null) cc.enabled = false; // si no, el CharacterController pisa la posición
+
+            jugador.position = destino.position;
+            if (copiarRotacionDestino)
+                jugador.rotation = destino.rotation;
+
+            if (cc != null) cc.enabled = true;
+        }
+
+        if (tiempoPantallaNegra > 0f)
+            yield return new WaitForSecondsRealtime(tiempoPantallaNegra);
+
+        // Fade de salida (pantalla vuelve a verse)
+        yield return Fade(1f, 0f, duracionFadeSalida);
+
+        if (scriptsJugadorADesactivar != null)
+        {
+            foreach (Behaviour b in scriptsJugadorADesactivar)
+                if (b != null) b.enabled = true;
+        }
+
+        Cruzando = false;
+    }
+
+    IEnumerator Fade(float desde, float hasta, float duracion)
+    {
+        if (pantallaNegra == null)
+            yield break;
+
+        pantallaNegra.blocksRaycasts = true;
+        float t = 0f;
+
+        while (t < duracion)
+        {
+            t += Time.unscaledDeltaTime;
+            pantallaNegra.alpha = Mathf.Lerp(desde, hasta, t / duracion);
+            yield return null;
+        }
+
+        pantallaNegra.alpha = hasta;
+        pantallaNegra.blocksRaycasts = hasta > 0f;
     }
 
     public void MostrarBoton(string ruta) // Con una ruta específica muestra una imagen específica del boton

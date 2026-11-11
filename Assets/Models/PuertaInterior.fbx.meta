@@ -3,7 +3,17 @@ guid: 9771ea3628456cd47854b082ae8a3ebb
 ModelImporter:
   serializedVersion: 24501
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Laton.002
+    second: {fileID: 2100000, guid: 8decb941d1b064c4d9408816c912424f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Madera.004
+    second: {fileID: 2100000, guid: 3284886a963b29544891523544bda7d5, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

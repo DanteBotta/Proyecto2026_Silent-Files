@@ -315,7 +315,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MissionPanelData
   displayName: 
   thumbnail: {fileID: 0}
-  isLocked: 1
+  isLocked: 0
 --- !u!1 &256061562
 GameObject:
   m_ObjectHideFlags: 0
@@ -1791,7 +1791,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MissionPanelData
   displayName: 
   thumbnail: {fileID: 0}
-  isLocked: 1
+  isLocked: 0
 --- !u!1 &1394211499
 GameObject:
   m_ObjectHideFlags: 0
@@ -2536,7 +2536,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MissionPanelData
   displayName: 
   thumbnail: {fileID: 0}
-  isLocked: 1
+  isLocked: 0
 --- !u!4 &1713257367 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 5c9d80cc383d1e84282e5ada77b446e6,

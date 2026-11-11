@@ -7,9 +7,6 @@ public class PlayerEnemyCollision : MonoBehaviour
 {
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        if (!isActiveAndEnabled)
-            return;
-
         // Permite reconocer al enemigo aunque el collider esté en un objeto hijo.
         if (hit.collider.GetComponentInParent<AI>() != null)
             AlColisionarConEnemigo();
@@ -17,5 +14,7 @@ public class PlayerEnemyCollision : MonoBehaviour
 
     private void AlColisionarConEnemigo()
     {
+        Debug.Log("67");
+        Time.timeScale = 0f; // Detiene el tiempo del juego.
     }
 }

@@ -35,6 +35,10 @@ public partial class Door : MonoBehaviour
     [Header("Debug")]
     public bool MostrarDebugs = false;
 
+    private Rigidbody rbBisagra;
+    private Collider colliderPuerta;
+    private bool colisionActiva = true;
+
     public enum EstadoPuerta
     {
         Abierta,
@@ -72,6 +76,11 @@ public partial class Door : MonoBehaviour
             TextoEstado = BuscarTextoEstado(raizPuerta);
 
         ActualizarTextoEstado();
+
+        rbBisagra = Bisagra.GetComponent<Rigidbody>();
+        rbBisagra.isKinematic = true;
+        rbBisagra.interpolation = RigidbodyInterpolation.Interpolate;
+        colliderPuerta = GetComponent<Collider>();
     }
 
     // El Canvas es hijo de la raíz de la puerta (hermano de la bisagra) y el texto es hijo directo del Canvas.
@@ -114,12 +123,6 @@ public partial class Door : MonoBehaviour
         if (guardasEnPaso.Count > 0 || fase == FaseMovimiento.Abriendo || fase == FaseMovimiento.Cerrando)
             return;
 
-        // Abierta a la fuerza con la palanca: gira más rápido que la apertura normal.
-        float velocidad = aperturaRapida && estadoActual == EstadoPuerta.Abierta
-            ? VelocidadRotacion * multiplicadorVelocidadPalanca
-            : VelocidadRotacion;
-        Bisagra.localRotation = Quaternion.Slerp(Bisagra.localRotation, RotacionObjetivo, velocidad * Time.deltaTime);
-
         if (ShowCanvasNearPlayer != null && InventoryManager != null &&
             ShowCanvasNearPlayer.FuncionCanvas && Input.GetKeyDown(KeyCode.F))
         {
@@ -135,6 +138,7 @@ public partial class Door : MonoBehaviour
                         aperturaRapida = false;
                         CambiarEstado(EstadoPuerta.Abierta);
                         RotacionObjetivo = RotacionAbierta;
+                        ActivarColision(false);
 
                         Vector3 posicionRuido = origenRuido != null
                             ? origenRuido.position
@@ -149,6 +153,7 @@ public partial class Door : MonoBehaviour
                         aperturaRapida = false;
                         CambiarEstado(EstadoPuerta.Cerrada);
                         RotacionObjetivo = RotacionCerrada;
+                        ActivarColision(false);
                     }
                     else if (estadoActual == EstadoPuerta.Trabada) // Puerta Trabada
                     {
@@ -193,6 +198,7 @@ public partial class Door : MonoBehaviour
                         aperturaRapida = true;
                         CambiarEstado(EstadoPuerta.Abierta);
                         RotacionObjetivo = RotacionAbierta;
+                        ActivarColision(false);
                     }
                 }
             }
@@ -203,6 +209,35 @@ public partial class Door : MonoBehaviour
                 DebugPuerta("La puerta no se puede abrir, esta bloqueada");
             }
         }
+    }
+
+    void FixedUpdate()
+    {
+        if (guardasEnPaso.Count > 0 || fase == FaseMovimiento.Abriendo || fase == FaseMovimiento.Cerrando)
+            return;
+
+        bool enMovimiento = Quaternion.Angle(Bisagra.localRotation, RotacionObjetivo) > 0.01f;
+
+        // Mientras se mueve: sin collider. Quieta: con collider.
+        ActivarColision(!enMovimiento);
+
+        if (!enMovimiento)
+            return;
+
+        float velocidad = aperturaRapida && estadoActual == EstadoPuerta.Abierta
+            ? VelocidadRotacion * multiplicadorVelocidadPalanca
+            : VelocidadRotacion;
+
+        Quaternion siguiente = Quaternion.RotateTowards(Bisagra.localRotation, RotacionObjetivo, velocidad * Time.fixedDeltaTime);
+        Quaternion mundo = Bisagra.parent != null ? Bisagra.parent.rotation * siguiente : siguiente;
+        rbBisagra.MoveRotation(mundo);
+    }
+
+    private void ActivarColision(bool activa)
+    {
+        if (colisionActiva == activa || colliderPuerta == null) return;
+        colisionActiva = activa;
+        colliderPuerta.enabled = activa;
     }
 
     IEnumerator EsperarResultadoLockpickMinigame()

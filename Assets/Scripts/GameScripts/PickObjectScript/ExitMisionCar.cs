@@ -31,7 +31,9 @@ public class ExitMisionCar : MonoBehaviour
     public float TiempoQuieto = 0.5f;
     public float Aceleracion = 8f;
     public float VelocidadMaxima = 20f;
+    public float DistanciaMaxima = 30f;
 
+    [Header("Parametros de Configuración (no tocar)")]
     public bool MisionTerminada = false;
     public bool NivelTerminado = false;
     bool mostrandoAlerta = false;
@@ -168,8 +170,8 @@ public class ExitMisionCar : MonoBehaviour
 
         float velocidad = 0f;
 
-        // Avanzar hasta Z = -30
-        while (Car.transform.position.z > -30f)
+        // Avanzar hasta Z = -DistanciaMaxima
+        while (Car.transform.position.z > -DistanciaMaxima)
         {
             velocidad += Aceleracion * Time.deltaTime;
             velocidad = Mathf.Min(velocidad, VelocidadMaxima);

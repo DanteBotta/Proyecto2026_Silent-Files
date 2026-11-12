@@ -5,6 +5,13 @@ public class WallFade : MonoBehaviour
 {
     [Header("Referencias")]
     public Transform Objetivo; // Objetivo del spherecast (normalmente el jugador)
+    public Collider[] ZonasInterior; // Colliders (Is Trigger) que juntos cubren el interior de la casa
+
+    [Header("Techos")]
+    public List<GameObject> Techos = new List<GameObject>(); // Techos que se desactivan al entrar a la casa (se asignan a mano)
+
+    [Header("Tags")]
+    public string TagPared = "Pared";
 
     [Header("Raycast")]
     public float AlcanceRayCast = 10f; // Distancia máxima del SphereCast
@@ -12,123 +19,150 @@ public class WallFade : MonoBehaviour
     public float AlturaObjetivo = 1f; // Altura extra del objetivo
 
     [Header("Transparencia")]
-    [Range(0f, 1f)] public float Transparencia = 0.3f; // Valor de alpha cuando el objeto está tapando al objetivo
-    public float VelocidadFade = 2f; // Velocidad a la que el objeto se vuelve transparente u opaco
+    [Range(0f, 1f)] public float Transparencia = 0.3f; // Valor de alpha cuando la pared está tapando al objetivo
+    public float VelocidadFade = 2f; // Velocidad a la que la pared se vuelve transparente u opaca
 
     [Header("Debug")]
     public bool MostrarDebug = true; // Muestra el SphereCast en la escena
 
-    private HashSet<Renderer> renderersControlados = new HashSet<Renderer>(); // Renderers que están siendo controlados actualmente por este script
-    // HashSet es una colección que guarda varios Renderer, pero sin repetir elementos
-
-    private List<Renderer> paraQuitar = new List<Renderer>(); // Renderers que ya no están tapando al objetivo y que deben dejar de ser controlados
-    // List<Renderer> paraQuitar es una lista temporal de renderers que hay que dejar de controlar
+    private HashSet<Renderer> renderersControlados = new HashSet<Renderer>(); // Renderers controlados actualmente por este script
+    private List<Renderer> paraQuitar = new List<Renderer>(); // Renderers que ya no hay que controlar
+    private bool techosActivos = true; // Estado actual de los techos
 
     private void Start()
     {
         Objetivo = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
+    // Devuelve true si el objetivo (jugador) está dentro de alguna de las zonas interiores
+    private bool EstaDentroDeLaCasa()
+    {
+        if (ZonasInterior == null || Objetivo == null)
+            return false;
+
+        Vector3 pos = Objetivo.position + Vector3.up * AlturaObjetivo;
+
+        foreach (Collider zona in ZonasInterior)
+        {
+            // ClosestPoint devuelve el mismo punto si este está dentro del collider
+            // (funciona con BoxCollider, SphereCollider, CapsuleCollider y MeshCollider convexo)
+            if (zona != null && zona.ClosestPoint(pos) == pos)
+                return true;
+        }
+
+        return false;
+    }
+
     void Update()
     {
-        Vector3 destino = Objetivo.position + Vector3.up * AlturaObjetivo; // Se obtiene el destino del spherecast
-            // Objetivo.position = posición del objetivo (jugador) en el mundo
-            // Vector3.up * AlturaObjetivo = Es una valor que se suma en el eje Y para que el spherecast no apunte al suelo
+        bool dentro = EstaDentroDeLaCasa();
 
-        Vector3 direccion = (destino - transform.position).normalized; // Se obtiene la dirección del spherecast
-            // destino - transform.position = calcula el vector que va desde el objeto que tiene este script hasta el destino
-            // .normalized = Se normaliza el vector para que tenga longitud 1
-
-        // Physics.SphereCastAll() hace un SphereCast, lanza una especie de esfera a lo largo de una dirección y devuelve todos los objetos que encuentra
-        // Se guarda en RaycastHit[] impactos que es una array de todos los objetos que impacta el SphereCast
-        RaycastHit[] impactos = Physics.SphereCastAll( 
-            transform.position, // Desde donde empieza
-            RadioRayCast, // El tamaño de la espera
-            direccion, // La dirección
-            AlcanceRayCast // Su alcanze
-        );
-
-        // Renderers detectados durante ESTE frame, cada frame se genera una nuevo
-        HashSet<Renderer> renderersActuales = new HashSet<Renderer>();
-
-        // Recorre todos los impactos del SphereCast
-        foreach (RaycastHit impacto in impactos)
+        // Techos: se desactivan al entrar y se activan al salir (solo cuando cambia el estado)
+        if (techosActivos == dentro)
         {
-            if (!impacto.collider.CompareTag("Pared")) // Comprueba si el collider que choco tiene el tag "Pared"
-                continue; // Si no tiene el tag "Pared", pasa al siguiente impacto, no lo considera
-
-            // Obtiene el renderer del objeto que choco y todos sus hijos
-            Renderer[] renderers = impacto.collider.GetComponentsInChildren<Renderer>();
-
-            foreach (Renderer r in renderers) // Recorre todos y cada uno de los que encontró
+            techosActivos = !dentro;
+            foreach (GameObject techo in Techos)
             {
-                renderersActuales.Add(r); // Este esta sindo controlado ESTE frame
-                renderersControlados.Add(r); // Este esta siendo controlado
+                if (techo != null)
+                    techo.SetActive(techosActivos);
             }
         }
 
-        paraQuitar.Clear(); // Limpia la lista de renderers que ya no están tapando al objetivo
+        // Paredes que deben ser transparentes durante ESTE frame
+        HashSet<Renderer> renderersActuales = new HashSet<Renderer>();
 
-        foreach (Renderer r in renderersControlados) // Recorre todos los renders controlados
+        if (dentro)
         {
-            // Por si el objeto fue destruido
+            // Solo se hace el SphereCast si el jugador está dentro de la casa
+            Vector3 destino = Objetivo.position + Vector3.up * AlturaObjetivo;
+            Vector3 direccion = (destino - transform.position).normalized;
+
+            RaycastHit[] impactos = Physics.SphereCastAll(
+                transform.position,
+                RadioRayCast,
+                direccion,
+                AlcanceRayCast
+            );
+
+            foreach (RaycastHit impacto in impactos)
+            {
+                if (!impacto.collider.CompareTag(TagPared))
+                    continue;
+
+                Renderer[] renderers = impacto.collider.GetComponentsInChildren<Renderer>();
+
+                foreach (Renderer r in renderers)
+                {
+                    renderersActuales.Add(r);
+                    renderersControlados.Add(r);
+                }
+            }
+        }
+        // Si está afuera, renderersActuales queda vacío: todo lo controlado vuelve a ser opaco solo
+
+        paraQuitar.Clear();
+
+        foreach (Renderer r in renderersControlados)
+        {
             if (r == null)
             {
-                paraQuitar.Add(r); // Se agrega en quitar
+                paraQuitar.Add(r);
                 continue;
             }
 
-            bool tapando = renderersActuales.Contains(r); // Verifica si la pared esta tapando actualmente o no en ESTE 
-            float alphaMeta = tapando ? Transparencia : 1f; // Si esta tapando, el alpha meta es la transparencia, si no, es 1 (opaco)
+            bool tapando = renderersActuales.Contains(r);
+            float alphaMeta = tapando ? Transparencia : 1f;
 
             bool terminado = true;
 
-            // Recorre todos los materiales, ya que pueden tener varios
-            foreach (Material mat in r.materials) 
+            foreach (Material mat in r.materials)
             {
-                if (!mat.HasProperty("_Color")) // Verifica si tiene color
-                    continue; // Si no pasa al siguiente
+                if (!mat.HasProperty("_Color"))
+                    continue;
 
-                Color color = mat.color; // Se obtiene el color del material
+                Color color = mat.color;
 
-                color.a = Mathf.MoveTowards( // Hace que un valor se acerque a otro valor a una velocidad determinada
-                    color.a, // Color actual
-                    alphaMeta, // Color objetivo
-                    VelocidadFade * Time.deltaTime // Tiempo de duración del cambio
+                color.a = Mathf.MoveTowards(
+                    color.a,
+                    alphaMeta,
+                    VelocidadFade * Time.deltaTime
                 );
 
-                mat.color = color; // Le aplica el color al material
+                mat.color = color;
 
                 if (!Mathf.Approximately(color.a, alphaMeta))
                     terminado = false;
             }
 
-            // Si ya volvió a ser opaco y no está tapando, dejamos de controlarlo
-            if (!tapando && terminado) // Verifica si ya no esta tapando y si ya termino de hacer el fade
+            // Si ya volvió a ser opaca y no está tapando, dejamos de controlarla
+            if (!tapando && terminado)
                 paraQuitar.Add(r);
         }
 
-        foreach (Renderer r in paraQuitar) // Se recorrecon todos los renderer en paraQuitar
+        foreach (Renderer r in paraQuitar)
         {
-            renderersControlados.Remove(r); // Lo saca de los renderers controlados
+            renderersControlados.Remove(r);
         }
     }
 
     // Permite visualizar el SphereCast en la escena
     private void OnDrawGizmos()
     {
-        if (!MostrarDebug || Objetivo == null) // Solamente si esta debug en true y existe un objetivo
+        if (!MostrarDebug || Objetivo == null)
             return;
 
-        Vector3 destino = Objetivo.position + Vector3.up * AlturaObjetivo; 
-        Vector3 direccion = (destino - transform.position).normalized; 
+        Vector3 destino = Objetivo.position + Vector3.up * AlturaObjetivo;
+        Vector3 direccion = (destino - transform.position).normalized;
 
-        Vector3 inicio = transform.position; // Guarda la posición del objeto del script
-        Vector3 final = transform.position + direccion * AlcanceRayCast; // Calcula la posición final del spherecast
+        Vector3 inicio = transform.position;
+        Vector3 final = transform.position + direccion * AlcanceRayCast;
 
-        Gizmos.DrawLine(inicio, final); // Dibuja una línea entre el inicio y el final del spherecast
-        Gizmos.DrawWireSphere(inicio, RadioRayCast); // Dibuja una esfera en el inicio del spherecast con el radio del spherecast
-        Gizmos.DrawWireSphere(final, RadioRayCast); // Dibuja una esfera en el final del spherecast con el radio del spherecast
-        Gizmos.DrawWireSphere(destino, RadioRayCast); // Dibuja una esfera en el destino del spherecast con el radio del spherecast
+        // Verde si está dentro de la casa (efecto activo), rojo si está afuera
+        Gizmos.color = EstaDentroDeLaCasa() ? Color.green : Color.red;
+
+        Gizmos.DrawLine(inicio, final);
+        Gizmos.DrawWireSphere(inicio, RadioRayCast);
+        Gizmos.DrawWireSphere(final, RadioRayCast);
+        Gizmos.DrawWireSphere(destino, RadioRayCast);
     }
 }

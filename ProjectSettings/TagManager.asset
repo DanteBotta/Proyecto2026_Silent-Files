@@ -9,6 +9,7 @@ TagManager:
   - Objectives
   - Indicator
   - Car
+  - Techo
   layers:
   - Default
   - TransparentFX

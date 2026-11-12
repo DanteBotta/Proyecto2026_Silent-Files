@@ -5,6 +5,13 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class PlayerEnemyCollision : MonoBehaviour
 {
+    public MissionEndManager MissionEndManager;
+
+    private void Start()
+    {
+        MissionEndManager = FindAnyObjectByType<MissionEndManager>();
+    }
+
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {
         // Permite reconocer al enemigo aunque el collider esté en un objeto hijo.
@@ -14,7 +21,9 @@ public class PlayerEnemyCollision : MonoBehaviour
 
     private void AlColisionarConEnemigo()
     {
-        Debug.Log("67");
+        // Actualizar el estado de la misión
+        MissionEndManager.Victoria = false;
+        MissionEndManager.MisionTerminada = true;
         Time.timeScale = 0f; // Detiene el tiempo del juego.
     }
 }

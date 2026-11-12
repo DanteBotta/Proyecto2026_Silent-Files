@@ -10,12 +10,11 @@ public class IntroJuego : MonoBehaviour
     [Header("Elementos")]
     public CanvasGroup pantallaNegra;
     public CanvasGroup imagenIntro;
-    public CanvasGroup textoIntro;
 
     [Header("Tiempos")]
     public float esperaInicial = 0.5f;
     public float duracionFadeAparicion = 1f;
-    public float esperaTexto = 0.5f;
+    public float esperaImagenVisible = 2f;
     public float duracionFadeDesaparicion = 1f;
     public float esperaPantallaNegra = 0.5f;
     public float duracionFadeNegro = 1f;
@@ -25,27 +24,27 @@ public class IntroJuego : MonoBehaviour
 
     private void Start()
     {
-        // Activar los objetos aunque esten ocultos en el Inspector.
+        Time.timeScale = 1f; // Avanza el tiempo del juego.
         pantallaNegra.gameObject.SetActive(true);
         imagenIntro.gameObject.SetActive(true);
-        textoIntro.gameObject.SetActive(true);
+
+        pantallaNegra.alpha = 1f;
+        imagenIntro.alpha = 0f;
+
+        juegoEmpezo = false;
 
         if (!activarIntro)
         {
             pantallaNegra.alpha = 0f;
             imagenIntro.alpha = 0f;
-            textoIntro.alpha = 0f;
+            pantallaNegra.gameObject.SetActive(false);
+            imagenIntro.gameObject.SetActive(false);
             juegoEmpezo = true;
             return;
         }
 
-        pantallaNegra.alpha = 1f;
-        imagenIntro.alpha = 0f;
-        textoIntro.alpha = 0f;
-        juegoEmpezo = false;
-
         StartCoroutine(ReproducirIntro());
-    }
+    }           
 
     private IEnumerator ReproducirIntro()
     {
@@ -55,23 +54,12 @@ public class IntroJuego : MonoBehaviour
         yield return Fade(imagenIntro, 0f, 1f,
             duracionFadeAparicion);
 
-        // El texto comienza a aparecer 0.5 segundos despues.
-        yield return new WaitForSeconds(esperaTexto);
+        // Mantener la imagen completamente visible.
+        yield return new WaitForSeconds(esperaImagenVisible);
 
-        yield return Fade(textoIntro, 0f, 1f,
-            duracionFadeAparicion);
-
-        // Desaparecen juntos la imagen y el texto.
-        Coroutine fadeImagen = StartCoroutine(
-            Fade(imagenIntro, 1f, 0f,
-                duracionFadeDesaparicion));
-
-        Coroutine fadeTexto = StartCoroutine(
-            Fade(textoIntro, 1f, 0f,
-                duracionFadeDesaparicion));
-
-        yield return fadeImagen;
-        yield return fadeTexto;
+        // Desaparece la imagen.
+        yield return Fade(imagenIntro, 1f, 0f,
+            duracionFadeDesaparicion);
 
         // Esperar antes de quitar el fondo negro.
         yield return new WaitForSeconds(esperaPantallaNegra);
@@ -80,9 +68,9 @@ public class IntroJuego : MonoBehaviour
             duracionFadeNegro);
 
         juegoEmpezo = true;
+
         pantallaNegra.gameObject.SetActive(false);
         imagenIntro.gameObject.SetActive(false);
-        textoIntro.gameObject.SetActive(false);
     }
 
     private IEnumerator Fade(

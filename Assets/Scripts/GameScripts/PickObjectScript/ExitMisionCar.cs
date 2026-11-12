@@ -7,6 +7,7 @@ public class ExitMisionCar : MonoBehaviour
 {
     public ShowCanvasNearPlayer ShowCanvasNearPlayer;
     public MissionBriefing MissionBriefing;
+    public MissionEndManager MissionEndManager;
 
     [Header("Camaras")]
     public GameObject MainCamera;
@@ -45,6 +46,8 @@ public class ExitMisionCar : MonoBehaviour
     {
         ShowCanvasNearPlayer = GetComponent<ShowCanvasNearPlayer>();
         MissionBriefing = FindAnyObjectByType<MissionBriefing>();
+        MissionEndManager = FindAnyObjectByType<MissionEndManager>();
+
         Player = FindAnyObjectByType<PlayerController>().gameObject;
         ImageFilled.fillAmount = 0;
 
@@ -189,5 +192,12 @@ public class ExitMisionCar : MonoBehaviour
 
         // Destruir el auto
         Destroy(Car);
+
+        // Esperar a que Unity procese la destrucción
+        yield return null;
+
+        // Actualizar el estado de la misión
+        MissionEndManager.Victoria = true;
+        MissionEndManager.MisionTerminada = true;
     }
 }

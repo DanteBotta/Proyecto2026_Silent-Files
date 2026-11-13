@@ -11,6 +11,7 @@ public class ConfigurationOpen : MonoBehaviour
     public GameObject PanelConfiguracion;
     public GameObject PanelCreditos;
     public GameObject PanelSalir;
+    public GameObject PanelBotonesFuncionales;
 
     bool PanelAbierto = false;
 
@@ -21,6 +22,7 @@ public class ConfigurationOpen : MonoBehaviour
         PanelConfiguracion.SetActive(false);
         PanelCreditos.SetActive(false);
         PanelSalir.SetActive(false);
+        PanelBotonesFuncionales.SetActive(true);
     }
 
     // Update is called once per frame
@@ -48,6 +50,7 @@ public class ConfigurationOpen : MonoBehaviour
     {
         PanelInterrution.SetActive(true);
         PanelCreditos.SetActive(true);
+        PanelBotonesFuncionales.SetActive(false);
         PanelAbierto = true;
     }
 
@@ -83,6 +86,7 @@ public class ConfigurationOpen : MonoBehaviour
         PanelConfiguracion.SetActive(false);
         PanelCreditos.SetActive(false);
         PanelSalir.SetActive(false);
+        PanelBotonesFuncionales.SetActive(true);
         PanelAbierto = false;
     }
 }

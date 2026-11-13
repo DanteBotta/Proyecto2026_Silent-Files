@@ -42,6 +42,7 @@ public class MissionSelectionManager : MonoBehaviour
         public Transform panel;
         public string displayName;
         public Sprite thumbnail;
+        public int difficulty;
 
         // Posición "guardada en la carpeta" (la rotación no se toca nunca)
         public Transform homeParent;
@@ -53,8 +54,16 @@ public class MissionSelectionManager : MonoBehaviour
         public GameObject menuButton;
         public GameObject selectedMarker;
         public GameObject lockedMarker;
+        public Transform difficultyPanel;
 
+        /// <summary>Bloqueada = solo visual (panel con candado, sin estrellas).</summary>
         public bool Locked => data != null && data.isLocked;
+
+        /// <summary>Si se puede elegir. Si no, no se toca, se salta con flechas y la hoja nunca sale.</summary>
+        public bool Selectable => data == null || data.isSelectable;
+
+        /// <summary>Las estrellas solo se ven si no está bloqueada y se puede seleccionar.</summary>
+        public bool ShowDifficulty => !Locked && Selectable;
 
         public Vector3 HomeWorldPos => homeParent ? homeParent.TransformPoint(homeLocalPos) : homeLocalPos;
     }
@@ -108,8 +117,15 @@ public class MissionSelectionManager : MonoBehaviour
     [Tooltip("Contenedor del menú (idealmente con HorizontalLayoutGroup).")]
     [SerializeField] private RectTransform menuContainer;
 
-    [Tooltip("Prefab con Button. Opcional: TMP_Text (nombre), hijo 'Icon' (Image) e hijo 'Selected' (marca de selección).")]
+    [Tooltip("Prefab con Button. Opcional: TMP_Text (nombre), hijo 'Icon' (Image), hijo 'Selected' (marca de selección), hijo 'Dificultad' (panel con 5 Images de estrellas) e hijo 'PanelBloqueado' (panel transparente con un candado grande).")]
     [SerializeField] private Button menuButtonPrefab;
+
+    [Header("Dificultad (estrellas)")]
+    [Tooltip("Imagen de estrella completa (se usa para cada punto de dificultad).")]
+    [SerializeField] private Sprite starFull;
+
+    [Tooltip("Imagen de estrella vacía (se usa para los puntos que faltan hasta 5).")]
+    [SerializeField] private Sprite starEmpty;
 
     [Header("Menú: separación y scroll")]
     [Tooltip("Separación mínima entre botones (px).")]
@@ -261,6 +277,7 @@ public class MissionSelectionManager : MonoBehaviour
                 panel = t,
                 displayName = data && !string.IsNullOrEmpty(data.displayName) ? data.displayName : t.name,
                 thumbnail = data ? data.thumbnail : null,
+                difficulty = data ? data.Difficulty : MissionPanelData.MinDifficulty,
                 data = data,
                 homeParent = t.parent,
                 homeLocalPos = t.localPosition,
@@ -270,7 +287,7 @@ public class MissionSelectionManager : MonoBehaviour
 
         // Las hojas bloqueadas nunca se muestran, aunque hideInactivePanels esté apagado
         foreach (var m in _missions)
-            if (hideInactivePanels || m.Locked) m.panel.gameObject.SetActive(false);
+            if (hideInactivePanels || !m.Selectable) m.panel.gameObject.SetActive(false);
 
         BuildMenu();
         RefreshMenuHighlight();
@@ -308,6 +325,9 @@ public class MissionSelectionManager : MonoBehaviour
                 icon.enabled = m.thumbnail != null;
             }
 
+            // Estrellas de dificultad: panel hijo llamado "Dificultad" con 5 Images
+            m.difficultyPanel = ApplyDifficultyStars(btn.transform, m.difficulty);
+
             // El marcador "Selected" solo se ve en la misión elegida
             var selected = btn.transform.Find("Selected");
             if (selected) { m.selectedMarker = selected.gameObject; selected.gameObject.SetActive(false); }
@@ -320,10 +340,16 @@ public class MissionSelectionManager : MonoBehaviour
             le.preferredWidth = w;
             le.flexibleWidth = 0f;
 
-            // Candado opcional: hijo del botón llamado "Locked", solo se ve si la misión está bloqueada
+            // Panel bloqueado: hijo del botón llamado "PanelBloqueado", solo se ve si la misión está bloqueada
             m.button = btn;
-            var lockedT = btn.transform.Find("Locked");
-            if (lockedT) m.lockedMarker = lockedT.gameObject;
+            var lockedT = FindDeep(btn.transform, "PanelBloqueado");
+            if (lockedT == null) lockedT = FindDeep(btn.transform, "Panel Bloqueado");
+            if (lockedT == null) lockedT = FindDeep(btn.transform, "Locked");
+            if (lockedT)
+            {
+                m.lockedMarker = lockedT.gameObject;
+                lockedT.SetAsLastSibling(); // queda por delante del nombre y la imagen
+            }
             ApplyLockVisual(m);
 
             m.menuButton = btn.gameObject;
@@ -336,6 +362,50 @@ public class MissionSelectionManager : MonoBehaviour
             LayoutRebuilder.ForceRebuildLayoutImmediate(menuContainer);
             _scroll.horizontalNormalizedPosition = 0f;
         }
+    }
+
+    /// <summary>
+    /// Busca el panel "Dificultad" dentro del botón y pinta sus estrellas:
+    /// las primeras "difficulty" con la estrella completa y el resto con la vacía.
+    /// </summary>
+    private Transform ApplyDifficultyStars(Transform buttonRoot, int difficulty)
+    {
+        // Busca "Dificultad" en cualquier nivel del botón (también acepta "Difficulty")
+        Transform panel = FindDeep(buttonRoot, "Dificultad");
+        if (panel == null) panel = FindDeep(buttonRoot, "Difficulty");
+        if (panel == null) return null;
+
+        difficulty = Mathf.Clamp(difficulty, MissionPanelData.MinDifficulty, MissionPanelData.MaxDifficulty);
+
+        // Las estrellas son las Images hijas directas del panel, en orden de jerarquía
+        int star = 0;
+        foreach (Transform child in panel)
+        {
+            if (!child.TryGetComponent(out Image img)) continue;
+
+            Sprite sprite = star < difficulty ? starFull : starEmpty;
+            if (sprite != null) img.sprite = sprite;
+            star++;
+        }
+
+        if (star != MissionPanelData.MaxDifficulty)
+            Debug.LogWarning($"[MissionSelectionManager] El panel 'Dificultad' tiene {star} imágenes hijas; se esperaban {MissionPanelData.MaxDifficulty}.", panel);
+
+        if (starFull == null || starEmpty == null)
+            Debug.LogWarning("[MissionSelectionManager] Faltan asignar 'starFull' y/o 'starEmpty' en el inspector.", this);
+
+        return panel;
+    }
+
+    private static Transform FindDeep(Transform root, string name)
+    {
+        foreach (Transform child in root)
+        {
+            if (child.name == name) return child;
+            var found = FindDeep(child, name);
+            if (found != null) return found;
+        }
+        return null;
     }
 
     private void RefreshMenuHighlight()
@@ -522,7 +592,7 @@ public class MissionSelectionManager : MonoBehaviour
     public void SelectMission(int index)
     {
         if (index < 0 || index >= _missions.Count) return;
-        if (_missions[index].Locked) return; // bloqueada: no se puede usar
+        if (!_missions[index].Selectable) return; // no seleccionable: no hace nada
 
         // Tocar la misma misión => guardarla (si está permitido)
         if (index == _targetIndex)
@@ -537,18 +607,18 @@ public class MissionSelectionManager : MonoBehaviour
 
     public void Next()
     {
-        int next = FindUnlocked(_targetIndex, +1);
+        int next = FindSelectable(_targetIndex, +1);
         if (next >= 0) SetTarget(next);
     }
 
     public void Previous()
     {
-        int prev = FindUnlocked(_targetIndex, -1);
+        int prev = FindSelectable(_targetIndex, -1);
         if (prev >= 0) SetTarget(prev);
     }
 
-    /// <summary>Busca la próxima misión desbloqueada en la dirección dada (salta las bloqueadas). -1 si no hay.</summary>
-    private int FindUnlocked(int from, int dir)
+    /// <summary>Busca la próxima misión seleccionable en la dirección dada (salta las no seleccionables). -1 si no hay.</summary>
+    private int FindSelectable(int from, int dir)
     {
         int n = _missions.Count;
         if (n == 0) return -1;
@@ -562,7 +632,7 @@ public class MissionSelectionManager : MonoBehaviour
             if (wrapAround) i = ((i % n) + n) % n;
             else if (i < 0 || i >= n) return -1;
 
-            if (!_missions[i].Locked) return i;
+            if (_missions[i].Selectable) return i;
         }
         return -1;
     }
@@ -570,7 +640,10 @@ public class MissionSelectionManager : MonoBehaviour
     public bool IsMissionLocked(int index) =>
         index >= 0 && index < _missions.Count && _missions[index].Locked;
 
-    /// <summary>Bloquea o desbloquea una misión en pleno juego (por ejemplo según el progreso del jugador).</summary>
+    public bool IsMissionSelectable(int index) =>
+        index >= 0 && index < _missions.Count && _missions[index].Selectable;
+
+    /// <summary>Marca una misión como bloqueada o no (solo visual: candado y sin estrellas). No cambia si se puede seleccionar.</summary>
     public void SetMissionLocked(int index, bool locked)
     {
         if (index < 0 || index >= _missions.Count) return;
@@ -579,8 +652,19 @@ public class MissionSelectionManager : MonoBehaviour
         if (m.data == null) m.data = m.panel.gameObject.AddComponent<MissionPanelData>();
         m.data.isLocked = locked;
         ApplyLockVisual(m);
+    }
 
-        if (locked)
+    /// <summary>Permite o impide seleccionar una misión en pleno juego (por ejemplo según el progreso del jugador).</summary>
+    public void SetMissionSelectable(int index, bool selectable)
+    {
+        if (index < 0 || index >= _missions.Count) return;
+        var m = _missions[index];
+
+        if (m.data == null) m.data = m.panel.gameObject.AddComponent<MissionPanelData>();
+        m.data.isSelectable = selectable;
+        ApplyLockVisual(m);
+
+        if (!selectable)
         {
             if (_targetIndex == index) SetTarget(-1);                      // si estaba abierta, se guarda
             else if (index != _shownIndex) m.panel.gameObject.SetActive(false);
@@ -591,11 +675,11 @@ public class MissionSelectionManager : MonoBehaviour
         }
     }
 
+    /// <summary>Actualiza lo visual del botón: panel del candado y estrellas.</summary>
     private void ApplyLockVisual(Mission m)
     {
-        bool locked = m.Locked;
-        if (m.button) m.button.interactable = !locked;
-        if (m.lockedMarker) m.lockedMarker.SetActive(locked);
+        if (m.lockedMarker) m.lockedMarker.SetActive(m.Locked);
+        if (m.difficultyPanel) m.difficultyPanel.gameObject.SetActive(m.ShowDifficulty);
     }
 
     // ───────────────────────── Confirmar ─────────────────────────
@@ -722,7 +806,7 @@ public class MissionSelectionManager : MonoBehaviour
         yield return MoveTo(m.panel, homePos, m.homeLocalScale, dropDuration);
 
         SnapHome(m);
-        if (hideInactivePanels || m.Locked) m.panel.gameObject.SetActive(false);
+        if (hideInactivePanels || !m.Selectable) m.panel.gameObject.SetActive(false);
     }
 
     private void SnapHome(Mission m)

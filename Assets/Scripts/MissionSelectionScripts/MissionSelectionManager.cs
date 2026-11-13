@@ -160,6 +160,17 @@ public class MissionSelectionManager : MonoBehaviour
     [Tooltip("Duración (segundos) del fade al entrar y al salir de esta escena.")]
     [SerializeField] private float fadeDuration = 0.5f;
 
+    [Header("Ayuda")]
+    [Tooltip("Texto de ayuda para quien no sabe cómo elegir. Aparece después de 'helpDelay' segundos de iniciada la escena y desaparece al apretar Enter.")]
+    public TMP_Text helpText;
+
+    [Tooltip("Segundos desde que arranca la escena hasta que aparece el texto de ayuda.")]
+    [SerializeField] private float helpDelay = 10f;
+
+    [Header("Debug")]
+    [Tooltip("Activa o desactiva TODOS los mensajes de debug de este script (selección, confirmación, avisos y advertencias).")]
+    public bool DebugsConsola = false;
+
     // ───────────────────────── Eventos ─────────────────────────
     /// <summary>Se dispara cuando cambia la misión objetivo (-1 = ninguna).</summary>
     public event Action<int> OnMissionChanged;
@@ -188,11 +199,11 @@ public class MissionSelectionManager : MonoBehaviour
 
     private void Start()
     {
-        if (displayAnchor == null)
+        if (DebugsConsola && displayAnchor == null)
             Debug.LogWarning("[MissionSelectionManager] Falta asignar 'displayAnchor'. Se usará una posición por defecto junto a la carpeta.", this);
 
 #if !MISSION_USE_NEW_INPUT && !ENABLE_LEGACY_INPUT_MANAGER
-        if (keyboardNavigation)
+        if (DebugsConsola && keyboardNavigation)
             Debug.LogWarning("[MissionSelectionManager] Teclado desactivado: el proyecto usa solo el Input System nuevo. Agregá el define MISSION_USE_NEW_INPUT para activarlo.", this);
 #endif
 
@@ -202,6 +213,13 @@ public class MissionSelectionManager : MonoBehaviour
         if (previousButton) previousButton.onClick.AddListener(Previous);
         if (nextButton) nextButton.onClick.AddListener(Next);
         if (confirmButton) confirmButton.onClick.AddListener(ConfirmSelection);
+
+        // Ayuda: arranca oculta y aparece a los 'helpDelay' segundos (se reinicia cada vez que se carga la escena)
+        if (helpText)
+        {
+            helpText.gameObject.SetActive(false);
+            _helpRoutine = StartCoroutine(HelpRoutine());
+        }
 
         if (openFirstOnStart && _missions.Count > 0)
             Next(); // la primera misión desbloqueada
@@ -291,7 +309,8 @@ public class MissionSelectionManager : MonoBehaviour
 
         BuildMenu();
         RefreshMenuHighlight();
-        Debug.Log($"[MissionSelectionManager] {_missions.Count} misiones encontradas.", this);
+        if (DebugsConsola)
+            Debug.Log($"[MissionSelectionManager] {_missions.Count} misiones encontradas.", this);
     }
 
     // ───────────────────────── Menú ─────────────────────────
@@ -388,10 +407,10 @@ public class MissionSelectionManager : MonoBehaviour
             star++;
         }
 
-        if (star != MissionPanelData.MaxDifficulty)
+        if (DebugsConsola && star != MissionPanelData.MaxDifficulty)
             Debug.LogWarning($"[MissionSelectionManager] El panel 'Dificultad' tiene {star} imágenes hijas; se esperaban {MissionPanelData.MaxDifficulty}.", panel);
 
-        if (starFull == null || starEmpty == null)
+        if (DebugsConsola && (starFull == null || starEmpty == null))
             Debug.LogWarning("[MissionSelectionManager] Faltan asignar 'starFull' y/o 'starEmpty' en el inspector.", this);
 
         return panel;
@@ -686,6 +705,25 @@ public class MissionSelectionManager : MonoBehaviour
     private bool _confirmed;
     private ScreenFader _fader;
 
+    // ───────────────────────── Texto de ayuda ─────────────────────────
+    private Coroutine _helpRoutine;
+    private bool _helpDismissed;
+
+    private IEnumerator HelpRoutine()
+    {
+        yield return new WaitForSecondsRealtime(helpDelay);
+        _helpRoutine = null;
+        if (!_helpDismissed && helpText) helpText.gameObject.SetActive(true);
+    }
+
+    /// <summary>Oculta el texto de ayuda y evita que vuelva a aparecer en esta escena.</summary>
+    private void DismissHelp()
+    {
+        _helpDismissed = true;
+        if (_helpRoutine != null) { StopCoroutine(_helpRoutine); _helpRoutine = null; }
+        if (helpText) helpText.gameObject.SetActive(false);
+    }
+
     /// <summary>
     /// Guarda la misión elegida (como número, en SelectedMission) y carga la escena de juego con fade.
     /// Se llama con Enter, con el botón "confirmButton" o desde cualquier otro script.
@@ -696,7 +734,17 @@ public class MissionSelectionManager : MonoBehaviour
 
         if (_targetIndex < 0)
         {
-            Debug.Log("[MissionSelectionManager] No hay ninguna misión elegida, no se confirma nada.", this);
+            if (DebugsConsola)
+                Debug.Log("[MissionSelectionManager] No hay ninguna misión elegida, no se confirma nada.", this);
+            return;
+        }
+
+        // Solo se puede confirmar cuando la hoja está quieta y fija sobre la mesa:
+        // no durante la entrada ni la salida (ni mientras otra hoja se está guardando).
+        if (_process != null || _shownIndex != _targetIndex)
+        {
+            if (DebugsConsola)
+                Debug.Log("[MissionSelectionManager] Confirmar ignorado: la hoja todavía está en transición.", this);
             return;
         }
 
@@ -705,6 +753,12 @@ public class MissionSelectionManager : MonoBehaviour
 
         SelectedMission.Index = chosen;
         _confirmed = true;
+
+        // La ayuda desaparece solo con el Enter que realmente elige la misión (no con cualquier Enter)
+        DismissHelp();
+
+        if (DebugsConsola)
+            Debug.Log($"[MissionSelectionManager] Misión CONFIRMADA: índice {chosen} ({_missions[chosen].displayName}).", this);
     }
 
     // ───────────────────────── Núcleo ─────────────────────────
@@ -713,6 +767,13 @@ public class MissionSelectionManager : MonoBehaviour
         if (_confirmed) return; // ya se confirmó: no se puede cambiar mientras se hace el fade
         if (index == _targetIndex) return;
         _targetIndex = index;
+
+        if (DebugsConsola)
+        {
+            if (index >= 0) Debug.Log($"[MissionSelectionManager] Misión seleccionada: índice {index} ({_missions[index].displayName}).", this);
+            else Debug.Log("[MissionSelectionManager] Ninguna misión seleccionada.", this);
+        }
+
         RefreshMenuHighlight();
         ScrollToSelected();
         OnMissionChanged?.Invoke(_targetIndex);

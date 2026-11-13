@@ -26,6 +26,45 @@ public partial class Door : MonoBehaviour
     [Tooltip("Texto que muestra el estado de la puerta. Sin asignar, usa el único texto hijo directo del Canvas hermano de la bisagra.")]
     public TMP_Text TextoEstado;
 
+    [Serializable]
+    public class MensajePuerta
+    {
+        [Tooltip("Si está desactivado, este mensaje no se muestra.")]
+        public bool mostrar = true;
+        [TextArea(1, 3)] public string texto;
+
+        public MensajePuerta(string texto, bool mostrar = true)
+        {
+            this.texto = texto;
+            this.mostrar = mostrar;
+        }
+    }
+
+    [Header("Mensajes (activá/desactivá y editá cada texto)")]
+    [Tooltip("Texto donde se muestran los mensajes. Sin asignar, usa el segundo texto hijo del Canvas; si no hay, reemplaza temporalmente al texto de estado.")]
+    public TMP_Text TextoMensaje;
+    [Min(0.1f)] public float duracionMensaje = 2f;
+
+    [Header("Mensajes - Mano")]
+    public MensajePuerta msgAbrirConMano = new MensajePuerta("Abriste la puerta");
+    public MensajePuerta msgCerrarConMano = new MensajePuerta("Cerraste la puerta");
+    public MensajePuerta msgTrabadaConMano = new MensajePuerta("La puerta está trabada. Cambiá a la ganzúa o a la palanca");
+
+    [Header("Mensajes - Cambio automático de herramienta")]
+    public MensajePuerta msgCambioAMano = new MensajePuerta("Cambiaste a la mano");
+
+    [Header("Mensajes - Ganzúa")]
+    public MensajePuerta msgGanzuaExito = new MensajePuerta("Destrabaste la puerta. Ahora podés abrirla");
+    public MensajePuerta msgGanzuaFallo = new MensajePuerta("No pudiste destrabar la puerta");
+
+    [Header("Mensajes - Palanca")]
+    public MensajePuerta msgPalancaForzada = new MensajePuerta("Forzaste la puerta con la palanca");
+
+    [Header("Mensajes - Puerta bloqueada")]
+    public MensajePuerta msgBloqueada = new MensajePuerta("La puerta está bloqueada, no se puede abrir");
+
+    private Coroutine corrutinaMensaje;
+
     private Quaternion RotacionCerrada;
     private Quaternion RotacionAbierta;
     private Quaternion RotacionObjetivo;
@@ -74,6 +113,11 @@ public partial class Door : MonoBehaviour
             ShowCanvasNearPlayer = raizPuerta.GetComponentInChildren<ShowCanvasNearPlayer>(true);
         if (TextoEstado == null)
             TextoEstado = BuscarTextoEstado(raizPuerta);
+        if (TextoMensaje == null)
+            TextoMensaje = BuscarTextoMensaje(raizPuerta);
+
+        if (TextoMensaje != null)
+            TextoMensaje.text = string.Empty;
 
         ActualizarTextoEstado();
 
@@ -99,6 +143,56 @@ public partial class Door : MonoBehaviour
             }
         }
         return null;
+    }
+
+    // Busca un segundo texto hijo del Canvas (distinto al de estado) para los mensajes.
+    private TMP_Text BuscarTextoMensaje(Transform raizPuerta)
+    {
+        foreach (Transform hermano in raizPuerta)
+        {
+            if (hermano == Bisagra || hermano.GetComponent<Canvas>() == null)
+                continue;
+
+            foreach (Transform hijo in hermano)
+            {
+                TMP_Text texto = hijo.GetComponent<TMP_Text>();
+                if (texto != null && texto != TextoEstado)
+                    return texto;
+            }
+        }
+        return null;
+    }
+
+    private void MostrarMensaje(MensajePuerta mensaje)
+    {
+        if (mensaje == null || !mensaje.mostrar || string.IsNullOrEmpty(mensaje.texto))
+            return;
+
+        if (corrutinaMensaje != null)
+            StopCoroutine(corrutinaMensaje);
+        corrutinaMensaje = StartCoroutine(CorrutinaMensaje(mensaje.texto));
+    }
+
+    private IEnumerator CorrutinaMensaje(string texto)
+    {
+        // Sin texto propio para mensajes: se usa el de estado y después se restaura.
+        TMP_Text destino = TextoMensaje != null ? TextoMensaje : TextoEstado;
+        if (destino == null)
+            yield break;
+
+        destino.text = texto;
+        yield return new WaitForSeconds(duracionMensaje);
+
+        if (destino == TextoEstado)
+        {
+            estadoMostrado = null; // fuerza a ActualizarTextoEstado a reescribir el estado
+            ActualizarTextoEstado();
+        }
+        else
+        {
+            destino.text = string.Empty;
+        }
+        corrutinaMensaje = null;
     }
 
     // Sólo reescribe el texto cuando el estado cambió (se llama desde LateUpdate en Door.Passage.cs).
@@ -128,6 +222,16 @@ public partial class Door : MonoBehaviour
         {
             InventoryManager.Herramienta herramientaActual = InventoryManager.ObjetoEnMano; // Obtener la herramienta actual del jugador
 
+            // Puerta cerrada o abierta con ganzúa/palanca en mano: pasa a la mano automáticamente (cambia también la imagen del slot)
+            bool cambioAutomatico = false;
+            if ((estadoActual == EstadoPuerta.Cerrada || estadoActual == EstadoPuerta.Abierta) && herramientaActual != InventoryManager.Herramienta.Mano
+                && InventoryManager.EquiparMano())
+            {
+                herramientaActual = InventoryManager.ObjetoEnMano;
+                cambioAutomatico = true;
+                DebugPuerta("Cambio automatico a la mano");
+            }
+
             if (estadoActual != EstadoPuerta.Bloqueada) // Si la puerta no esta bloqueada, se puede interactuar con ella
             {
                 if ((herramientaActual == InventoryManager.Herramienta.Mano)) // Se interactua con la mano
@@ -135,6 +239,7 @@ public partial class Door : MonoBehaviour
                     if (estadoActual == EstadoPuerta.Cerrada) // Puerta Cerrada
                     {
                         DebugPuerta("Abriste puerta con la mano");
+                        MostrarMensaje(msgCambioAMano.mostrar && cambioAutomatico ? msgCambioAMano : msgAbrirConMano);
                         aperturaRapida = false;
                         CambiarEstado(EstadoPuerta.Abierta);
                         RotacionObjetivo = RotacionAbierta;
@@ -150,6 +255,7 @@ public partial class Door : MonoBehaviour
                     else if (estadoActual == EstadoPuerta.Abierta) // Puerta Abierta
                     {
                         DebugPuerta("Cerraste puerta con la mano");
+                        MostrarMensaje(msgCambioAMano.mostrar && cambioAutomatico ? msgCambioAMano : msgCerrarConMano);
                         aperturaRapida = false;
                         CambiarEstado(EstadoPuerta.Cerrada);
                         RotacionObjetivo = RotacionCerrada;
@@ -158,6 +264,7 @@ public partial class Door : MonoBehaviour
                     else if (estadoActual == EstadoPuerta.Trabada) // Puerta Trabada
                     {
                         DebugPuerta("La puerta esta bloqueada, no se puede abrir con la mano");
+                        MostrarMensaje(msgTrabadaConMano);
                     }
                 }
 
@@ -195,6 +302,7 @@ public partial class Door : MonoBehaviour
                     else if (estadoActual == EstadoPuerta.Trabada) // Puerta Trabada, la palanca la fuerza y la abre de una
                     {
                         DebugPuerta("Forzaste la puerta con la palanca");
+                        MostrarMensaje(msgPalancaForzada);
                         aperturaRapida = true;
                         CambiarEstado(EstadoPuerta.Abierta);
                         RotacionObjetivo = RotacionAbierta;
@@ -207,6 +315,7 @@ public partial class Door : MonoBehaviour
             {
                 // Lo que pasa si la puerta esta bloqueada (no se puede abrir)
                 DebugPuerta("La puerta no se puede abrir, esta bloqueada");
+                MostrarMensaje(msgBloqueada);
             }
         }
     }
@@ -255,12 +364,14 @@ public partial class Door : MonoBehaviour
             // Salio bien
             CambiarEstado(EstadoPuerta.Cerrada);
             DebugPuerta("Puerta desbloqueada con la ganzua");
+            MostrarMensaje(msgGanzuaExito);
         }
         else
         {
             // Salio mal
             CambiarEstado(EstadoPuerta.Trabada);
             DebugPuerta("No pudiste abrir la puerta con la ganzua");
+            MostrarMensaje(msgGanzuaFallo);
         }
     }
     void DebugPuerta(string mensaje)

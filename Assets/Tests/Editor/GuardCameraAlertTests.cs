@@ -145,16 +145,25 @@ public class GuardCameraAlertTests
     [UnityTest]
     public IEnumerator ReportRouteWaitsForDoorAndContinuesAfterOpening()
     {
-        GameObject doorObject = CreateObject("Alert route door");
-        doorObject.SetActive(false);
+        GameObject root = CreateObject("Alert route door");
+        root.SetActive(false);
+        GameObject hinge = CreateObject("Hinge");
+        hinge.transform.SetParent(root.transform, false);
+        hinge.transform.localPosition = Vector3.left;
+        Rigidbody body = hinge.AddComponent<Rigidbody>();
+        body.isKinematic = true;
+        body.interpolation = RigidbodyInterpolation.Interpolate;
+        GameObject doorObject = CreateObject("Leaf");
+        doorObject.transform.SetParent(hinge.transform, false);
+        doorObject.transform.localPosition = Vector3.right;
         BoxCollider collider = doorObject.AddComponent<BoxCollider>();
         collider.center = Vector3.up;
         collider.size = new Vector3(2f, 2f, 0.2f);
         Door door = doorObject.AddComponent<Door>();
         door.estadoActual = Door.EstadoPuerta.Bloqueada;
-        typeof(Door).GetField("esperarEventosAnimacion", BindingFlags.Instance | BindingFlags.NonPublic)
-            .SetValue(door, true);
-        doorObject.SetActive(true);
+        typeof(Door).GetField("velocidadGuardaGrados", BindingFlags.Instance | BindingFlags.NonPublic)
+            .SetValue(door, 90f);
+        root.SetActive(true);
 
         AI guard = CreateGuard();
         GuardDoorPassage passage = guard.GetComponent<GuardDoorPassage>();
@@ -171,7 +180,6 @@ public class GuardCameraAlertTests
             yield return null;
         Assert.That(guard.IsInvestigatingPlayerReport, Is.True);
         Assert.That(guard.navMeshAgent.isStopped, Is.True);
-        door.NotificarPuertaAbierta();
 
         deadline = Time.realtimeSinceStartup + 6f;
         while (guard.IsInvestigatingPlayerReport && Time.realtimeSinceStartup < deadline)

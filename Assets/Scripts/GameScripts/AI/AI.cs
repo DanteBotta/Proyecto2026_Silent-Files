@@ -53,6 +53,8 @@ public class AI : MonoBehaviour, IHear
 
     private void Awake()
     {
+        AssignSceneGuardPaths();
+
         if (navMeshAgent == null)
             navMeshAgent = GetComponent<NavMeshAgent>();
 
@@ -61,6 +63,31 @@ public class AI : MonoBehaviour, IHear
             doorPassage.enabled = isActiveAndEnabled;
 
         animator = GetComponent<Animator>();
+    }
+
+    private void AssignSceneGuardPaths()
+    {
+        // Keep explicitly configured routes. Prefabs can contain empty scene references.
+        if (destinations != null && System.Array.Exists(destinations, destination => destination != null))
+            return;
+
+        foreach (GameObject root in gameObject.scene.GetRootGameObjects())
+        {
+            foreach (Transform candidate in root.GetComponentsInChildren<Transform>(true))
+            {
+                if (candidate.name != "Guard Paths")
+                    continue;
+
+                // Only direct children are waypoints; their children can contain visual markers.
+                destinations = new Transform[candidate.childCount];
+                for (int index = 0; index < destinations.Length; index++)
+                    destinations[index] = candidate.GetChild(index);
+
+                // Preserve the rest duration configured for each waypoint index in the prefab.
+                System.Array.Resize(ref destinationRestTimes, destinations.Length);
+                return;
+            }
+        }
     }
 
     private void OnEnable()

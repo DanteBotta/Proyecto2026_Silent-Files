@@ -39,8 +39,13 @@ public partial class Door
         Bisagra != null &&
         (RotacionCerrada.x != 0f || RotacionCerrada.y != 0f || RotacionCerrada.z != 0f || RotacionCerrada.w != 0f);
 
+    // La pose interpolada del Transform es visual; la física determina si ya se puede pasar.
+    private Quaternion RotacionFisicaLocal => rbBisagra != null
+        ? Quaternion.Inverse(Bisagra.parent != null ? Bisagra.parent.rotation : Quaternion.identity) * rbBisagra.rotation
+        : Bisagra.localRotation;
+
     private bool EstaEn(Quaternion objetivo) =>
-        BisagraLista && Quaternion.Angle(Bisagra.localRotation, objetivo) < ToleranciaGrados;
+        BisagraLista && Quaternion.Angle(RotacionFisicaLocal, objetivo) < ToleranciaGrados;
 
     private void Awake()
     {
@@ -117,7 +122,7 @@ public partial class Door
         if (BisagraLista)
         {
             RotacionObjetivo = abierta ? RotacionAbierta : RotacionCerrada;
-            Bisagra.localRotation = RotacionObjetivo;
+            FijarRotacion(RotacionObjetivo);
         }
     }
 
@@ -126,34 +131,47 @@ public partial class Door
     private void LateUpdate()
     {
         ActualizarTextoEstado();
+    }
 
-        if (!BisagraLista)
-            return;
-
+    // Se llama desde FixedUpdate: la apertura automática usa la misma física que la manual.
+    private void ActualizarMovimientoGuarda()
+    {
         if (fase == FaseMovimiento.Abriendo)
         {
-            GirarHacia(RotacionAbierta);
+            GirarHacia(RotacionAbierta, velocidadGuardaGrados);
             if (EstaEn(RotacionAbierta))
             {
-                Bisagra.localRotation = RotacionAbierta;
                 fase = FaseMovimiento.Abierta;
             }
         }
         else if (fase == FaseMovimiento.Cerrando)
         {
-            GirarHacia(RotacionCerrada);
+            GirarHacia(RotacionCerrada, velocidadGuardaGrados);
             if (EstaEn(RotacionCerrada))
             {
-                Bisagra.localRotation = RotacionCerrada;
                 fase = FaseMovimiento.Cerrada;
             }
         }
     }
 
-    private void GirarHacia(Quaternion objetivo)
+    private void GirarHacia(Quaternion objetivo, float velocidad)
     {
-        Bisagra.localRotation = Quaternion.RotateTowards(
-            Bisagra.localRotation, objetivo, velocidadGuardaGrados * Time.deltaTime);
+        Quaternion siguiente = Quaternion.RotateTowards(RotacionFisicaLocal, objetivo,
+            velocidad * Time.fixedDeltaTime);
+        if (rbBisagra != null)
+            rbBisagra.MoveRotation(RotacionMundo(siguiente));
+        else
+            Bisagra.localRotation = siguiente;
+    }
+
+    private Quaternion RotacionMundo(Quaternion local) =>
+        Bisagra.parent != null ? Bisagra.parent.rotation * local : local;
+
+    private void FijarRotacion(Quaternion local)
+    {
+        if (rbBisagra != null)
+            rbBisagra.rotation = RotacionMundo(local);
+        Bisagra.localRotation = local;
     }
 
     // El guarda pide pasar: la puerta empieza a abrirse. Hay que esperar a IsPassable antes de cruzar.
@@ -226,13 +244,13 @@ public partial class Door
     private static Vector3 Abs(Vector3 value) => new Vector3(Mathf.Abs(value.x), Mathf.Abs(value.y), Mathf.Abs(value.z));
 
     // Completan al instante el movimiento de apertura/cierre iniciado por un guarda.
-    // El juego no las necesita (LateUpdate llega solo), pero los tests las usan para simular que la puerta terminó de moverse.
+    // El juego no las necesita (FixedUpdate llega solo), pero los tests las usan para simular que la puerta terminó de moverse.
     public void NotificarPuertaAbierta()
     {
         if (fase != FaseMovimiento.Abriendo)
             return;
         if (BisagraLista)
-            Bisagra.localRotation = RotacionAbierta;
+            FijarRotacion(RotacionAbierta);
         fase = FaseMovimiento.Abierta;
     }
 
@@ -241,7 +259,7 @@ public partial class Door
         if (fase != FaseMovimiento.Cerrando)
             return;
         if (BisagraLista)
-            Bisagra.localRotation = RotacionCerrada;
+            FijarRotacion(RotacionCerrada);
         fase = FaseMovimiento.Cerrada;
     }
 

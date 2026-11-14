@@ -185,13 +185,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7dad3171b80bbd445a216550cb0214a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AI
-  navMeshAgent: {fileID: 0}
+  navMeshAgent: {fileID: 338612082435409843}
   destinations:
   - {fileID: 0}
   - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   destinationRestTimes:
-  - 4
   - 0
+  - 1
+  - 8
+  - 5
+  - 4
   followPlayer: 0
   distanceToFollowPlayer: 10
   distanceToFollowPath: 2

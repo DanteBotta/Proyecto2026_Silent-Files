@@ -322,10 +322,16 @@ public partial class Door : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (guardasEnPaso.Count > 0 || fase == FaseMovimiento.Abriendo || fase == FaseMovimiento.Cerrando)
+        if (!BisagraLista)
             return;
 
-        bool enMovimiento = Quaternion.Angle(Bisagra.localRotation, RotacionObjetivo) > 0.01f;
+        if (guardasEnPaso.Count > 0 || fase == FaseMovimiento.Abriendo || fase == FaseMovimiento.Cerrando)
+        {
+            ActualizarMovimientoGuarda();
+            return;
+        }
+
+        bool enMovimiento = Quaternion.Angle(RotacionFisicaLocal, RotacionObjetivo) > 0.01f;
 
         // Mientras se mueve: sin collider. Quieta: con collider.
         ActivarColision(!enMovimiento);
@@ -337,9 +343,7 @@ public partial class Door : MonoBehaviour
             ? VelocidadRotacion * multiplicadorVelocidadPalanca
             : VelocidadRotacion;
 
-        Quaternion siguiente = Quaternion.RotateTowards(Bisagra.localRotation, RotacionObjetivo, velocidad * Time.fixedDeltaTime);
-        Quaternion mundo = Bisagra.parent != null ? Bisagra.parent.rotation * siguiente : siguiente;
-        rbBisagra.MoveRotation(mundo);
+        GirarHacia(RotacionObjetivo, velocidad);
     }
 
     private void ActivarColision(bool activa)

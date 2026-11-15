@@ -13824,7 +13824,7 @@ MonoBehaviour:
   distanciaActivacion: 6
   distanciaFuncion: 6
   FuncionCanvas: 0
-  bloquearConParedes: 1
+  bloquearConParedes: 0
   capasObstaculo:
     serializedVersion: 2
     m_Bits: 4294967295

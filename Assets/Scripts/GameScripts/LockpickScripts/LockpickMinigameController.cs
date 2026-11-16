@@ -8,7 +8,8 @@ public class LockpickMinigameController : MonoBehaviour
     {
         SinTerminar,
         Correcto,
-        Incorrecto
+        Incorrecto,
+        Cancelado
     }
 
     [Header("UI a ocultar")]
@@ -64,6 +65,12 @@ public class LockpickMinigameController : MonoBehaviour
     [Header("Resultado (leer desde otros scripts)")]
     public Resultado ResultadoActual = Resultado.SinTerminar;
 
+    [Header("Bloqueo de movimiento")]
+    [Tooltip("Si queda vacío, se busca solo en la escena.")]
+    [SerializeField] private PlayerController playerController;
+
+    public bool MinigameCancelled { get { return ResultadoActual == Resultado.Cancelado; } }
+
     // Estado interno
     private bool MinigameActive = false;
     private bool LineaGirando = false;
@@ -91,12 +98,21 @@ public class LockpickMinigameController : MonoBehaviour
         ConfigurarZonaVerde();
         ResetearIndicadores();
 
+        playerController = FindAnyObjectByType<PlayerController>();
+
         TopIndicatorPanel.gameObject.SetActive(false);
         LockpickCircle.gameObject.SetActive(false);
     }
 
     void Update()
     {
+        // ESC: solo si todavía no se hizo el primer click
+        if (MinigameActive && IntentoActual == 0 && Input.GetKeyDown(KeyCode.Escape))
+        {
+            CancelarMinijuego(true);
+            return;
+        }
+
         if (!MinigameActive || !LineaGirando)
         {
             return;
@@ -283,5 +299,48 @@ public class LockpickMinigameController : MonoBehaviour
         {
             Debug.Log("[Lockpick] " + mensaje);
         }
+    }
+
+    void CancelarMinijuego(bool porEsc)
+    {
+        if (rutina != null)
+        {
+            StopCoroutine(rutina);
+            rutina = null;
+        }
+
+        MinigameActive = false;
+        LineaGirando = false;
+        ResultadoActual = Resultado.Cancelado;
+
+        LockpickCircle.gameObject.SetActive(false);
+        TopIndicatorPanel.gameObject.SetActive(false);
+
+        if (InventoryPanel != null && RestaurarInventarioAlFinalizar)
+            InventoryPanel.SetActive(true);
+
+        SetMovimientoBloqueado(false);
+
+        // Solo con ESC: para que el menú de pausa ignore este mismo ESC
+        if (porEsc)
+            WindowMinigameManager.FrameCierrePorEsc = Time.frameCount;
+
+        Log(porEsc ? "Minijuego cancelado con ESC (sin penalización)."
+                   : "Minijuego cerrado por captura del enemigo.");
+    }
+
+    // Lo llama PlayerEnemyCollision cuando el enemigo atrapa al jugador
+    public void CerrarPorCaptura()
+    {
+        if (!MinigameActive)
+            return;
+
+        CancelarMinijuego(false);
+    }
+
+    void SetMovimientoBloqueado(bool bloqueado)
+    {
+        if (playerController != null)
+            playerController.SetMovementLocked(bloqueado);
     }
 }

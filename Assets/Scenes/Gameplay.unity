@@ -2889,6 +2889,7 @@ MonoBehaviour:
   ColorError: {r: 1, g: 0, b: 0, a: 1}
   MostrarDebugs: 0
   ResultadoActual: 0
+  playerController: {fileID: 0}
 --- !u!4 &352643080
 Transform:
   m_ObjectHideFlags: 0

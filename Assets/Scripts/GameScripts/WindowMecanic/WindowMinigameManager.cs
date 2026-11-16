@@ -59,6 +59,10 @@ public class WindowMinigameManager : MonoBehaviour
     [Header("Distancias tras completar el minijuego")]
     [SerializeField] private float distanciaTrasCompletar = 4f;
 
+    [Header("Bloqueo de movimiento")]
+    [Tooltip("Si queda vacío, se busca solo en la escena.")]
+    [SerializeField] private PlayerController playerController;
+
     // Frame en el que se cerró un minijuego con ESC (para que el menú de pausa lo ignore)
     public static int FrameCierrePorEsc = -1;
 
@@ -101,6 +105,8 @@ public class WindowMinigameManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        playerController = FindAnyObjectByType<PlayerController>();
+
         volume.profile.TryGet(out depthOfField); // Consigue el efecto de depthOfField del volume
         TextoEstado.text = "Ventana (cerrado)";
 
@@ -257,6 +263,8 @@ public class WindowMinigameManager : MonoBehaviour
             ? ShowCanvasNearPlayer.player.position
             : transform.position;
 
+        playerController.SetMovementLocked(true);
+
         SpriteImage.enabled = true;
         SpriteBoton.enabled = true;
         UICamera.enabled = false;
@@ -275,6 +283,8 @@ public class WindowMinigameManager : MonoBehaviour
     {
         StopAllCoroutines(); // por si estaba en la animación inicial
 
+        playerController.SetMovementLocked(false);
+
         SpriteImage.enabled = false;
         SpriteBoton.enabled = false;
         UICamera.enabled = true;
@@ -292,6 +302,16 @@ public class WindowMinigameManager : MonoBehaviour
         {
             ReducirDistancias();
         }
+    }
+
+    // Lo llama PlayerEnemyCollision cuando el enemigo atrapa al jugador
+    public void CerrarPorCaptura()
+    {
+        if (!JuegoIniciado)
+            return;
+
+        AnimationImages.Detener();
+        DesactivarMinijuego();
     }
 
     void ReducirDistancias()

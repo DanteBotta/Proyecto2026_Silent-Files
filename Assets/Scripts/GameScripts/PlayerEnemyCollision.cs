@@ -87,6 +87,18 @@ public class PlayerEnemyCollision : MonoBehaviour
         MissionEndManager.Victoria = false;
         MissionEndManager.MisionTerminada = true;
         Time.timeScale = 0f;
+        CerrarMinijuegos();
         return true;
+    }
+
+    private void CerrarMinijuegos()
+    {
+        foreach (WindowMinigameManager ventana in
+                 FindObjectsByType<WindowMinigameManager>(FindObjectsSortMode.None))
+            ventana.CerrarPorCaptura();
+
+        foreach (LockpickMinigameController ganzua in
+                 FindObjectsByType<LockpickMinigameController>(FindObjectsSortMode.None))
+            ganzua.CerrarPorCaptura();
     }
 }

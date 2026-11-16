@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: b6ae2b987db910f42941ef707b699f1a
+guid: fe8c820909c8dc242b786472238bbc17
 ModelImporter:
   serializedVersion: 24501
   internalIDToNameTable: []
@@ -7,28 +7,13 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Gafas
-    second: {fileID: 2100000, guid: 8f8af97507997d842a821c26133dcd86, type: 2}
+      name: Material
+    second: {fileID: 2100000, guid: d623be85665f2b1408ffcceb354aa58c, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Jeans
-    second: {fileID: 2100000, guid: 14232d6cdcdd6a747a8be997bc4ab8b9, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Musculosa
-    second: {fileID: 2100000, guid: 6f999dd7a477d5047a17eb11f52bcb50, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Piel
-    second: {fileID: 2100000, guid: 76abed61098aa554b8074a66a3e919b2, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Zapatillas
-    second: {fileID: 2100000, guid: 9ad3b48ae2f31b242862b40ee716c3e7, type: 2}
+      name: Material.001
+    second: {fileID: 2100000, guid: e9ced50ddfac49e45bbf5a56611c0128, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

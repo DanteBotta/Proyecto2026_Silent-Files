@@ -16,7 +16,7 @@ public class PickObject : MonoBehaviour
     {
         ShowCanvasNearPlayer = GetComponentInChildren<ShowCanvasNearPlayer>(true);
         ObjetivoManager = FindAnyObjectByType<ObjetivoManager>();
-        ImageFilled = transform.Find("CanvasObjetivo1/Fill-Image").GetComponent<Image>();
+        ImageFilled = transform.Find("CanvasObjetivo/Fill-Image").GetComponent<Image>();
         ImageFilled.fillAmount = 0;
     }
 

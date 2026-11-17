@@ -17,6 +17,9 @@ public class AI : MonoBehaviour, IHear
     public float distanceToFollowPath = 2;
     public GameObject player;
 
+    [Tooltip("Velocidad al perseguir al jugador detectado. La patrulla conserva la velocidad del NavMeshAgent.")]
+    [Min(0.1f)] public float chaseSpeed = 6f;
+
     [Min(0.1f)] public float soundArrivalDistance = 0.5f;
     [Min(0.1f)] public float soundNavMeshSearchRadius = 2f;
 
@@ -27,6 +30,8 @@ public class AI : MonoBehaviour, IHear
     private bool restingAtDestination;
     private float restEndTime;
     private GuardDoorPassage doorPassage;
+    private float patrolSpeed;
+    private bool hasRunningParameter;
 
     public bool IsChasingPlayer => player != null &&
         (playerDetected || (!investigatingPlayerReport && followPlayer &&
@@ -58,11 +63,20 @@ public class AI : MonoBehaviour, IHear
         if (navMeshAgent == null)
             navMeshAgent = GetComponent<NavMeshAgent>();
 
+        if (navMeshAgent != null)
+            patrolSpeed = navMeshAgent.speed;
+
         doorPassage = GuardDoorPassage.EnsureFor(navMeshAgent);
         if (doorPassage != null)
             doorPassage.enabled = isActiveAndEnabled;
 
         animator = GetComponent<Animator>();
+        if (animator != null && animator.runtimeAnimatorController != null)
+        {
+            foreach (AnimatorControllerParameter parameter in animator.parameters)
+                if (parameter.name == "Corriendo" && parameter.type == AnimatorControllerParameterType.Bool)
+                    hasRunningParameter = true;
+        }
     }
 
     private void AssignSceneGuardPaths()
@@ -98,6 +112,12 @@ public class AI : MonoBehaviour, IHear
 
     private void OnDisable()
     {
+        if (navMeshAgent != null)
+            navMeshAgent.speed = patrolSpeed;
+
+        if (animator != null && hasRunningParameter)
+            animator.SetBool("Corriendo", false);
+
         if (doorPassage != null)
             doorPassage.enabled = false;
     }
@@ -117,7 +137,11 @@ public class AI : MonoBehaviour, IHear
         if (animator == null || navMeshAgent == null)
             return;
 
-        animator.SetFloat("Velocidad", navMeshAgent.velocity.magnitude);
+        float speed = navMeshAgent.velocity.magnitude;
+        animator.SetFloat("Velocidad", speed);
+        if (hasRunningParameter)
+            animator.SetBool("Corriendo", IsChasingPlayer && CanNavigate &&
+                !navMeshAgent.isStopped && speed > 0.1f);
     }
 
     // Resolve movement after vision and player movement have updated.
@@ -131,6 +155,9 @@ public class AI : MonoBehaviour, IHear
             FollowPlayer();
             return;
         }
+
+        // Restore walking even while waiting at a door or investigating an alert.
+        navMeshAgent.speed = patrolSpeed;
 
         // A report can arrive before the agent is on its NavMesh. Keep the snapshot until ready.
         // It also replaces an interrupted patrol/sound route while a door is opening.
@@ -276,6 +303,7 @@ public class AI : MonoBehaviour, IHear
         if (!CanNavigate || player == null || (investigatingPlayerReport && !playerDetected))
             return;
 
+        navMeshAgent.speed = Mathf.Max(patrolSpeed, chaseSpeed);
         restingAtDestination = false;
         investigatingSound = false;
         investigatingPlayerReport = false;

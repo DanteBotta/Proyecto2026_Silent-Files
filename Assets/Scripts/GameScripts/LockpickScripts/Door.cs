@@ -12,6 +12,8 @@ public partial class Door : MonoBehaviour
 
     [Header("Ruido")]
     [SerializeField, Min(0f)] private float radioRuidoApertura = 5f;
+    [Tooltip("Alcance del ruido que atrae a los guardias al forzar una puerta trabada con la palanca.")]
+    [SerializeField, Min(0f)] private float radioRuidoPalanca = 15f;
     [Tooltip("Punto de interacción cerca del suelo. Sin asignar, usa la posición del jugador al abrir la puerta.")]
     [SerializeField] private Transform origenRuido;
 
@@ -245,12 +247,7 @@ public partial class Door : MonoBehaviour
                         RotacionObjetivo = RotacionAbierta;
                         ActivarColision(false);
 
-                        Vector3 posicionRuido = origenRuido != null
-                            ? origenRuido.position
-                            : ShowCanvasNearPlayer.player != null
-                                ? ShowCanvasNearPlayer.player.position
-                                : transform.position;
-                        Sounds.MakeSound(new Sound(posicionRuido, radioRuidoApertura, Sound.SoundType.Interesting));
+                        EmitirRuido(radioRuidoApertura);
                     }
                     else if (estadoActual == EstadoPuerta.Abierta) // Puerta Abierta
                     {
@@ -307,6 +304,7 @@ public partial class Door : MonoBehaviour
                         CambiarEstado(EstadoPuerta.Abierta);
                         RotacionObjetivo = RotacionAbierta;
                         ActivarColision(false);
+                        EmitirRuido(radioRuidoPalanca);
                     }
                 }
             }
@@ -318,6 +316,16 @@ public partial class Door : MonoBehaviour
                 MostrarMensaje(msgBloqueada);
             }
         }
+    }
+
+    private void EmitirRuido(float radio)
+    {
+        Vector3 posicionRuido = origenRuido != null
+            ? origenRuido.position
+            : ShowCanvasNearPlayer != null && ShowCanvasNearPlayer.player != null
+                ? ShowCanvasNearPlayer.player.position
+                : transform.position;
+        Sounds.MakeSound(new Sound(posicionRuido, radio, Sound.SoundType.Interesting));
     }
 
     void FixedUpdate()

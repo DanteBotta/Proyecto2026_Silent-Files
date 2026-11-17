@@ -159,8 +159,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FieldOfView
   delay: 0.2
-  radius: 7
-  angle: 180
+  radius: 40
+  angle: 120
   playerRef: {fileID: 0}
   targetMask:
     serializedVersion: 2
@@ -202,6 +202,7 @@ MonoBehaviour:
   distanceToFollowPlayer: 10
   distanceToFollowPath: 2
   player: {fileID: 0}
+  chaseSpeed: 6
   soundArrivalDistance: 0.5
   soundNavMeshSearchRadius: 2
 --- !u!114 &4025980066874828131
@@ -231,7 +232,7 @@ NavMeshAgent:
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
-  m_AngularSpeed: 120
+  m_AngularSpeed: 300
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1

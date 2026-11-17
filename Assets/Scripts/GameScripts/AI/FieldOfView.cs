@@ -19,6 +19,9 @@ public class FieldOfView : MonoBehaviour
 
     public AI seguirJugadorScript; // Referencia al script seguirjugador
 
+    [SerializeField, Min(0f), Tooltip("Rapidez con la que aumenta la sospecha al ver al jugador; se divide por la distancia.")]
+    private float suspicionIncreaseRate = 1000f;
+
     public float suspicion = 0f; //Sospecha del enemigo, si llega a 100 el enemigo detecta al jugador
 
     public enum DetectionMode { GuardSuspicion, Instant }
@@ -198,7 +201,7 @@ public class FieldOfView : MonoBehaviour
         distanceToPlayer = Vector3.Distance(transform.position, playerRef.transform.position);
         if (canSeePlayer)
         {
-            suspicion += (500f * Time.deltaTime) / Mathf.Max(distanceToPlayer, 0.1f); // Aumenta la sospecha del enemigo mientras el jugador está a la vista
+            suspicion += (suspicionIncreaseRate * Time.deltaTime) / Mathf.Max(distanceToPlayer, 0.1f); // Aumenta la sospecha del enemigo mientras el jugador está a la vista
         }
 
         if (!canSeePlayer)

@@ -9,7 +9,7 @@ TagManager:
   - Objectives
   - Indicator
   - Car
-  - Techo
+  - MapLimiters
   layers:
   - Default
   - TransparentFX

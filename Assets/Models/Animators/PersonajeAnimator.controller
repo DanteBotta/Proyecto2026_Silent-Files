@@ -39,10 +39,10 @@ AnimatorStateTransition:
   m_Conditions:
   - m_ConditionMode: 3
     m_ConditionEvent: movment
-    m_EventTreshold: 3.9
+    m_EventTreshold: 4.9
   - m_ConditionMode: 4
     m_ConditionEvent: movment
-    m_EventTreshold: 4.1
+    m_EventTreshold: 5.1
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 5061205255775214205}
   m_Solo: 0
@@ -67,10 +67,10 @@ AnimatorStateTransition:
   m_Conditions:
   - m_ConditionMode: 3
     m_ConditionEvent: movment
-    m_EventTreshold: 6.9
+    m_EventTreshold: 7.9
   - m_ConditionMode: 4
     m_ConditionEvent: movment
-    m_EventTreshold: 7.1
+    m_EventTreshold: 8.1
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 75343376074596063}
   m_Solo: 0
@@ -148,10 +148,10 @@ AnimatorStateTransition:
   m_Conditions:
   - m_ConditionMode: 3
     m_ConditionEvent: movment
-    m_EventTreshold: 6.9
+    m_EventTreshold: 7.9
   - m_ConditionMode: 4
     m_ConditionEvent: movment
-    m_EventTreshold: 7.1
+    m_EventTreshold: 8.1
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 75343376074596063}
   m_Solo: 0
@@ -176,10 +176,10 @@ AnimatorStateTransition:
   m_Conditions:
   - m_ConditionMode: 3
     m_ConditionEvent: movment
-    m_EventTreshold: 3.9
+    m_EventTreshold: 4.9
   - m_ConditionMode: 4
     m_ConditionEvent: movment
-    m_EventTreshold: 4.1
+    m_EventTreshold: 5.1
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 5061205255775214205}
   m_Solo: 0
@@ -204,10 +204,10 @@ AnimatorStateTransition:
   m_Conditions:
   - m_ConditionMode: 3
     m_ConditionEvent: movment
-    m_EventTreshold: 6.9
+    m_EventTreshold: 7.9
   - m_ConditionMode: 4
     m_ConditionEvent: movment
-    m_EventTreshold: 7.1
+    m_EventTreshold: 8.1
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 75343376074596063}
   m_Solo: 0
@@ -457,10 +457,10 @@ AnimatorStateTransition:
   m_Conditions:
   - m_ConditionMode: 3
     m_ConditionEvent: movment
-    m_EventTreshold: 3.9
+    m_EventTreshold: 4.9
   - m_ConditionMode: 4
     m_ConditionEvent: movment
-    m_EventTreshold: 4.1
+    m_EventTreshold: 5.1
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 5061205255775214205}
   m_Solo: 0

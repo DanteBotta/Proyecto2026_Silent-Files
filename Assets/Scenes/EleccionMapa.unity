@@ -1004,7 +1004,7 @@ PrefabInstance:
     - target: {fileID: 4255441428804181589, guid: d965b7927a6e9d04dbebc273f47363b5,
         type: 3}
       propertyPath: displayName
-      value: Mision 3 - 67
+      value: Mision 3 - Asalto Seguro
       objectReference: {fileID: 0}
     - target: {fileID: 4255441428804181589, guid: d965b7927a6e9d04dbebc273f47363b5,
         type: 3}
@@ -1490,6 +1490,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_text
       value: 'Acceder a la base de datos principal '
+      objectReference: {fileID: 0}
+    - target: {fileID: 4255441428804181589, guid: d965b7927a6e9d04dbebc273f47363b5,
+        type: 3}
+      propertyPath: isLocked
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4255441428804181589, guid: d965b7927a6e9d04dbebc273f47363b5,
         type: 3}

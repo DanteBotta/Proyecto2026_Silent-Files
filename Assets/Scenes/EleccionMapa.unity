@@ -1512,6 +1512,11 @@ PrefabInstance:
       propertyPath: displayName
       value: "Mision 2 - Mafia Tecnol\xF3gica"
       objectReference: {fileID: 0}
+    - target: {fileID: 4255441428804181589, guid: d965b7927a6e9d04dbebc273f47363b5,
+        type: 3}
+      propertyPath: isSelectable
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4424288835483992163, guid: d965b7927a6e9d04dbebc273f47363b5,
         type: 3}
       propertyPath: m_Name

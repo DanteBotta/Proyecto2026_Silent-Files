@@ -20,7 +20,7 @@ public class FieldOfView : MonoBehaviour
     public AI seguirJugadorScript; // Referencia al script seguirjugador
 
     [SerializeField, Min(0f), Tooltip("Rapidez con la que aumenta la sospecha al ver al jugador; se divide por la distancia.")]
-    private float suspicionIncreaseRate = 1000f;
+    private float suspicionIncreaseRate = 10000f;
 
     public float suspicion = 0f; //Sospecha del enemigo, si llega a 100 el enemigo detecta al jugador
 

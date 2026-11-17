@@ -186,7 +186,7 @@ MonoBehaviour:
   canSeePlayer: 0
   distanceToPlayer: 0
   seguirJugadorScript: {fileID: 6347557697784440781}
-  suspicionIncreaseRate: 1000
+  suspicionIncreaseRate: 10000
   suspicion: 0
   detectionMode: 0
 --- !u!114 &6347557697784440781

@@ -13,7 +13,7 @@ public partial class Door : MonoBehaviour
     [Header("Ruido")]
     [SerializeField, Min(0f)] private float radioRuidoApertura = 5f;
     [Tooltip("Alcance del ruido que atrae a los guardias al forzar una puerta trabada con la palanca.")]
-    [SerializeField, Min(0f)] private float radioRuidoPalanca = 15f;
+    [SerializeField, Min(0f)] private float radioRuidoPalanca = 45f;
     [Tooltip("Punto de interacción cerca del suelo. Sin asignar, usa la posición del jugador al abrir la puerta.")]
     [SerializeField] private Transform origenRuido;
 

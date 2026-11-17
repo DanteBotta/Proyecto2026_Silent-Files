@@ -1952,6 +1952,7 @@ MonoBehaviour:
   LockpickMinigameController: {fileID: 0}
   ShowCanvasNearPlayer: {fileID: 0}
   radioRuidoApertura: 5
+  radioRuidoPalanca: 15
   origenRuido: {fileID: 0}
   Bisagra: {fileID: 0}
   AnguloApertura: 90
@@ -3194,6 +3195,7 @@ MonoBehaviour:
   LockpickMinigameController: {fileID: 0}
   ShowCanvasNearPlayer: {fileID: 0}
   radioRuidoApertura: 5
+  radioRuidoPalanca: 15
   origenRuido: {fileID: 0}
   Bisagra: {fileID: 0}
   AnguloApertura: -90
@@ -4209,7 +4211,7 @@ MonoBehaviour:
   Personaje: {fileID: 6220407021977530333, guid: 9d1c8b0b45c932f4db473f14c7efd19c,
     type: 3}
   PuntoSpawn: {fileID: 1239488228}
-  Guardia: {fileID: 9014397089936639942, guid: cb3a78641a499bc40b039128a3361d6c, type: 3}
+  Guardia: {fileID: 5583253087229553669, guid: 95e7b1d0ccd1d1241a55d9842c030bec, type: 3}
   PuntoSpawnGuardia: {fileID: 1047997897}
   Panel: {fileID: 134178243}
   PanelInventario: {fileID: 1634313144}
@@ -7821,6 +7823,7 @@ MonoBehaviour:
   LockpickMinigameController: {fileID: 0}
   ShowCanvasNearPlayer: {fileID: 0}
   radioRuidoApertura: 5
+  radioRuidoPalanca: 15
   origenRuido: {fileID: 0}
   Bisagra: {fileID: 0}
   AnguloApertura: -90
@@ -10031,6 +10034,7 @@ MonoBehaviour:
   LockpickMinigameController: {fileID: 0}
   ShowCanvasNearPlayer: {fileID: 0}
   radioRuidoApertura: 5
+  radioRuidoPalanca: 15
   origenRuido: {fileID: 0}
   Bisagra: {fileID: 0}
   AnguloApertura: -90
@@ -10265,6 +10269,7 @@ MonoBehaviour:
   LockpickMinigameController: {fileID: 0}
   ShowCanvasNearPlayer: {fileID: 0}
   radioRuidoApertura: 5
+  radioRuidoPalanca: 15
   origenRuido: {fileID: 0}
   Bisagra: {fileID: 0}
   AnguloApertura: -90
@@ -10704,6 +10709,7 @@ MonoBehaviour:
   LockpickMinigameController: {fileID: 0}
   ShowCanvasNearPlayer: {fileID: 0}
   radioRuidoApertura: 5
+  radioRuidoPalanca: 15
   origenRuido: {fileID: 0}
   Bisagra: {fileID: 0}
   AnguloApertura: -90
@@ -13338,6 +13344,7 @@ MonoBehaviour:
   LockpickMinigameController: {fileID: 0}
   ShowCanvasNearPlayer: {fileID: 0}
   radioRuidoApertura: 5
+  radioRuidoPalanca: 15
   origenRuido: {fileID: 0}
   Bisagra: {fileID: 0}
   AnguloApertura: -90
@@ -15953,6 +15960,7 @@ MonoBehaviour:
   LockpickMinigameController: {fileID: 0}
   ShowCanvasNearPlayer: {fileID: 0}
   radioRuidoApertura: 5
+  radioRuidoPalanca: 15
   origenRuido: {fileID: 0}
   Bisagra: {fileID: 0}
   AnguloApertura: -90

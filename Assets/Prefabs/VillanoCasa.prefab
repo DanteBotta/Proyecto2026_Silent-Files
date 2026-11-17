@@ -174,8 +174,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FieldOfView
   delay: 0.2
-  radius: 7
-  angle: 180
+  radius: 40
+  angle: 120
   playerRef: {fileID: 0}
   targetMask:
     serializedVersion: 2
@@ -185,7 +185,8 @@ MonoBehaviour:
     m_Bits: 512
   canSeePlayer: 0
   distanceToPlayer: 0
-  seguirJugadorScript: {fileID: 0}
+  seguirJugadorScript: {fileID: 6347557697784440781}
+  suspicionIncreaseRate: 1000
   suspicion: 0
   detectionMode: 0
 --- !u!114 &6347557697784440781
@@ -200,7 +201,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7dad3171b80bbd445a216550cb0214a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AI
-  navMeshAgent: {fileID: 0}
+  navMeshAgent: {fileID: 8520544576216042912}
   destinations:
   - {fileID: 0}
   - {fileID: 0}
@@ -217,6 +218,7 @@ MonoBehaviour:
   distanceToFollowPlayer: 10
   distanceToFollowPath: 2
   player: {fileID: 0}
+  chaseSpeed: 7
   soundArrivalDistance: 0.5
   soundNavMeshSearchRadius: 2
 --- !u!114 &4921657478610466084
@@ -243,10 +245,10 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 5
   m_Acceleration: 8
   avoidancePriority: 50
-  m_AngularSpeed: 120
+  m_AngularSpeed: 1000
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1

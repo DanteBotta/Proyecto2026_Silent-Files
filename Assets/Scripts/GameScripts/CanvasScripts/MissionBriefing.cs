@@ -138,35 +138,29 @@ public class MissionBriefing : MonoBehaviour
 
     private IEnumerator MostrarBriefing()
     {
-        yield return StartCoroutine(
-            EscribirTexto(Fecha, "FECHA\t\t: 06.10.2026"));
+        yield return StartCoroutine(EscribirTexto(Fecha, "FECHA\t\t: 06.10.2026"));
 
         yield return new WaitForSecondsRealtime(TiempoEntreTextos);
 
-        yield return StartCoroutine(
-            EscribirTexto(Hora, "HORA\t\t: 02:37 AM"));
+        yield return StartCoroutine(EscribirTexto(Hora, "HORA\t\t: 02:37 AM"));
 
         yield return new WaitForSecondsRealtime(TiempoEntreTextos);
 
-        yield return StartCoroutine(
-            EscribirTexto(Ubicacion, "UBICACI�N\t\t: LANUS, ARGENTINA"));
+        yield return StartCoroutine(EscribirTexto(Ubicacion, "UBICACIÓN\t\t: LANUS, ARGENTINA"));
 
         yield return new WaitForSecondsRealtime(TiempoEntreTextos);
 
         Linea1.text = "________________________________________________________________________";
 
-        yield return StartCoroutine(
-            EscribirTexto(TituloMision, "MISI�N 01 - El Falsificador"));
+        yield return StartCoroutine(EscribirTexto(TituloMision, "MISIÓN 01 - El Falsificador"));
 
         yield return new WaitForSecondsRealtime(TiempoEntreTextos);
 
-        yield return StartCoroutine(
-            EscribirTexto(Descripcion, "El mejor falsificador de identidades de la ciudad vive aqu�"));
+        yield return StartCoroutine(EscribirTexto(Descripcion, "El mejor falsificador de identidades de la ciudad vive aquí"));
 
         yield return new WaitForSecondsRealtime(TiempoEntreTextos);
 
-        yield return StartCoroutine(
-            EscribirTexto(Objetivo, "OBJETIVO : INGRESAR SIN SER DETECTADO Y RECUPERAR DOCUMENTOS"));
+        yield return StartCoroutine(EscribirTexto(Objetivo, "OBJETIVO : INGRESAR SIN SER DETECTADO Y RECUPERAR DOCUMENTOS"));
 
         yield return new WaitForSecondsRealtime(TiempoEntreTextos);
 
@@ -179,8 +173,7 @@ public class MissionBriefing : MonoBehaviour
         TerminarBriefing();
     }
 
-    private IEnumerator EscribirTexto(
-        TextMeshProUGUI texto, string contenido)
+    private IEnumerator EscribirTexto(TextMeshProUGUI texto, string contenido)
     {
         texto.text = "";
 

@@ -107,16 +107,11 @@ public partial class Door : MonoBehaviour
 
         RotacionObjetivo = RotacionCerrada;
 
-        if (InventoryManager == null)
-            InventoryManager = FindAnyObjectByType<InventoryManager>();
-        if (LockpickMinigameController == null)
-            LockpickMinigameController = FindAnyObjectByType<LockpickMinigameController>();
-        if (ShowCanvasNearPlayer == null)
-            ShowCanvasNearPlayer = raizPuerta.GetComponentInChildren<ShowCanvasNearPlayer>(true);
-        if (TextoEstado == null)
-            TextoEstado = BuscarTextoEstado(raizPuerta);
-        if (TextoMensaje == null)
-            TextoMensaje = BuscarTextoMensaje(raizPuerta);
+        InventoryManager = FindAnyObjectByType<InventoryManager>();
+        LockpickMinigameController = FindAnyObjectByType<LockpickMinigameController>();
+        ShowCanvasNearPlayer = raizPuerta.GetComponentInChildren<ShowCanvasNearPlayer>(true);
+        TextoEstado = BuscarTextoEstado(raizPuerta);
+        TextoMensaje = BuscarTextoMensaje(raizPuerta);
 
         if (TextoMensaje != null)
             TextoMensaje.text = string.Empty;

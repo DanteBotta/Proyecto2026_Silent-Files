@@ -15994,7 +15994,7 @@ MonoBehaviour:
     mostrar: 1
     texto: Puerta bloqueada, no se puede abrir
   MostrarDebugs: 0
-  estadoActual: 3
+  estadoActual: 1
 --- !u!23 &1701043508689312
 MeshRenderer:
   m_ObjectHideFlags: 0

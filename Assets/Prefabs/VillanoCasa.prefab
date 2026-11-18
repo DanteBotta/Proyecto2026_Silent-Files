@@ -218,7 +218,7 @@ MonoBehaviour:
   distanceToFollowPlayer: 10
   distanceToFollowPath: 2
   player: {fileID: 0}
-  chaseSpeed: 7
+  chaseSpeed: 8
   soundArrivalDistance: 0.5
   soundNavMeshSearchRadius: 2
 --- !u!114 &4921657478610466084
@@ -248,7 +248,7 @@ NavMeshAgent:
   m_Speed: 5
   m_Acceleration: 8
   avoidancePriority: 50
-  m_AngularSpeed: 1000
+  m_AngularSpeed: 200
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1

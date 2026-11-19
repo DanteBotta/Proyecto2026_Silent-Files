@@ -128,6 +128,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1276220159}
     m_Modifications:
+    - target: {fileID: -9144416076658404024, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9771ea3628456cd47854b082ae8a3ebb,
         type: 3}
       propertyPath: m_LocalScale.x
@@ -193,10 +198,35 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -3100612443717797840, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 9771ea3628456cd47854b082ae8a3ebb,
         type: 3}
       propertyPath: m_Name
       value: PuertaInterior
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1120924037789985790, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4624277816682848537, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 7166339759620083578, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -825,6 +855,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 928644677}
     m_Modifications:
+    - target: {fileID: -9144416076658404024, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9771ea3628456cd47854b082ae8a3ebb,
         type: 3}
       propertyPath: m_LocalScale.x
@@ -890,10 +925,35 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -3100612443717797840, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 9771ea3628456cd47854b082ae8a3ebb,
         type: 3}
       propertyPath: m_Name
       value: PuertaInterior
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1120924037789985790, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4624277816682848537, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 7166339759620083578, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1218,6 +1278,16 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1825510864}
     m_Modifications:
+    - target: {fileID: 2996528354898730914, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4898607216865115633, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 5252572409444642758, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
         type: 3}
       propertyPath: m_Name
@@ -1225,8 +1295,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5252572409444642758, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
         type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5252572409444642758, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
+        type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5501314729176224646, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6616661247229436690, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
         type: 3}
@@ -1606,6 +1686,16 @@ PrefabInstance:
       propertyPath: bloquearConParedes
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2996528354898730914, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4898607216865115633, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 5252572409444642758, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
         type: 3}
       propertyPath: m_Name
@@ -1613,8 +1703,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5252572409444642758, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
         type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5252572409444642758, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
+        type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5501314729176224646, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6616661247229436690, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
         type: 3}
@@ -2655,7 +2755,7 @@ GameObject:
   m_Component:
   - component: {fileID: 228086399}
   - component: {fileID: 228086400}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Bisagra
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3026,6 +3126,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 549332559}
     m_Modifications:
+    - target: {fileID: -9144416076658404024, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9771ea3628456cd47854b082ae8a3ebb,
         type: 3}
       propertyPath: m_LocalScale.x
@@ -3091,10 +3196,35 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -3100612443717797840, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 9771ea3628456cd47854b082ae8a3ebb,
         type: 3}
       propertyPath: m_Name
       value: PuertaInterior
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1120924037789985790, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4624277816682848537, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 7166339759620083578, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3117,6 +3247,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1200013291}
     m_Modifications:
+    - target: {fileID: -9144416076658404024, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9771ea3628456cd47854b082ae8a3ebb,
         type: 3}
       propertyPath: m_LocalScale.x
@@ -3182,10 +3317,35 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -3100612443717797840, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 9771ea3628456cd47854b082ae8a3ebb,
         type: 3}
       propertyPath: m_Name
       value: PuertaInterior
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1120924037789985790, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4624277816682848537, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 7166339759620083578, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3209,7 +3369,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 318593116}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: PuertaCochera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4105,7 +4265,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 399993366}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: PuertaCerca
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4138,7 +4298,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 404066997}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: PuertaEntrada
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4275,7 +4435,7 @@ GameObject:
   m_Component:
   - component: {fileID: 453320177}
   - component: {fileID: 453320178}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Bisagra
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5013,7 +5173,7 @@ GameObject:
   m_Component:
   - component: {fileID: 549332559}
   - component: {fileID: 549332560}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Bisagra
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5868,7 +6028,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 657505990}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: "PuertaBa\xF1o"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6097,7 +6257,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 665562954}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: "PuertaHabitaci\xF3n"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6130,7 +6290,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 676441190}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: PuertaOficinaHabitacion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7126,6 +7286,16 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 318593116}
     m_Modifications:
+    - target: {fileID: 2996528354898730914, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4898607216865115633, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 5252572409444642758, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
         type: 3}
       propertyPath: m_Name
@@ -7133,8 +7303,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5252572409444642758, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
         type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5252572409444642758, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
+        type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5501314729176224646, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6616661247229436690, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
         type: 3}
@@ -8077,7 +8257,7 @@ GameObject:
   m_Component:
   - component: {fileID: 928644677}
   - component: {fileID: 928644678}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Bisagra
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8137,7 +8317,7 @@ GameObject:
   m_Component:
   - component: {fileID: 929163323}
   - component: {fileID: 929163324}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Bisagra
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8387,7 +8567,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1017837832}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: PuertaAlmacen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8419,6 +8599,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 228086399}
     m_Modifications:
+    - target: {fileID: -9144416076658404024, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9771ea3628456cd47854b082ae8a3ebb,
         type: 3}
       propertyPath: m_LocalScale.x
@@ -8484,10 +8669,35 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -3100612443717797840, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 9771ea3628456cd47854b082ae8a3ebb,
         type: 3}
       propertyPath: m_Name
       value: PuertaInterior
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1120924037789985790, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4624277816682848537, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 7166339759620083578, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8749,6 +8959,16 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1017837832}
     m_Modifications:
+    - target: {fileID: 2996528354898730914, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4898607216865115633, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 5252572409444642758, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
         type: 3}
       propertyPath: m_Name
@@ -8756,8 +8976,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5252572409444642758, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
         type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5252572409444642758, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
+        type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5501314729176224646, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6616661247229436690, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
         type: 3}
@@ -10114,7 +10344,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1200013291}
   - component: {fileID: 1200013292}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Bisagra
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10644,7 +10874,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1276220159}
   - component: {fileID: 1276220160}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Bisagra
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11454,6 +11684,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 453320177}
     m_Modifications:
+    - target: {fileID: -9144416076658404024, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9771ea3628456cd47854b082ae8a3ebb,
         type: 3}
       propertyPath: m_LocalScale.x
@@ -11519,10 +11754,35 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -3100612443717797840, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 9771ea3628456cd47854b082ae8a3ebb,
         type: 3}
       propertyPath: m_Name
       value: PuertaInterior
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1120924037789985790, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4624277816682848537, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 7166339759620083578, guid: 9771ea3628456cd47854b082ae8a3ebb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -12547,6 +12807,16 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 676441190}
     m_Modifications:
+    - target: {fileID: 2996528354898730914, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4898607216865115633, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 5252572409444642758, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
         type: 3}
       propertyPath: m_Name
@@ -12554,8 +12824,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5252572409444642758, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
         type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5252572409444642758, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
+        type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5501314729176224646, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6616661247229436690, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
         type: 3}
@@ -13694,7 +13974,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1605021847}
   - component: {fileID: 1605021848}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Bisagra
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14361,10 +14641,25 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -1880618490756294677, guid: 16769b032e96c364090c8d004b518269,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 16769b032e96c364090c8d004b518269,
         type: 3}
       propertyPath: m_Name
       value: PuertaCerca
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 16769b032e96c364090c8d004b518269,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 2780200790410218616, guid: 16769b032e96c364090c8d004b518269,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 3433992052308909741, guid: 16769b032e96c364090c8d004b518269,
         type: 3}
@@ -14395,6 +14690,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6592401360930831907, guid: 16769b032e96c364090c8d004b518269,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 7020830686189265933, guid: 16769b032e96c364090c8d004b518269,
         type: 3}
@@ -15279,6 +15579,16 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 665562954}
     m_Modifications:
+    - target: {fileID: 2996528354898730914, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4898607216865115633, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 5252572409444642758, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
         type: 3}
       propertyPath: m_Name
@@ -15286,8 +15596,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5252572409444642758, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
         type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5252572409444642758, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
+        type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5501314729176224646, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6616661247229436690, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
         type: 3}
@@ -15797,6 +16117,16 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 657505990}
     m_Modifications:
+    - target: {fileID: 2996528354898730914, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4898607216865115633, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 5252572409444642758, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
         type: 3}
       propertyPath: m_Name
@@ -15804,8 +16134,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5252572409444642758, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
         type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5252572409444642758, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
+        type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5501314729176224646, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6616661247229436690, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
         type: 3}
@@ -16090,7 +16430,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1825510864}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: PuertaOficina
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17047,6 +17387,16 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 404066997}
     m_Modifications:
+    - target: {fileID: 2996528354898730914, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4898607216865115633, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 5252572409444642758, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
         type: 3}
       propertyPath: m_Name
@@ -17054,8 +17404,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5252572409444642758, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
         type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5252572409444642758, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
+        type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5501314729176224646, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6616661247229436690, guid: 41e734f6ae3d55048bf9ed0b802c3e72,
         type: 3}
@@ -17469,10 +17829,35 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -6212985962149816971, guid: 78b16e454f6651649a346c2f64b816f9,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: -4984319022125605856, guid: 78b16e454f6651649a346c2f64b816f9,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 78b16e454f6651649a346c2f64b816f9,
         type: 3}
       propertyPath: m_Name
       value: PuertaEntrada
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 78b16e454f6651649a346c2f64b816f9,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4146342961836969303, guid: 78b16e454f6651649a346c2f64b816f9,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 6592401360930831907, guid: 78b16e454f6651649a346c2f64b816f9,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

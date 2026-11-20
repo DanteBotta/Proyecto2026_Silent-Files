@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 public class MissionEndManager : MonoBehaviour
 {
     public Image PanelInterruption;
-    
+
     [Header("Canvas Victoria")]
     public GameObject CanvasVictoria;
 
@@ -17,35 +17,51 @@ public class MissionEndManager : MonoBehaviour
     public Canvas Minimapa;
     public Camera UICamera;
 
+    [Header("Speedrun")]
+    public SpeedrunManager speedrunManager;
+
     [Header("Parametros (no tocar)")]
     public bool MisionTerminada = false;
     public bool Victoria;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private bool finProcesado = false;
+
     void Start()
     {
+        speedrunManager = FindAnyObjectByType<SpeedrunManager>();
+
         PanelInterruption.enabled = false;
         CanvasVictoria.SetActive(false);
         CanvasDerrota.SetActive(false);
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (MisionTerminada)
+        if (!MisionTerminada || finProcesado)
         {
-            PanelInterruption.enabled = true;
-            PanelInventario.gameObject.SetActive(false);
-            Minimapa.gameObject.SetActive(false);
-            UICamera.gameObject.SetActive(false);
-            if (Victoria)
+            return;
+        }
+
+        finProcesado = true;
+
+        PanelInterruption.enabled = true;
+        PanelInventario.gameObject.SetActive(false);
+        Minimapa.gameObject.SetActive(false);
+        UICamera.gameObject.SetActive(false);
+
+        if (Victoria)
+        {
+            CanvasVictoria.SetActive(true);
+
+            // Frena el cronómetro; el tiempo final queda visible
+            if (speedrunManager != null)
             {
-                CanvasVictoria.SetActive(true);
+                speedrunManager.PausarTimer();
             }
-            else if (!Victoria)
-            {
-                CanvasDerrota.SetActive(true);
-            }
+        }
+        else
+        {
+            CanvasDerrota.SetActive(true);
         }
     }
 

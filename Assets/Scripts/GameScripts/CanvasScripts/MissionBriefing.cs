@@ -19,6 +19,9 @@ public class MissionBriefing : MonoBehaviour
     public GameObject PanelInventario;
     public GameObject Minimapa;
 
+    [Header("Speedrun")]
+    public SpeedrunManager speedrunManager;
+
     [Header("Textos")]
     public TextMeshProUGUI Fecha;
     public TextMeshProUGUI Hora;
@@ -44,7 +47,16 @@ public class MissionBriefing : MonoBehaviour
     public bool MisionIniciada = false;
 
     private bool personajeInstanciado = false;
-    private bool gaurdiaInstanciado = false;
+    private bool guardiaInstanciado = false;
+
+    private const string TXT_FECHA = "FECHA\t\t: 06.10.2026";
+    private const string TXT_HORA = "HORA\t\t: 02:37 AM";
+    private const string TXT_UBICACION = "UBICACIÓN\t\t: LANUS, ARGENTINA";
+    private const string TXT_LINEA = "________________________________________________________________________";
+    private const string TXT_TITULO = "MISIÓN 01 - El Falsificador";
+    private const string TXT_DESCRIPCION = "El mejor falsificador de identidades de la ciudad vive aquí";
+    private const string TXT_OBJETIVO = "OBJETIVO : INGRESAR SIN SER DETECTADO Y RECUPERAR DOCUMENTOS";
+    private const string TXT_PRESIONA_F = "Presiona [ F ] para EMPEZAR";
 
     private void Awake()
     {
@@ -57,6 +69,8 @@ public class MissionBriefing : MonoBehaviour
 
     private void Start()
     {
+        speedrunManager = FindAnyObjectByType<SpeedrunManager>();
+
         Time.timeScale = 0f;
 
         if (!ActivarBriefing)
@@ -68,6 +82,15 @@ public class MissionBriefing : MonoBehaviour
         }
 
         Panel.SetActive(true);
+
+        // Modo speedrun: todo el texto aparece de una, sin efecto de escritura
+        if (ConfigurationVariables.Instance.SpeedrunMode)
+        {
+            MostrarTodoElTexto();
+            SalteandoBriefing = true;
+            TerminarBriefing();
+            return;
+        }
 
         Fecha.text = "";
         Hora.text = "";
@@ -114,16 +137,7 @@ public class MissionBriefing : MonoBehaviour
         if (!BriefingTerminado)
         {
             StopAllCoroutines();
-
-            Fecha.text = "FECHA\t\t: 06.10.2026";
-            Hora.text = "HORA\t\t: 02:37 AM";
-            Ubicacion.text = "UBICACIÓN\t\t: LANUS, ARGENTINA";
-            Linea1.text = "________________________________________________________________________";
-            TituloMision.text = "MISIÓN 01 - El Falsificador";
-            Descripcion.text = "El mejor falsificador de identidades de la ciudad vive aquí";
-            Objetivo.text = "OBJETIVO : INGRESAR SIN SER DETECTADO Y RECUPERAR DOCUMENTOS";
-            Linea2.text = "________________________________________________________________________";
-            PresionaF.text = "Presiona [ F ] para EMPEZAR";
+            MostrarTodoElTexto();
 
             SalteandoBriefing = true;
             BriefingTerminado = true;
@@ -136,39 +150,46 @@ public class MissionBriefing : MonoBehaviour
         ContinuarMision();
     }
 
+    private void MostrarTodoElTexto()
+    {
+        Fecha.text = TXT_FECHA;
+        Hora.text = TXT_HORA;
+        Ubicacion.text = TXT_UBICACION;
+        Linea1.text = TXT_LINEA;
+        TituloMision.text = TXT_TITULO;
+        Descripcion.text = TXT_DESCRIPCION;
+        Objetivo.text = TXT_OBJETIVO;
+        Linea2.text = TXT_LINEA;
+        PresionaF.text = TXT_PRESIONA_F;
+    }
+
     private IEnumerator MostrarBriefing()
     {
-        yield return StartCoroutine(EscribirTexto(Fecha, "FECHA\t\t: 06.10.2026"));
-
+        yield return StartCoroutine(EscribirTexto(Fecha, TXT_FECHA));
         yield return new WaitForSecondsRealtime(TiempoEntreTextos);
 
-        yield return StartCoroutine(EscribirTexto(Hora, "HORA\t\t: 02:37 AM"));
-
+        yield return StartCoroutine(EscribirTexto(Hora, TXT_HORA));
         yield return new WaitForSecondsRealtime(TiempoEntreTextos);
 
-        yield return StartCoroutine(EscribirTexto(Ubicacion, "UBICACIÓN\t\t: LANUS, ARGENTINA"));
-
+        yield return StartCoroutine(EscribirTexto(Ubicacion, TXT_UBICACION));
         yield return new WaitForSecondsRealtime(TiempoEntreTextos);
 
-        Linea1.text = "________________________________________________________________________";
+        Linea1.text = TXT_LINEA;
 
-        yield return StartCoroutine(EscribirTexto(TituloMision, "MISIÓN 01 - El Falsificador"));
-
+        yield return StartCoroutine(EscribirTexto(TituloMision, TXT_TITULO));
         yield return new WaitForSecondsRealtime(TiempoEntreTextos);
 
-        yield return StartCoroutine(EscribirTexto(Descripcion, "El mejor falsificador de identidades de la ciudad vive aquí"));
-
+        yield return StartCoroutine(EscribirTexto(Descripcion, TXT_DESCRIPCION));
         yield return new WaitForSecondsRealtime(TiempoEntreTextos);
 
-        yield return StartCoroutine(EscribirTexto(Objetivo, "OBJETIVO : INGRESAR SIN SER DETECTADO Y RECUPERAR DOCUMENTOS"));
-
+        yield return StartCoroutine(EscribirTexto(Objetivo, TXT_OBJETIVO));
         yield return new WaitForSecondsRealtime(TiempoEntreTextos);
 
-        Linea2.text = "________________________________________________________________________";
+        Linea2.text = TXT_LINEA;
 
         yield return new WaitForSecondsRealtime(1f);
 
-        PresionaF.text = "Presiona [ F ] para EMPEZAR";
+        PresionaF.text = TXT_PRESIONA_F;
 
         TerminarBriefing();
     }
@@ -196,29 +217,19 @@ public class MissionBriefing : MonoBehaviour
             return;
         }
 
-        Instantiate(
-            Personaje,
-            PuntoSpawn.transform.position,
-            PuntoSpawn.transform.rotation
-        );
-
+        Instantiate(Personaje, PuntoSpawn.transform.position, PuntoSpawn.transform.rotation);
         personajeInstanciado = true;
     }
 
     private void InstanciarGuardia()
     {
-        if (gaurdiaInstanciado)
+        if (guardiaInstanciado)
         {
             return;
         }
 
-        Instantiate(
-            Guardia,
-            PuntoSpawnGuardia.transform.position,
-            PuntoSpawnGuardia.transform.rotation
-        );
-
-        gaurdiaInstanciado = true;
+        Instantiate(Guardia, PuntoSpawnGuardia.transform.position, PuntoSpawnGuardia.transform.rotation);
+        guardiaInstanciado = true;
     }
 
     private void ContinuarMision()
@@ -236,5 +247,11 @@ public class MissionBriefing : MonoBehaviour
 
         SalteandoBriefing = false;
         MisionIniciada = true;
+
+        // Arranca el cronómetro al empezar la misión
+        if (speedrunManager != null)
+        {
+            speedrunManager.IniciarTimer();
+        }
     }
 }

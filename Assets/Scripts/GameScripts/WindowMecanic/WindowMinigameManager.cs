@@ -83,7 +83,6 @@ public class WindowMinigameManager : MonoBehaviour
     bool DistanciasReducidas = false;
     Vector3 posicionInteraccion;
 
-    bool PrimeraVezF = false;
     bool FalloRojo = false;
 
     public bool MinijuegoActivo => JuegoIniciado;
@@ -172,7 +171,6 @@ public class WindowMinigameManager : MonoBehaviour
             {
                 if (EvitarRepeticion == 0)
                 {
-                    PrimeraVezF = true;
                     FalloRojo = false;
 
                     AnimationImages.Reproducir("MinijuegoVentana/InteraccionVentana/StruglingWindow", true);

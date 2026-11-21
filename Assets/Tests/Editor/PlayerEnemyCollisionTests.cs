@@ -13,23 +13,19 @@ public class PlayerEnemyCollisionTests
     private NavMeshData navigationData;
     private NavMeshDataInstance navigationInstance;
     private float previousTimeScale;
-    private bool previousAutoSync;
 
     [UnitySetUp]
     public IEnumerator SetUp()
     {
         yield return new EnterPlayMode();
         previousTimeScale = Time.timeScale;
-        previousAutoSync = Physics.autoSyncTransforms;
         Time.timeScale = 1f;
-        Physics.autoSyncTransforms = false;
     }
 
     [UnityTearDown]
     public IEnumerator TearDown()
     {
         Time.timeScale = previousTimeScale;
-        Physics.autoSyncTransforms = previousAutoSync;
         Physics.IgnoreLayerCollision(29, 30, false);
         for (int index = objects.Count - 1; index >= 0; index--)
         {
@@ -250,7 +246,7 @@ public class PlayerEnemyCollisionTests
         yield return null;
         Assert.That(player.MissionEndManager, Is.SameAs(assignedManager));
 
-        foreach (MissionEndManager manager in Object.FindObjectsByType<MissionEndManager>(FindObjectsSortMode.None))
+        foreach (MissionEndManager manager in Object.FindObjectsByType<MissionEndManager>())
             Object.Destroy(manager.gameObject);
         yield return null;
         CreateGuard(Vector3.zero);

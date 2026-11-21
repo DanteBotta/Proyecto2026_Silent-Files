@@ -9,6 +9,8 @@ public class PauseMenuController : MonoBehaviour
 {
     public Image PanelMenuPausa;
     public MissionBriefing MissionBriefing;
+    public MissionEndManager MissionEndManager;
+    public ExitMisionCar ExitMisionCar;
     public WindowMinigameManager[] WindowMinigames;
 
     [Header("Canvas a ocultar")]
@@ -21,12 +23,22 @@ public class PauseMenuController : MonoBehaviour
     {
         PanelMenuPausa.gameObject.SetActive(false);
         MissionBriefing = FindAnyObjectByType<MissionBriefing>();
+        MissionEndManager = FindAnyObjectByType<MissionEndManager>();
+        ExitMisionCar = FindAnyObjectByType<ExitMisionCar>();
         WindowMinigames = FindObjectsByType<WindowMinigameManager>();
     }
 
     void Update()
     {
         if (!MissionBriefing.BriefingTerminado)
+            return;
+
+        // No se puede pausar si la misión ya terminó (derrota o victoria)
+        if (MissionEndManager != null && MissionEndManager.MisionTerminada)
+            return;
+
+        // No se puede pausar si el jugador ya se subió al auto
+        if (ExitMisionCar != null && ExitMisionCar.SalidaIniciada)
             return;
 
         // Comprobar si hay algún minijuego activo

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 // Para usar el Input System NUEVO en el teclado: agregar el scripting define MISSION_USE_NEW_INPUT
 // (Project Settings > Player > Scripting Define Symbols) y asegurarse de que el paquete
@@ -23,6 +24,7 @@ using UnityEngine.InputSystem;
 ///   La hoja NUNCA rota: mantiene su rotación original (mirando a la cámara).
 /// - Si elegís otra, la hoja actual hace el recorrido inverso y recién después sale la nueva.
 /// - Next() / Previous(): botones en pantalla (mouse/touch) y flechas izquierda/derecha del teclado.
+/// - Espacio (o doble click en una misión) confirma la misión elegida.
 /// </summary>
 public class MissionSelectionManager : MonoBehaviour
 {
@@ -147,21 +149,24 @@ public class MissionSelectionManager : MonoBehaviour
     [SerializeField] private Button previousButton;
     [SerializeField] private Button nextButton;
 
-    [Tooltip("Usar el teclado: flechas izquierda/derecha para cambiar y Enter para confirmar.")]
+    [Tooltip("Usar el teclado: flechas izquierda/derecha para cambiar y Espacio para confirmar.")]
     [SerializeField] private bool keyboardNavigation = true;
 
     [Header("Confirmar misión")]
     [Tooltip("Nombre exacto de la escena de juego. Tiene que estar agregada en Build Settings / Build Profiles.")]
     [SerializeField] private string gameplaySceneName = "Gameplay";
 
-    [Tooltip("Botón en pantalla para confirmar (opcional, útil en celular). Enter en el teclado hace lo mismo.")]
+    [Tooltip("Botón en pantalla para confirmar (opcional, útil en celular). Espacio en el teclado hace lo mismo.")]
     [SerializeField] private Button confirmButton;
+
+    [Tooltip("Tiempo máximo (segundos) entre dos clicks en la misma misión para que cuenten como doble click y la confirmen.")]
+    [SerializeField] private float doubleClickTime = 0.35f;
 
     [Tooltip("Duración (segundos) del fade al entrar y al salir de esta escena.")]
     [SerializeField] private float fadeDuration = 0.5f;
 
     [Header("Ayuda")]
-    [Tooltip("Texto de ayuda para quien no sabe cómo elegir. Aparece después de 'helpDelay' segundos de iniciada la escena y desaparece al apretar Enter.")]
+    [Tooltip("Texto de ayuda para quien no sabe cómo elegir. Aparece después de 'helpDelay' segundos de iniciada la escena y desaparece al confirmar con Espacio.")]
     public TMP_Text helpText;
 
     [Tooltip("Segundos desde que arranca la escena hasta que aparece el texto de ayuda.")]
@@ -183,6 +188,11 @@ public class MissionSelectionManager : MonoBehaviour
     private int _shownIndex = -1;   // lo que está realmente en la mesa
     private int _targetIndex = -1;  // lo que el jugador pidió
     private Coroutine _process;
+
+    // Doble click en el menú
+    private int _lastClickIndex = -1;
+    private float _lastClickTime;
+    private int _pendingConfirm = -1; // misión a confirmar apenas termine de apoyarse en la mesa
 
     public int MissionCount => _missions.Count;
     public int CurrentIndex => _targetIndex;
@@ -210,9 +220,9 @@ public class MissionSelectionManager : MonoBehaviour
         SetupMenuLayout();
         Rescan();
 
-        if (previousButton) previousButton.onClick.AddListener(Previous);
-        if (nextButton) nextButton.onClick.AddListener(Next);
-        if (confirmButton) confirmButton.onClick.AddListener(ConfirmSelection);
+        if (previousButton) { DisableNavigation(previousButton); previousButton.onClick.AddListener(OnPreviousClicked); }
+        if (nextButton) { DisableNavigation(nextButton); nextButton.onClick.AddListener(OnNextClicked); }
+        if (confirmButton) { DisableNavigation(confirmButton); confirmButton.onClick.AddListener(OnConfirmClicked); }
 
         // Ayuda: arranca oculta y aparece a los 'helpDelay' segundos (se reinicia cada vez que se carga la escena)
         if (helpText)
@@ -227,9 +237,9 @@ public class MissionSelectionManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (previousButton) previousButton.onClick.RemoveListener(Previous);
-        if (nextButton) nextButton.onClick.RemoveListener(Next);
-        if (confirmButton) confirmButton.onClick.RemoveListener(ConfirmSelection);
+        if (previousButton) previousButton.onClick.RemoveListener(OnPreviousClicked);
+        if (nextButton) nextButton.onClick.RemoveListener(OnNextClicked);
+        if (confirmButton) confirmButton.onClick.RemoveListener(OnConfirmClicked);
     }
 
     private void Update()
@@ -241,12 +251,78 @@ public class MissionSelectionManager : MonoBehaviour
         if (kb == null) return;
         if (kb.rightArrowKey.wasPressedThisFrame) Next();
         else if (kb.leftArrowKey.wasPressedThisFrame) Previous();
-        else if (kb.enterKey.wasPressedThisFrame || kb.numpadEnterKey.wasPressedThisFrame) ConfirmSelection();
+        else if (kb.spaceKey.wasPressedThisFrame) ConfirmSelection();
 #elif ENABLE_LEGACY_INPUT_MANAGER
         if (Input.GetKeyDown(KeyCode.RightArrow)) Next();
         else if (Input.GetKeyDown(KeyCode.LeftArrow)) Previous();
-        else if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) ConfirmSelection();
+        else if (Input.GetKeyDown(KeyCode.Space)) ConfirmSelection();
 #endif
+    }
+
+    // ───────────────────────── Clicks de UI ─────────────────────────
+    // Después de cada click se limpia la selección del EventSystem y se desactiva la navegación
+    // de los botones. Si no, el botón clickeado queda "seleccionado" en la UI y la próxima tecla de
+    // "Submit" lo vuelve a tocar (y la misión se des-selecciona o cambia sola).
+
+    /// <summary>Quita el foco del EventSystem para que el teclado no vuelva a "tocar" el último botón.</summary>
+    private static void ClearUISelection()
+    {
+        if (EventSystem.current != null)
+            EventSystem.current.SetSelectedGameObject(null);
+    }
+
+    /// <summary>Evita que las flechas del teclado muevan la selección de la UI.</summary>
+    private static void DisableNavigation(Button button)
+    {
+        var nav = button.navigation;
+        nav.mode = Navigation.Mode.None;
+        button.navigation = nav;
+    }
+
+    private void OnPreviousClicked() { ClearUISelection(); Previous(); }
+    private void OnNextClicked() { ClearUISelection(); Next(); }
+    private void OnConfirmClicked() { ClearUISelection(); ConfirmSelection(); }
+
+    /// <summary>Click en el botón de una misión del menú. Un doble click la elige y la confirma.</summary>
+    private void OnMissionButtonClicked(int index)
+    {
+        ClearUISelection();
+
+        if (index < 0 || index >= _missions.Count) return;
+        if (!_missions[index].Selectable) return;
+
+        bool isDoubleClick = index == _lastClickIndex &&
+                             Time.unscaledTime - _lastClickTime <= doubleClickTime;
+        _lastClickIndex = index;
+        _lastClickTime = Time.unscaledTime;
+
+        if (!isDoubleClick)
+        {
+            SelectMission(index);
+            return;
+        }
+
+        // Doble click: asegurar que esté elegida (sin des-elegirla) y confirmar apenas termine de apoyarse en la mesa
+        _lastClickIndex = -1;
+        if (_targetIndex != index) SelectMission(index);
+        if (_targetIndex != index) return; // no se pudo elegir
+
+        _pendingConfirm = index;
+        TryConfirmPending();
+    }
+
+    /// <summary>Confirma la misión del doble click cuando la hoja ya está quieta sobre la mesa.</summary>
+    private void TryConfirmPending()
+    {
+        if (_pendingConfirm < 0) return;
+
+        if (_pendingConfirm != _targetIndex) { _pendingConfirm = -1; return; }
+
+        if (_process == null && _shownIndex == _targetIndex)
+        {
+            _pendingConfirm = -1;
+            ConfirmSelection();
+        }
     }
 
     // ───────────────────────── Descubrimiento automático ─────────────────────────
@@ -264,6 +340,8 @@ public class MissionSelectionManager : MonoBehaviour
         _missions.Clear();
         _shownIndex = -1;
         _targetIndex = -1;
+        _pendingConfirm = -1;
+        _lastClickIndex = -1;
 
         var found = new List<Transform>();
         Transform root = folderRoot ? folderRoot : transform;
@@ -332,7 +410,8 @@ public class MissionSelectionManager : MonoBehaviour
 
             Button btn = Instantiate(menuButtonPrefab, menuContainer);
             btn.gameObject.name = $"MissionButton_{m.displayName}";
-            btn.onClick.AddListener(() => SelectMission(index));
+            DisableNavigation(btn);
+            btn.onClick.AddListener(() => OnMissionButtonClicked(index));
 
             var label = btn.GetComponentInChildren<TMP_Text>(true);
             if (label) label.text = m.displayName;
@@ -726,7 +805,7 @@ public class MissionSelectionManager : MonoBehaviour
 
     /// <summary>
     /// Guarda la misión elegida (como número, en SelectedMission) y carga la escena de juego con fade.
-    /// Se llama con Enter, con el botón "confirmButton" o desde cualquier otro script.
+    /// Se llama con Espacio, con doble click en la misión, con el botón "confirmButton" o desde cualquier otro script.
     /// </summary>
     public void ConfirmSelection()
     {
@@ -754,7 +833,7 @@ public class MissionSelectionManager : MonoBehaviour
         SelectedMission.Index = chosen;
         _confirmed = true;
 
-        // La ayuda desaparece solo con el Enter que realmente elige la misión (no con cualquier Enter)
+        // La ayuda desaparece solo con la confirmación real de la misión (no con cualquier tecla)
         DismissHelp();
 
         if (DebugsConsola)
@@ -767,6 +846,7 @@ public class MissionSelectionManager : MonoBehaviour
         if (_confirmed) return; // ya se confirmó: no se puede cambiar mientras se hace el fade
         if (index == _targetIndex) return;
         _targetIndex = index;
+        _pendingConfirm = -1; // cualquier cambio de misión cancela un doble click pendiente
 
         if (DebugsConsola)
         {
@@ -807,6 +887,9 @@ public class MissionSelectionManager : MonoBehaviour
             }
         }
         _process = null;
+
+        // Si hubo doble click mientras la hoja viajaba, se confirma ahora que quedó apoyada
+        TryConfirmPending();
     }
 
     /// <summary>Dirección hacia la cámara (para "levantar" la hoja acercándola a ella).</summary>

@@ -18,7 +18,6 @@ public class ConfigurationOpen : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        PanelInterrution.SetActive(false);
         PanelConfiguracion.SetActive(false);
         PanelCreditos.SetActive(false);
         PanelSalir.SetActive(false);

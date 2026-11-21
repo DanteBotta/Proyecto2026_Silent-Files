@@ -1,4 +1,3 @@
-
 using System.Collections;
 using UnityEngine;
 
@@ -10,6 +9,9 @@ public class IntroJuego : MonoBehaviour
     [Header("Elementos")]
     public CanvasGroup pantallaNegra;
     public CanvasGroup imagenIntro;
+
+    [Header("Panel de version")]
+    public VersionInfoPanel versionInfoPanel;
 
     [Header("Tiempos")]
     public float esperaInicial = 0.5f;
@@ -40,11 +42,14 @@ public class IntroJuego : MonoBehaviour
             pantallaNegra.gameObject.SetActive(false);
             imagenIntro.gameObject.SetActive(false);
             juegoEmpezo = true;
+
+            // Sin intro: se muestra el panel de version directamente.
+            if (versionInfoPanel != null) versionInfoPanel.Mostrar();
             return;
         }
 
         StartCoroutine(ReproducirIntro());
-    }           
+    }
 
     private IEnumerator ReproducirIntro()
     {
@@ -63,6 +68,9 @@ public class IntroJuego : MonoBehaviour
 
         // Esperar antes de quitar el fondo negro.
         yield return new WaitForSeconds(esperaPantallaNegra);
+
+        // Justo cuando empieza el fade out del fondo negro, aparece el panel de version.
+        if (versionInfoPanel != null) versionInfoPanel.Mostrar();
 
         yield return Fade(pantallaNegra, 1f, 0f,
             duracionFadeNegro);

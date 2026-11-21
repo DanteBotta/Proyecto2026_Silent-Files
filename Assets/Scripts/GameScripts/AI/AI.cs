@@ -20,6 +20,15 @@ public class AI : MonoBehaviour, IHear
     [Tooltip("Velocidad al perseguir al jugador detectado. La patrulla conserva la velocidad del NavMeshAgent.")]
     [Min(0.1f)] public float chaseSpeed = 6f;
 
+    [Header("Giro y frenado en persecución")]
+    [Tooltip("Velocidad de giro (grados/seg) al perseguir.")]
+    [Min(1f)] public float chaseAngularSpeed = 720f;
+    [Tooltip("Aceleración al perseguir. Más alto = cambia de dirección y frena más rápido.")]
+    [Min(1f)] public float chaseAcceleration = 40f;
+
+    private float patrolAngularSpeed;
+    private float patrolAcceleration;
+
     [Min(0.1f)] public float soundArrivalDistance = 0.5f;
     [Min(0.1f)] public float soundNavMeshSearchRadius = 2f;
 
@@ -65,6 +74,8 @@ public class AI : MonoBehaviour, IHear
 
         if (navMeshAgent != null)
             patrolSpeed = navMeshAgent.speed;
+            patrolAngularSpeed = navMeshAgent.angularSpeed;
+            patrolAcceleration = navMeshAgent.acceleration;
 
         doorPassage = GuardDoorPassage.EnsureFor(navMeshAgent);
         if (doorPassage != null)
@@ -114,6 +125,8 @@ public class AI : MonoBehaviour, IHear
     {
         if (navMeshAgent != null)
             navMeshAgent.speed = patrolSpeed;
+            navMeshAgent.angularSpeed = patrolAngularSpeed;
+            navMeshAgent.acceleration = patrolAcceleration;
 
         if (animator != null && hasRunningParameter)
             animator.SetBool("Corriendo", false);
@@ -158,6 +171,8 @@ public class AI : MonoBehaviour, IHear
 
         // Restore walking even while waiting at a door or investigating an alert.
         navMeshAgent.speed = patrolSpeed;
+        navMeshAgent.angularSpeed = patrolAngularSpeed;
+        navMeshAgent.acceleration = patrolAcceleration;
 
         // A report can arrive before the agent is on its NavMesh. Keep the snapshot until ready.
         // It also replaces an interrupted patrol/sound route while a door is opening.
@@ -304,6 +319,8 @@ public class AI : MonoBehaviour, IHear
             return;
 
         navMeshAgent.speed = Mathf.Max(patrolSpeed, chaseSpeed);
+        navMeshAgent.angularSpeed = Mathf.Max(patrolAngularSpeed, chaseAngularSpeed);
+        navMeshAgent.acceleration = Mathf.Max(patrolAcceleration, chaseAcceleration);
         restingAtDestination = false;
         investigatingSound = false;
         investigatingPlayerReport = false;

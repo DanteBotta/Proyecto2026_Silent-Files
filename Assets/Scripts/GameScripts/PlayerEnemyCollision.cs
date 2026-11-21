@@ -94,11 +94,11 @@ public class PlayerEnemyCollision : MonoBehaviour
     private void CerrarMinijuegos()
     {
         foreach (WindowMinigameManager ventana in
-                 FindObjectsByType<WindowMinigameManager>(FindObjectsSortMode.None))
+                 FindObjectsByType<WindowMinigameManager>())
             ventana.CerrarPorCaptura();
 
         foreach (LockpickMinigameController ganzua in
-                 FindObjectsByType<LockpickMinigameController>(FindObjectsSortMode.None))
+                 FindObjectsByType<LockpickMinigameController>())
             ganzua.CerrarPorCaptura();
     }
 }

@@ -42,6 +42,9 @@ public class ExitMisionCar : MonoBehaviour
     float fillAmount = 0;
     bool completado = false;
 
+    // true desde que el jugador empieza a subirse al auto
+    public bool SalidaIniciada => completado;
+
     void Start()
     {
         ShowCanvasNearPlayer = GetComponent<ShowCanvasNearPlayer>();

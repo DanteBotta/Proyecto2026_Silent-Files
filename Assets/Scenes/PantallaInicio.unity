@@ -3723,7 +3723,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Alpha 1.0
+  m_text: Alpha 1.1
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9c5ccd13fcc517542b900def72f329b6, type: 2}
   m_sharedMaterial: {fileID: 2422641731948630723, guid: 9c5ccd13fcc517542b900def72f329b6,
@@ -9771,8 +9771,8 @@ MonoBehaviour:
     perdido o ganado.\n\r\n- La IA ahora frena y gira coherentemente. Ya no es m\xE1s
     esquivable ni rodeable.\n\r\n- Agregue boton volver en eleccion mapa.\n\r\n-
     Arregle bug de selecci\xF3n de mapa, ahora se elige con espacio o doble click
-    en la misi\xF3n.\n\r\n- Agregue pop up para mostrar lo nuevo de la versi\xF3n.
-    Solo se muestra la primera vez (al entrar). [ ESTO QUE ESTAN VIENDO ]"
+    en la misi\xF3n.\n\r\n- Agregue modo Speedrun en configuraci\xF3n, agrega un
+    timer y el intro misi\xF3n ahora es autom\xE1tico."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 21710998cce81b14687b70102e70714e, type: 2}
   m_sharedMaterial: {fileID: 2524955132112479269, guid: 21710998cce81b14687b70102e70714e,

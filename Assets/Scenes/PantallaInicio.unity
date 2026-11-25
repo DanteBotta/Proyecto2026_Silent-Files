@@ -691,7 +691,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_IsOn: 0
+  m_IsOn: 1
 --- !u!1 &181163974
 GameObject:
   m_ObjectHideFlags: 0
@@ -2435,20 +2435,35 @@ MonoBehaviour:
   m_Placeholder: {fileID: 0}
   m_ItemText: {fileID: 2081584495}
   m_ItemImage: {fileID: 0}
-  m_Value: 0
+  m_Value: 2
   m_MultiSelect: 0
   m_Options:
     m_Options:
     - m_Text: "1280 \xD7 720"
       m_Image: {fileID: 0}
       m_Color: {r: 1, g: 1, b: 1, a: 1}
-    - m_Text: "1366 \xD7 768"
+    - m_Text: "1600\xD7900"
       m_Image: {fileID: 0}
       m_Color: {r: 1, g: 1, b: 1, a: 1}
-    - m_Text: "1600 \xD7 900"
+    - m_Text: "1920\xD71080"
       m_Image: {fileID: 0}
       m_Color: {r: 1, g: 1, b: 1, a: 1}
-    - m_Text: 1920 x 1080
+    - m_Text: "2560\xD71440"
+      m_Image: {fileID: 0}
+      m_Color: {r: 1, g: 1, b: 1, a: 1}
+    - m_Text: "3840\xD72160"
+      m_Image: {fileID: 0}
+      m_Color: {r: 1, g: 1, b: 1, a: 1}
+    - m_Text: "1440\xD7900"
+      m_Image: {fileID: 0}
+      m_Color: {r: 1, g: 1, b: 1, a: 1}
+    - m_Text: "1680\xD71050"
+      m_Image: {fileID: 0}
+      m_Color: {r: 1, g: 1, b: 1, a: 1}
+    - m_Text: "1680\xD71050"
+      m_Image: {fileID: 0}
+      m_Color: {r: 1, g: 1, b: 1, a: 1}
+    - m_Text: "2560\xD71600"
       m_Image: {fileID: 0}
       m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_OnValueChanged:
@@ -3698,9 +3713,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1885657686}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 110}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -30}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &661176259
@@ -3723,7 +3738,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Alpha 1.1
+  m_text: Alpha 1.2
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9c5ccd13fcc517542b900def72f329b6, type: 2}
   m_sharedMaterial: {fileID: 2422641731948630723, guid: 9c5ccd13fcc517542b900def72f329b6,
@@ -9216,8 +9231,8 @@ MonoBehaviour:
   MasterVolume: 1
   MusicVolume: 1
   EffectVolume: 1
-  Resolucion: 3
-  FullScreen: 0
+  Resolucion: 2
+  FullScreen: 1
   SpeedrunMode: 0
 --- !u!4 &1812511588
 Transform:
@@ -9742,10 +9757,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1885657686}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -30}
-  m_SizeDelta: {x: -30, y: -90}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -130}
+  m_SizeDelta: {x: 270, y: 148}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1882479395
 MonoBehaviour:
@@ -9767,12 +9782,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "- Arregle el error del Menu Pausa: Se pod\xEDa abrir incluso ya habiendo
-    perdido o ganado.\n\r\n- La IA ahora frena y gira coherentemente. Ya no es m\xE1s
-    esquivable ni rodeable.\n\r\n- Agregue boton volver en eleccion mapa.\n\r\n-
-    Arregle bug de selecci\xF3n de mapa, ahora se elige con espacio o doble click
-    en la misi\xF3n.\n\r\n- Agregue modo Speedrun en configuraci\xF3n, agrega un
-    timer y el intro misi\xF3n ahora es autom\xE1tico."
+  m_text: "- Ahora al presionar \"R\" en el nivel se reinicia automaticamente, si
+    ModoSpeedrun esta activado.\n\r\n- Agregue opciones de resoluci\xF3n en ajustes.\n\r\n-
+    Agregue opci\xF3n de pantalla completa en Ajustes."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 21710998cce81b14687b70102e70714e, type: 2}
   m_sharedMaterial: {fileID: 2524955132112479269, guid: 21710998cce81b14687b70102e70714e,
@@ -9800,8 +9812,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 12
-  m_fontSizeBase: 12
+  m_fontSize: 14
+  m_fontSizeBase: 14
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -9870,7 +9882,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1885657686
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9890,7 +9902,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 300, y: 300}
+  m_SizeDelta: {x: 300, y: 225}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1885657687
 MonoBehaviour:

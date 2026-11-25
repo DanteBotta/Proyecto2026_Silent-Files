@@ -10777,6 +10777,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PauseMenuController
   PanelMenuPausa: {fileID: 1229957995}
   MissionBriefing: {fileID: 0}
+  MissionEndManager: {fileID: 0}
+  ExitMisionCar: {fileID: 0}
   WindowMinigames: []
   CanvasMinimapa: {fileID: 369902594}
   CanvasInventario: {fileID: 1634313147}
@@ -19278,6 +19280,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SpeedrunManager
   ContenedorTimer: {fileID: 555761547}
   TextoTimer: {fileID: 1346782202}
+  TeclaReinicio: 114
   TimerCorriendo: 0
   TiempoActual: 0
 --- !u!1 &2130913240 stripped

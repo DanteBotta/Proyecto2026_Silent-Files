@@ -38,6 +38,10 @@ public class ConfigurationUI : MonoBehaviour
 
     void Update()
     {
+        // Detecto si cambió la resolución o la pantalla completa antes de pisar los valores
+        bool cambioPantalla = cfg.Resolucion != resolucionDropdown.value
+                           || cfg.FullScreen != pantallaCompleta.isOn;
+
         // Paso los valores de la UI al script persistente
         cfg.Idioma = idiomaDropdown.value;
         cfg.Resolucion = resolucionDropdown.value;
@@ -46,6 +50,11 @@ public class ConfigurationUI : MonoBehaviour
         cfg.EffectVolume = Slider_EffectVolume.value / 100;
         cfg.FullScreen = pantallaCompleta.isOn;
         cfg.SpeedrunMode = modoSpeedrun.isOn;
+
+        if (cambioPantalla)
+        {
+            cfg.AplicarPantalla();
+        }
 
         bool esp = LanguageManager.Instance.idiomaActual == 0;
         Text_MasterVolume.text = (esp ? "Volumen Maestro: " : "Master Volume: ") + ObtenerValor(Slider_MasterVolume.value);

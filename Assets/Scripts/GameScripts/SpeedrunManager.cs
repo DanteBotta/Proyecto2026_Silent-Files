@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SpeedrunManager : MonoBehaviour
 {
@@ -7,15 +8,20 @@ public class SpeedrunManager : MonoBehaviour
     public GameObject ContenedorTimer;      // objeto que contiene el texto (se oculta si no hay speedrun)
     public TextMeshProUGUI TextoTimer;
 
+    [Header("Controles")]
+    public KeyCode TeclaReinicio = KeyCode.R;
+
     [Header("Estado (no tocar)")]
     public bool TimerCorriendo = false;
     public float TiempoActual = 0f;
 
     private bool speedrunActivo = false;
+    private MissionBriefing missionBriefing;   // referencia automática
 
     private void Start()
     {
         speedrunActivo = ConfigurationVariables.Instance.SpeedrunMode;
+        missionBriefing = FindAnyObjectByType<MissionBriefing>();
 
         if (ContenedorTimer != null)
         {
@@ -27,7 +33,21 @@ public class SpeedrunManager : MonoBehaviour
 
     private void Update()
     {
-        if (!speedrunActivo || !TimerCorriendo)
+        if (!speedrunActivo)
+        {
+            return;
+        }
+
+        // Reinicio rápido: solo si el briefing ya terminó y la misión empezó (ya se tocó F)
+        if (Input.GetKeyDown(TeclaReinicio)
+            && missionBriefing != null
+            && missionBriefing.MisionIniciada)
+        {
+            ReiniciarNivel();
+            return;
+        }
+
+        if (!TimerCorriendo)
         {
             return;
         }
@@ -59,6 +79,13 @@ public class SpeedrunManager : MonoBehaviour
         TimerCorriendo = false;
         TiempoActual = 0f;
         ActualizarTexto();
+    }
+
+    // Recarga la escena actual (el timer arranca de cero porque se recrea el manager)
+    public void ReiniciarNivel()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     private void ActualizarTexto()
